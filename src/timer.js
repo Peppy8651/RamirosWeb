@@ -1,76 +1,72 @@
 export default class Timer {
-        _elapsedTime;
-        _targetTime;
-        _isRunning;
-        _isPaused;
-        playWhenPaused = false;
-        finishCallback;
 
         constructor(targetTime)
         {
-            _elapsedTime = TimeSpan.Zero;
-            _targetTime = targetTime;
-            _isRunning = false;
-            _isPaused = false;
+            this._elapsedTime = 0;
+            this._targetTime = targetTime;
+            this._isRunning = false;
+            this._isPaused = false;
+            this.playWhenPaused = false;
+            this.finishCallback = null;
         }
 
         Start()
         {
-            _isRunning = true;
-            _isPaused = false;
+            this._isRunning = true;
+            this._isPaused = false;
         }
 
         Stop()
         {
-            _isRunning = false;
-            _isPaused = false;
+            this._isRunning = false;
+            this._isPaused = false;
         }
 
         Pause()
         {
-            _isPaused = true;
+            this._isPaused = true;
         }
 
         Resume()
         {
-            _isPaused = false;
+            this._isPaused = false;
         }
-        Update(gameTime)
+        Update(delta)
         {
-            if (_isRunning && !_isPaused)
+            if (this._isRunning && !this._isPaused)
             {
-                _elapsedTime += gameTime.ElapsedGameTime;
-                if (finishCallback != null && IsFinished())
+                this._elapsedTime += delta;
+                if (this.finishCallback != null && this.IsFinished())
                 {
-                    finishCallback();
+                    this.finishCallback();
                 }
             }
         }
 
         IsFinished()
         {
-            return _elapsedTime >= _targetTime;
+            return this._elapsedTime >= this._targetTime;
         }
 
         SetTargetTime(targetTime)
         {
-            _targetTime = targetTime;
+            this._targetTime = targetTime;
         }
         RemoveTime(timeToRemove)
         {
-            _elapsedTime -= timeToRemove;
-            if (_elapsedTime < TimeSpan.Zero)
+            this._elapsedTime -= timeToRemove;
+            if (this._elapsedTime < 0)
             {
-                _elapsedTime = TimeSpan.Zero;
+                this._elapsedTime = 0;
             }
         }
         AddTime(timeToAdd)
         {
-            _elapsedTime += timeToAdd;
+            this._elapsedTime += timeToAdd;
         }
 
         Reset()
         {
-            _elapsedTime = TimeSpan.Zero;
+            this._elapsedTime = 0;
         }
 }
