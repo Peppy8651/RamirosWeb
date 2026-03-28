@@ -69,12 +69,14 @@ let dangerSoundTimer;
 
 export default class gameScreen extends Phaser.Scene {
   // The three methods currently empty
-  
+  constructor() {
+    super({key: 'gameScreen'});
+  }
   preload() {
         leftvent = new Rectangle(-cameraX + 75, -cameraY + 385, 60, 90);
         rightvent = new Rectangle(-cameraX + width - 160, -cameraY + 385, 60, 90);
-        maskrect = new Rectangle(10, height-40, 500, 40);
-        camerarect = new Rectangle(510, height-40, 500, 40);
+        maskrect = new Rectangle(10, height-60, 500, 40);
+        camerarect = new Rectangle(510, height-60, 500, 40);
         animatronics[0] = new Animatronic(this, "Misa"); // Misa animatronic
         animatronics[1] = new Animatronic(this, "Juan"); // Juan animatronic
         animatronics[2] = new Animatronic(this, "Ramiro"); // Ramiro animatronic 
@@ -226,7 +228,7 @@ export default class gameScreen extends Phaser.Scene {
     this.freddymask = this.add.sprite(0 + width/2, 0 + height/2, "freddymask1");
     this.freddymask.anims.create({
         key: "freddymaskactive",
-        frameRate: 45,
+        frameRate: 35,
         frames: [
         { key: 'freddymask1' },
         { key: 'freddymask2' },
@@ -239,10 +241,30 @@ export default class gameScreen extends Phaser.Scene {
         { key: 'freddymask9' },
         ],
     });
+    this.cameraopen = this.add.sprite(0 + width/2, 0 + height/2, "monitor1");
+    this.cameraopen.anims.create({
+        key: "camerabuttonactive",
+        frameRate: 35,
+        frames: [
+        { key: 'monitor1' },
+        { key: 'monitor2' },
+        { key: 'monitor3' },
+        { key: 'monitor4' },
+        { key: 'monitor5' },
+        { key: 'monitor6' },
+        { key: 'monitor7' },
+        { key: 'monitor8' },
+        { key: 'monitor9' },
+        ],
+    });
+    this.freddymask.setVisible(false);
+    this.cameraopen.setVisible(false);
     this.maskuse = this.add.image(260, height - maskrect.height, "maskuse");
     this.maskon = this.sound.add("maskon");
     this.maskoff = this.sound.add("maskoff");
     this.deepbreaths = this.sound.add("deepbreaths");
+    this.monitoropen = this.sound.add("open");
+    this.monitorclosed = this.sound.add("close");
 
     this.keyShift = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SHIFT);
     this.keyEnter = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
@@ -252,43 +274,66 @@ export default class gameScreen extends Phaser.Scene {
   update(time, delta) {
         var mouse = this.input.activePointer;
         drawChange = false;
-//             // mask
-//                 if (maskCooldown != null)
-//                 {
-//                     maskCooldown.Update(delta);
-//                 }
-
-//                 if (maskCooldown != null && maskCooldown.IsFinished())
-//                 {
-//                         maskbuttonactive = 0;
-//                         maskCooldown = null;
-//                         maskonPlayed = false;
-//                 }
-//                 // cam
-//                 if (camCooldown != null)
-//                 {
-//                     camCooldown.Update(delta);
-//                 }
-
-//                 if (camCooldown != null && camCooldown.IsFinished())
-//                 {
-//                         camerabuttonactive = 0;
-//                         camCooldown = null;
-//                         monitoropenPlayed = false;
-//                         if (animatronics[3].location == 14) // gustavo 5% jumpscare code
-//                         {
-//                             console.log("5% jumpscare");
-//                             const random = rng.Next(0, 21);
-//                             if (random == 20)
-//                             {
-//                                 jumpscareID = 6;
-//                                 switchScreenState(2);
-//                             }
-//                         }
-//                 }
 //                 // Unpaused/main game
-//                 if (pause == false) {
+            if (pause == false) {
+                    // mask
+                if (maskCooldown != null)
+                {
+                    maskCooldown.Update(delta);
+                }
 
+                if (maskCooldown != null && maskCooldown.IsFinished())
+                {
+                        maskbuttonactive = 0;
+                        maskCooldown = null;
+                        maskonPlayed = false;
+                        maskOffPlayed = false;
+                        this.freddymask.setVisible(false);
+                }
+                   // cam
+                if (camCooldown != null)
+                {
+                        camCooldown.Update(delta);
+                }
+                //     if (dangerSoundTimer != null && dangerSoundTimer.IsRunning)
+                //     {
+                //         dangerSoundTimer.Update(elapsedMs);
+                //     }
+                //     if (danger > 0 && dangerSoundPlayed == false)
+                //     {
+                //         PlaySound(hallwaydanger, false);
+                //         dangerSoundTimer = new RamirosWeb.Timer(TimeSpan.FromMilliseconds(7000));
+                //         dangerSoundTimer.finishCallback = () =>
+                //         {
+                //             dangerSoundPlayed = false;
+                //             dangerSoundTimer = null;
+                //         };
+                //         dangerSoundTimer.Start();
+                //         dangerSoundPlayed = true;
+                //     }
+                //     else
+                //     {
+                //         StopSound(hallwaydanger);
+                //         dangerSoundTimer = null;
+                //         dangerSoundPlayed = false;
+                //     }
+                if (camCooldown != null && camCooldown.IsFinished())
+                {
+                        this.cameraopen.setVisible(false);
+                        camerabuttonactive = 0;
+                        camCooldown = null;
+                        monitoropenPlayed = false;
+                        // if (animatronics[3].location == 14) // gustavo 5% jumpscare code
+                        // {
+                        //     console.log("5% jumpscare");
+                        //     const random = rng.Next(0, 21);
+                        //     if (random == 20)
+                        //     {
+                        //         jumpscareID = 6;
+                        //         switchScreenState(2);
+                        //     }
+                        // }
+                }
                     //Move left or right
                     if (mouse.x > width - width/3)
                     {
@@ -343,14 +388,17 @@ export default class gameScreen extends Phaser.Scene {
                         if (maskOnCooldown != null) maskOnCooldown.Update(delta);
                         if (maskrect.contains(mouse.x, mouse.y))
                         {
-                            if (maskbuttonactive == 0) maskbuttonactive = 1; // initial hover
+                            if (maskbuttonactive == 0) {
+                                maskbuttonactive = 1; // initial hover
+                                this.freddymask.setVisible(true);
+                            }
                             if (maskbuttonactive == 1)
                             {
                                 if (maskonPlayed == false)
                                 {
                                     maskonPlayed = true;
                                     this.maskon.play();
-                                    this.freddymask.anims.play("freddymaskactive");
+                                    this.freddymask.anims.play("freddymaskactive", true);
                                     maskOnCooldown = new timer(400);
                                     maskOnCooldown.Start();
                                 }
@@ -359,8 +407,8 @@ export default class gameScreen extends Phaser.Scene {
                             {
                                 if (maskOffPlayed == false) {
                                     maskOffPlayed = true;
-                                    this.freddymask.anims.play("freddymaskactive");
                                     this.maskoff.play();
+                                    this.freddymask.anims.playReverse("freddymaskactive", true);
                                 }
                                 this.deepbreaths.stop();
                                 maskbuttonactive = 3;
@@ -383,6 +431,49 @@ export default class gameScreen extends Phaser.Scene {
                                 {
                                     maskCooldown = new timer(250);
                                     maskCooldown.Start();
+                                }
+                            }
+                        }
+                    }
+
+                    if (maskbuttonactive == 0)
+                    {
+                            if (camerarect.contains(mouse.x, mouse.y))
+                            {
+                            if (camerabuttonactive == 0) {
+                                camerabuttonactive = 1;
+                                this.cameraopen.setVisible(true);
+                                this.cameraopen.anims.play('camerabuttonactive');
+                                this.monitoropen.play();
+                                const cameraSwitch = new timer(500);
+                                cameraSwitch.finishCallback = () =>
+                                {
+                                    console.log('switch to cameras');
+                                    this.scene.switch('cameraScreen');
+                                };
+                                cameraSwitch.Start(); // in case the animation fucks up
+                                timers.push(cameraSwitch);
+                            } // initial hover
+                            if (camerabuttonactive == 1)
+                            {
+                                if (monitoropenPlayed == false)
+                                {
+                                    if (maskOnCooldown != null) maskOnCooldown.Stop();
+                                    if (maskCooldown != null) maskCooldown = null;
+                                    this.monitoropen.play();
+                                    monitoropenPlayed = true;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (camerabuttonactive == 3)
+                            {
+                                this.cameraopen.playReverse('camerabuttonactive');
+                                if (camCooldown == null)
+                                {
+                                    camCooldown = new timer(250);
+                                    camCooldown.Start();
                                 }
                             }
                         }
@@ -423,9 +514,9 @@ export default class gameScreen extends Phaser.Scene {
 //                 else if (elapsed < 350) hournum = 4;
 //                 else if (elapsed < 420) hournum = 5;
 //                 else                    hournum = 6;
-//                 for (let i = 0; i < timers.length; i++) {
-//                     timers[i].Update(delta);
-//                 }
+                 for (let i = 0; i < timers.length; i++) {
+                     timers[i].Update(delta);
+                 }
 //         // different flashlights in main hallway + vents
 //         if (flashlightstate > 0 && screenState == 0)
 //         {
@@ -683,7 +774,7 @@ export default class gameScreen extends Phaser.Scene {
 //                 };
 //                 timers.Add(jackTimer);
 //                 }
-//                 }
+           }
         if (drawChange) this.updateDraw();
        }
        updateDraw() {

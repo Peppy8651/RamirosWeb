@@ -1,6 +1,8 @@
 export default class menuScreen extends Phaser.Scene {
   // The three methods currently empty
-
+  constructor() {
+    super({key: 'menuScreen'});
+  }
   preload() {
     // This method is called once at the beginning
     // It will load all the assets, like sprites and sounds  

@@ -10,7 +10,7 @@ new Phaser.Game({
   width: 1024, // Width of the game in pixels
   height: 768, // Height of the game in pixels
   backgroundColor: '#ffffff', // The background color (blue)
-  scene: gameScreen, // The name of the scene we created
+  scene: [gameScreen, menuScreen, gameOverScreen, cameraScreen, winScreen], // The name of the scene we created
   physics: { default: 'arcade' }, // The physics engine to use
   parent: 'game', // Create the game inside the <div id="game"> 
   type: Phaser.AUTO
