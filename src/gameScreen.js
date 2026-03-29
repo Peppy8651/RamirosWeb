@@ -1,5 +1,4 @@
 import Phaser from "phaser";
-import menuScreen from './menuScreen.js';
 import gameOverScreen from './gameOverScreen.js';
 import cameraScreen from './cameraScreen.js';
 import winScreen from './winScreen.js';
@@ -48,7 +47,7 @@ export default class gameScreen extends Phaser.Scene {
     this.screenState = 3; // 0: game, 1: camera 2: jumpscare 3: main menu 4: game over 5: win screen
     this.triangleflash = 0;
     this.musicTimer;
-    this.jumpscareID = 0;
+    this.jumpscareID = 16;
     this.musicMilliseconds = 60000;
     this.jumpscareScale = 0;
         // 6 am
@@ -71,6 +70,7 @@ export default class gameScreen extends Phaser.Scene {
     this.dangerSoundPlayed = false;
     this.clockChimePlayed = false;
     this.yayPlayed = false;
+    this.jackPlayed = false;
     this.dangerSoundTimer;
     this.animatronics[0] = new Animatronic(this, "Misa"); // Misa animatronic
     this.animatronics[1] = new Animatronic(this, "Juan"); // Juan animatronic
@@ -78,17 +78,17 @@ export default class gameScreen extends Phaser.Scene {
     this.animatronics[3] = new Animatronic(this, "Gustavo");
     this.animatronics[4] = new Animatronic(this, "Carlos");
     this.animatronics[5] = new Animatronic(this, "Nasir");
-    this.animatronics[6] = new Animatronic(this, "Darien");
-    this.animatronics[7] = new Animatronic(this, "Marlon");
+    // this.animatronics[6] = new Animatronic(this, "Darien");
+    // this.animatronics[7] = new Animatronic(this, "Marlon");
   }
   preload() {
         this.leftvent = new Rectangle(-this.cameraX + 75, -this.cameraY + 385, 60, 90);
         this.rightvent = new Rectangle(-this.cameraX + this.width - 160, -this.cameraY + 385, 60, 90);
         this.maskrect = new Rectangle(10, this.height-60, 500, 40);
         this.camerarect = new Rectangle(510, this.height-60, 500, 40);
-        // musicTimer = new Timer(musicMilliseconds);   
-        // musicTimer.Start();
-        // timers.Add(musicTimer);
+        this.musicTimer = new timer(this.musicMilliseconds);   
+        this.musicTimer.Start();
+        this.timers.push(this.musicTimer);
 
         this.load.setBaseURL('');
         this.load.setPath('');
@@ -300,8 +300,11 @@ export default class gameScreen extends Phaser.Scene {
     this.sixamnum.setVisible(false);
     this.sixamletters = this.add.image(1024/2 + 60, 768/2, 'sixam');
     this.sixamletters.setVisible(false);
+    this.fpsText = document.getElementById("fps");
+
   }
   update(time, delta) {
+        this.fpsText.innerHTML = 'FPS: ' + Math.floor(this.game.loop.actualFps);
         var mouse = this.input.activePointer;
         this.drawChange = false;
         if (this.key6.isDown) {
@@ -531,29 +534,29 @@ export default class gameScreen extends Phaser.Scene {
             for (let i = 0; i < this.animatronics.length; i++)
                     {
                         this.animatronics[i].update(delta);
-//                         switch (animatronics[i].location) { // play scary ambience when animatronic is nearby
-//                             case 14:
-//                                 gameScreen.danger+= 0.001;
-//                             break;
-//                             case 15:
-//                                 gameScreen.danger+= 0.001;
-//                             break;
-//                             case 16:
-//                                 gameScreen.danger+= 0.001;
-//                             break;
-//                             case 4:
-//                                 gameScreen.danger+= 0.001;
-//                             break;
-//                             case 5:
-//                                 gameScreen.danger+= 0.001;
-//                             break;
-//                             case 12:
-//                                 gameScreen.danger+= 0.001;
-//                             break;
-//                             case 13:
-//                                 gameScreen.danger+= 0.001;
-//                             break;
-//                         }
+                        switch (this.animatronics[i].location) { // play scary ambience when animatronic is nearby
+                            case 14:
+                                this.danger+= 0.001;
+                            break;
+                            case 15:
+                                this.danger+= 0.001;
+                            break;
+                            case 16:
+                                this.danger+= 0.001;
+                            break;
+                            case 4:
+                                this.danger+= 0.001;
+                            break;
+                            case 5:
+                                this.danger+= 0.001;
+                            break;
+                            case 12:
+                                this.danger+= 0.001;
+                            break;
+                            case 13:
+                                this.danger+= 0.001;
+                            break;
+                        }
                     }
         }
         if (this.nightTimer.IsFinished())
@@ -579,7 +582,7 @@ export default class gameScreen extends Phaser.Scene {
                             // PlaySound(yay, false);
                             yayTimer.Stop();
                             // StopSound(flashlightbuzz);
-                            let changeTimer = new timer(20000);
+                            let changeTimer = new timer(10000);
                             changeTimer.playWhenPaused = true;
                             changeTimer.finishCallback = async () => {
                                 this.phoneHasPlayed = false;
@@ -647,28 +650,29 @@ export default class gameScreen extends Phaser.Scene {
                 });
             }
 
-//         if (musicTimer.IsFinished())
-//         {
-//             if (jackPlayed == false)
-//             {
-//                 jackPlayed = true;
-//                 let jackTimer = new Timer(TimeSpan.FromSeconds(2));
-//                 let jackTimer2 = new Timer(TimeSpan.FromSeconds(rng.Next(2, 3)));
-//                 jackTimer2.finishCallback = async () =>
-//                 {
-//                         jumpscareID = 4;
-//                         StopSound(jackinthebox);
-//                         switchScreenState(2);
-//                 };
-//                 timers.Add(jackTimer2);
+        if (this.musicTimer.IsFinished())
+        {
+            if (this.jackPlayed == false)
+            {
+                this.jackPlayed = true;
+                let jackTimer = new timer(2000);
+                let jackTimer2 = new timer(Math.random() < 0.5 ? 2000 : 3000);
+                jackTimer2.finishCallback = () =>
+                {
+                        this.jumpscareID = 4;
+                        // StopSound(jackinthebox);
+                        this.switchScreenState(2);
+                };
+                this.timers.push(jackTimer2);
                     
-//                 jackTimer.Start();
-//                 jackTimer.finishCallback = async () => {
-//                     PlaySound(jackinthebox, false);
-//                     jackTimer2.Start();
-//                 };
-//                 timers.Add(jackTimer);
-//                 }
+                jackTimer.Start();
+                jackTimer.finishCallback = async () => {
+                    // PlaySound(jackinthebox, false);
+                    jackTimer2.Start();
+                };
+                this.timers.push(jackTimer);
+                }
+            }
         if (this.drawChange) this.updateDraw();
        }
        updateDraw() {
@@ -690,7 +694,7 @@ export default class gameScreen extends Phaser.Scene {
             let animatronicsIDcount = 0;
             let animatronicscount = 0;
             this.office.setTexture('officeflash');
-            for (let i = 0; i < this.animatronics.Length; i++)
+            for (let i = 0; i < this.animatronics.length; i++)
             {
                 if (this.animatronics[i].location == 15) // right vent with misa
                 {
@@ -722,7 +726,7 @@ export default class gameScreen extends Phaser.Scene {
             break;
             case 3:
             this.rightventtex.setTexture('vents4');
-            for (let i = 0; i < this.animatronics.Length; i++)
+            for (let i = 0; i < this.animatronics.length; i++)
             {
                 if (this.animatronics[i].location == 12) // right vent with misa
                 {
@@ -792,62 +796,51 @@ export default class gameScreen extends Phaser.Scene {
                     this.scene.launch('cameraScreen');
                 }            
             this.scene.bringToTop('cameraScreen');
+            break;
             case 2:
-            // Console.WriteLine("Jumpscared by: "+ jumpscareID);
-            // StopSound(garble);
-            // StopSound(fannoise);
-            // StopSound(cameraScreen.cameraAmbience);
-            // StopSound(gameScreen.hallwaydanger);
-            // StopSound(gameScreen.deepbreaths);
-            // PlaySound(jumpscaresound, false);
-            // if (gameScreen.phonePlaying)
-            // {
-            //     switch (nightnum)
-            //         {
-            //             case 1:
-            //             StopSound(gameScreen.phoneguy);
-            //             break;
-            //             case 2:
-            //             StopSound(gameScreen.phoneguy2);
-            //             break;
-            //         }
-            // }
-            // gameScreen.phoneHasPlayed = false;
-            // Timer timer = new Timer(TimeSpan.FromSeconds(2));
-            // timer.playWhenPaused = true;
-            // timer.finishCallback = async () =>
-            // {
-            //     StopSound(jumpscaresound);
-            //     switchScreenState(4);
-            // };
-            // timer.Start();
-            // timers.Add(timer);
+            if (this.screenState == 1) this.scene.sleep('cameraScreen');
+            console.log("Jumpscared by: "+ this.jumpscareID);
+            this.blackRectangle.setAlpha(1);
+            // this.jumpscareimg.setVisible(true);
+            let newtimer = new timer(2000);
+            newtimer.playWhenPaused = true;
+            newtimer.finishCallback = async () =>
+            {
+                // StopSound(jumpscaresound);
+                this.switchScreenState(4);
+            };
+            newtimer.Start();
+            this.timers.push(newtimer);
             // StopSound(windsound);
             break;
             case 3:
-            // menuScreen.nightOpen = false;
-            // menuScreen.switchStatic = 16;
-            // menuScreen.nightOpenTimer = new RamirosWeb.Timer(TimeSpan.FromSeconds(3));
-            // menuScreen.nightOpenTimer.finishCallback = () => { // start night
-            //     StopSound(blip);
-            //     nightTimer = new RamirosWeb.Timer(TimeSpan.FromSeconds(420)); // 7 minute night
-            //     nightTimer.Start();
-            //     timers.Add(nightTimer);
-            //     menuScreen.nightOpenTimer = null;
-            //     switchScreenState(0);
-            // };
-            
+            let menuScreen = this.scene.get('menuScreen');
+            menuScreen.nightOpen = false;
+            menuScreen.nightOpenTimer = new timer(3000);
+            menuScreen.nightOpenTimer.finishCallback = () => { // start night
+               // StopSound(blip);
+                this.nightTimer = new timer(420000); // 7 minute night
+                this.nightTimer.Start();
+                this.timers.push(this.nightTimer);
+                menuScreen.nightOpenTimer = null;
+                this.switchScreenState(0);
+            };
             // PlaySound(menuScreen.menuMusic, true);
-            // setUpGame();
+            this.setUpGame();
+            if (this.screenState == 5) this.screens[4].scene.switch('menuScreen');
+            if (this.screenState == 4) this.screens[3].scene.switch('menuScreen');
+            if (this.screenState == 0) this.scene.switch('menuScreen');
             break;
             case 4:
             // StopSound(jackinthebox);
             // PlaySound(menuScreen.menuMusic, false);
-            // gameOverScreen.changeTimer = new RamirosWeb.Timer(TimeSpan.FromSeconds(7));
-            // gameOverScreen.changeTimer.finishCallback = async () => {
-            //     switchScreenState(3);
-            // }; 
-            // gameOverScreen.changeTimer.Start();
+            let gameOverScreen = this.scene.get('gameOverScreen');
+            gameOverScreen.changeTimer = new timer(7000);
+            gameOverScreen.changeTimer.finishCallback = async () => {
+                    this.switchScreenState(3);
+                }; 
+            gameOverScreen.changeTimer.Start();
+            this.scene.switch('gameOverScreen');
             break;
             case 5:
             // StopSound(garble);
@@ -857,13 +850,15 @@ export default class gameScreen extends Phaser.Scene {
             // StopSound(jackinthebox);
             // StopSound(gameScreen.hallwaydanger);
             // StopSound(gameScreen.deepbreaths);
-            // PlaySound(winScreen.winmusic, false);
-            // winScreen.changeTimer = new RamirosWeb.Timer(TimeSpan.FromMilliseconds(11500));
-            // winScreen.changeTimer.finishCallback = async () => {
-            //     StopSound(winScreen.winmusic);
-            //     switchScreenState(3);
-            // }; 
-            // winScreen.changeTimer.Start();
+            let winScreen = this.scene.get('winScreen');
+            winScreen.changeTimer = new timer(11500);
+            winScreen.changeTimer.finishCallback = async () => {
+                    winScreen.partyrock.stop();
+                    winScreen.blackRectangle.setAlpha(1);
+                    this.switchScreenState(3);
+                }; 
+            winScreen.changeTimer.Start();
+            this.scene.switch('winScreen');
             break;
         }
         this.screenState = num;
@@ -872,20 +867,116 @@ export default class gameScreen extends Phaser.Scene {
     {
                 if (this.batterymilliseconds <= (initialbattery * (0.2)))
                 {
-                        batterynum = 0; // invisible bar but there's still battery
+                        this.batterynum = 0; // invisible bar but there's still battery
                 }
                 else if (this.batterymilliseconds <= (initialbattery * (0.4)))
                 {
-                        batterynum = 1; // 1 bars left
+                        this.batterynum = 1; // 1 bars left
                 }
                 else if (this.batterymilliseconds <= (initialbattery * (0.6)))
                 {
-                        batterynum = 2; // 2 bars left
+                        this.batterynum = 2; // 2 bars left
                 }
                 else if (this.batterymilliseconds <= (initialbattery * (0.8)))
                 {
-                        batterynum = 3; // 3 bars left
+                        this.batterynum = 3; // 3 bars left
                 }
     }
+    setUpGame()
+    {
+        this.pause = false;
+        this.office.setTexture('office');
+        this.leftventtex.setTexture("vents1");
+        this.rightventtex.setTexture("vents3");
+        this.table.setTexture("table1");
+        this.table.anims.stop();
+        this.battery.setTexture("battery4");
+        this.nightNumShow.setTexture(this.nightnum);
+        this.hourNumShow.setTexture("num" + 1);
+        this.hourNumShow2.setTexture("num" + 2);
+        this.freddymask.setTexture("freddymask1");
+        this.freddymask.anims.stop();
+        this.cameraopen.setTexture("monitor1");
+        this.cameraopen.anims.stop();
+        this.freddymask.setVisible(false);
+        this.cameraopen.setVisible(false);
+        this.blackRectangle.setAlpha(0); // Start fully transparent
+        this.sixamnum.setTexture('nightEnd1');
+        this.sixamnum.anims.stop();
+        this.sixamnum.setAlpha(0);
+        this.sixamnum.setVisible(false);
+        this.sixamletters.setTexture('sixam');
+        this.sixamletters.setAlpha(0);
+        this.sixamletters.setVisible(false);
 
+        this.animatronics[0] = new Animatronic(this, "Misa"); // Misa animatronic
+        this.animatronics[1] = new Animatronic(this, "Juan"); // Juan animatronic
+        this.animatronics[2] = new Animatronic(this, "Ramiro"); // Ramiro animatronic 
+        this.animatronics[3] = new Animatronic(this, "Gustavo");
+        this.animatronics[4] = new Animatronic(this, "Carlos");
+        this.animatronics[5] = new Animatronic(this, "Nasir");
+
+        this.maskonPlayed = false;
+        this.monitoropenPlayed = false;
+        this.clockChimePlayed = false;
+        this.jackPlayed = false;
+        this.yayPlayed = false;
+        this.batterynum = 4;
+        this.flashlightstate = 0;
+        this.oldcameraX = 0;
+        this.oldcameraY = 0;
+        this.tableframe = 0;
+        this.freddymaskframe = 0;
+        this.maskbuttonactive = 0;
+        this.camerabuttonactive = 0;
+        this.cameraframe =0;
+        this.hournum = 0;
+        this.jumpscareID = 0;
+        this.musicMilliseconds = 60000;
+        this.clockchimefade = 0;
+        this.nightendframe = 0;
+        this.nightendframesplayed = false;
+        this.jumpscareScale = 0;
+        this.danger = 0;
+        this.drawChange = true;
+        // menuscreen
+        let menuScreen = this.scene.get('menuScreen');
+        menuScreen.drawChange = true;
+        menuScreen.logo.setVisible(true);
+        menuScreen.firstnight.setVisible(false);
+        menuScreen.secondnight.setVisible(false);
+        menuScreen.newgame.setVisible(true);
+        menuScreen.titlepic.setVisible(true);
+        menuScreen.static.setVisible(true);
+        menuScreen.arrow.setVisible(true);
+        menuScreen.nightPreview.setVisible(false);
+        menuScreen.nightOpen = false;
+        menuScreen.nightSelection = false;
+        menuScreen.fullScreenSelection = false;
+        menuScreen.nightSelected = 1;
+        menuScreen.optionSelected = 1;
+        
+        // camera screen
+        let cameraScreen = this.scene.get('cameraScreen');
+        cameraScreen.drawChange = true;
+        cameraScreen.cameraspot = 8;
+        // cameraScreen.darienstaticanimationframe = 0;
+        cameraScreen.darieninterrupt = false;
+        cameraScreen.switchStatic = true;
+        cameraScreen.camDir = 1;
+        cameraScreen.camFlashOn = false;
+        cameraScreen.animatronicForceOff = false;
+        cameraScreen.winding = false;
+        // reset timers
+        this.timers.splice(0, this.timers.length); // clear timers
+        menuScreen.nightOpenTimer.Reset();
+        // gameOverScreen.changeTimer.Reset();
+        this.nightTimer.Reset();
+        if (this.camCooldown != null) this.camCooldown.Reset();
+        if (this.maskCooldown != null) this.maskCooldown.Reset();
+        if (this.maskOnCooldown != null) this.maskOnCooldown.Reset();
+        this.musicTimer = new timer(this.musicMilliseconds);
+        this.musicTimer.Start();
+        this.timers.push(this.musicTimer);
+    }
 }

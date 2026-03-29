@@ -57,7 +57,7 @@ export default class Animatronic {
                 this.nasirValue3 = 0;
                 this.millisecondsCounter = 0;
                 this.flashMillisecondsCounter = 0;
-                this.nasirJumpscareTimer = new timer(10);
+                this.nasirJumpscareTimer = new timer(10000);
                 this.nasirJumpscareTimer.finishCallback = () =>
                     {
                         this.gameScreen.jumpscareID = 5;
@@ -84,7 +84,7 @@ export default class Animatronic {
         }
         this.location = this.movementPath[0];
         this.camTimer = new timer(750);
-        this.cameraLookingTimer = new timer(10); // you can't stare at the cameras for more than 10 seconds or you get jumpscared
+        this.cameraLookingTimer = new timer(10000); // you can't stare at the cameras for more than 10 seconds or you get jumpscared
         this.cameraLookingTimer.finishCallback = () =>
         {
             if (this.Name != "Carlos" && this.Name != "Gustavo") // Gooch only jumpscares you if you exit the cameras
@@ -103,6 +103,7 @@ export default class Animatronic {
     }
     Activate() {
         this.active = true;
+        this.cameraScreen = this.gameScreen.scene.get('cameraScreen');
         switch (this.gameScreen.nightnum)
         {
             case 1:
@@ -281,7 +282,7 @@ export default class Animatronic {
                     case "Misa":
                     if (this.gameScreen.maskbuttonactive > 0 && this.gameScreen.maskbuttonactive < 3)
                     {
-                        this.x -= (delta * scrollspeed);
+                        this.x -= (delta * this.scrollspeed);
                         // if (this.gameScree.stare.State != SoundState.Playing)
                         // {
                         //     this.game.stare.Play();
@@ -397,7 +398,7 @@ export default class Animatronic {
                 if (this.gameScreen.camerabuttonactive == 3 && this.attacking == 1)
                 {
                     if (this.camTimer != null) {
-                    if (this.camTimer.IsRunning == false)
+                    if (this.camTimer._isRunning == false)
                     {
                         this.camTimer.finishCallback = () => // give less than 1 second window to put on a mask
                         {
@@ -488,20 +489,20 @@ export default class Animatronic {
                         this.gameScreen.stare.Play();
                         this.movementActive = true;
                         this.location = 14; // he's about to jumpscare
-                        this.camTimer = new Timer(TimeSpan.FromMilliseconds(1000));
-                        if (this.camTimer.IsRunning == false)
+                        this.camTimer = new timer(1000);
+                        if (this.camTimer._isRunning == false)
                         {
                             this.camTimer.finishCallback = () => // give 1 second window to put on a mask
                             {
                                 if (this.gameScreen.maskbuttonactive == 0 || this.gameScreen.maskbuttonactive == 3) {
-                                    this.gameScreen.stare.Stop();
+                                    // this.gameScreen.stare.Stop();
                                     this.gameScreen.jumpscareID = this.ID;
                                     this.gameScreen.switchScreenState(2); // force jumpscare if leaving cameras
                                 }
                                 else
                                 {
-                                    alphaoverlay = 1;
-                                    this.gameScreen.stare.Stop();
+                                    this.alphaoverlay = 1;
+                                    //this.gameScreen.stare.Stop();
                                     this.camTimer.Stop();
                                     this.camTimer = null;
                                     this.location = 8;
@@ -520,37 +521,37 @@ export default class Animatronic {
                     if (this.gameScreen.animatronics[6].location != 14)
                     {
                         this.officeAnimatronicsRNGAttemptMade = true;
-                        this.gameScreen.stare.Play();
-                        this.gameScreen.darienlaugh2.Play();
+                        //this.gameScreen.stare.Play();
+                        //this.gameScreen.darienlaugh2.Play();
                         this.movementActive = true;
                         this.location = 14; // he's about to jumpscare
-                        let jumpscareInterval = this.gameScreen.rng.Next(1, 3) == 2? 5000 : 8000;
-                        this.officeJumpscareTimer = new Timer (TimeSpan.FromMilliseconds(jumpscareInterval));
-                        this.camTimer = new Timer(TimeSpan.FromMilliseconds(this.gameScreen.rng.Next(1, 3) == 2? 500 : 250));
-                        if (this.camTimer.IsRunning == false)
+                        let jumpscareInterval = Math.random() < 0.5 ? 5000 : 8000;
+                        this.officeJumpscareTimer = new timer(jumpscareInterval);
+                        this.camTimer = new timer(Math.random() < 0.5 ? 500 : 250);
+                        if (this.camTimer._isRunning == false)
                         {
                             this.camTimer.finishCallback = () => // give 1 second window to put on a mask
                             {
                                 if (this.gameScreen.maskbuttonactive == 0 || this.gameScreen.maskbuttonactive == 3) {
-                                    this.gameScreen.stare.Stop();
+                                    // this.gameScreen.stare.Stop();
                                     this.gameScreen.jumpscareID = this.ID;
                                     this.gameScreen.switchScreenState(2); // force jumpscare if leaving cameras
                                 }
                             };  
                             this.camTimer.Start();
                         }
-                        if (this.officeJumpscareTimer.IsRunning == false)
+                        if (this.officeJumpscareTimer._isRunning == false)
                         {
                             this.officeJumpscareTimer.finishCallback = () => // give 1 second window to put on a mask
                             {
                                 if (this.gameScreen.maskbuttonactive == 1 || this.gameScreen.maskbuttonactive == 2) {
                                     this.alphaoverlay = 1;
-                                    this.gameScreen.stare.Stop();
+                                    //this.gameScreen.stare.Stop();
                                     this.camTimer.Stop();
                                     this.camTimer = null;
                                     this.officeJumpscareTimer.Stop();
                                     this.officeJumpscareTimer = null;
-                                    this.location = this.gameScreen.rng.Next(0,2) == 0? 10 : 3; // either prize corner or party room 4
+                                    this.location = Math.random() < 0.5 ? 10 : 3; // either prize corner or party room 4
                                     this.movementActive = false;
                                     this.AInum = 0;
                                     this.gameScreen.danger = 0;
@@ -561,12 +562,12 @@ export default class Animatronic {
                         }
                     }
                 }
-                if (Name == "Marlon" && location == 16)
+                if (this.Name == "Marlon" && this.location == 16)
                 {
                     if (this.officeAnimatronicsRNGAttemptMade == false && this.gameScreen.camerabuttonactive == 3 && this.gameScreen.animatronics[6].location != 14 && this.gameScreen.animatronics[2].location != 14)
                     {
                         this.officeAnimatronicsRNGAttemptMade = true;
-                        this.officeAnimatronicsRNG = this.gameScreen.rng.Next(1,11);
+                        this.officeAnimatronicsRNG = Math.random() * 10;
                     }
                     else
                     {
@@ -574,32 +575,32 @@ export default class Animatronic {
                     }
                     if (this.officeAnimatronicsRNG >= 7 && this.gameScreen.camerabuttonactive == 3) // final attack attempt
                     {
-                        this.gameScreen.stare.Play();
+                        //this.gameScreen.stare.Play();
                         this.movementActive = true;
                         this.location = 14; // he's about to jumpscare
-                        let jumpscareInterval = this.gameScreen.rng.Next(1, 3) == 2? 4000 : 9000;
-                        this.officeJumpscareTimer = new Timer(TimeSpan.FromMilliseconds(jumpscareInterval));
-                        this.camTimer = new Timer(TimeSpan.FromMilliseconds(1250 / (this.marlonBlackoutCounter + 1)));
-                        if (this.camTimer.IsRunning == false)
+                        let jumpscareInterval = Math.random() < 0.5 ? 4000 : 9000;
+                        this.officeJumpscareTimer = new timer(jumpscareInterval);
+                        this.camTimer = new timer(1250 / (this.marlonBlackoutCounter + 1));
+                        if (this.camTimer._isRunning == false)
                         {
                             this.camTimer.finishCallback = () => // give 1 second window to put on a mask
                             {
                                 if (this.gameScreen.maskbuttonactive == 0 || this.gameScreen.maskbuttonactive == 3) {
-                                    this.gameScreen.stare.Stop();
-                                    this.gameScreen.jumpscareID = ID;
+                                    // this.gameScreen.stare.Stop();
+                                    this.gameScreen.jumpscareID = this.ID;
                                     this.gameScreen.switchScreenState(2); // force jumpscare if leaving cameras
                                 }
                             };  
                             this.camTimer.Start();
                         }
-                        if (this.officeJumpscareTimer.IsRunning == false)
+                        if (this.officeJumpscareTimer._isRunning == false)
                         {
                             this.officeJumpscareTimer.finishCallback = () => // give 1 second window to put on a mask
                             {
                                 if (this.gameScreen.maskbuttonactive == 1 || this.gameScreen.maskbuttonactive == 2) {
                                     this.marlonBlackoutCounter++;
                                     this.alphaoverlay = 1;
-                                    this.gameScreen.stare.Stop();
+                                    // this.gameScreen.stare.Stop();
                                     this.camTimer.Stop();
                                     this.camTimer = null;
                                     this.officeJumpscareTimer.Stop();
@@ -623,9 +624,9 @@ export default class Animatronic {
                     }
                 }
 
-                if (this.camTimer != null && this.camTimer.IsRunning) {
-                    this.camTimer.Update(gameTime);
-                    if (this.officeJumpscareTimer != null && this.officeJumpscareTimer.IsRunning) this.officeJumpscareTimer.Update(gameTime);
+                if (this.camTimer != null && this.camTimer._isRunning) {
+                    this.camTimer.Update(delta);
+                    if (this.officeJumpscareTimer != null && this.officeJumpscareTimer._isRunning) this.officeJumpscareTimer.Update(delta);
                     switch (this.alphaoverlay)
                         {
                             case 0:
@@ -648,8 +649,8 @@ export default class Animatronic {
                                 break;
                         }
                     if (this.Name == "Darien" && (this.gameScreen.maskbuttonactive == 3)) {
-                        this.gameScreen.stare.Stop();
-                        this.gameScreen.jumpscareID = ID;
+                        // this.gameScreen.stare.Stop();
+                        this.gameScreen.jumpscareID = this.ID;
                         this.gameScreen.switchScreenState(2); // force jumpscare if leaving cameras
                     }
                 }
@@ -657,16 +658,16 @@ export default class Animatronic {
                 {
                     if (this.gameScreen.camerabuttonactive == 1 || this.gameScreen.camerabuttonactive == 2)
                     {
-                        this.cameraLookingTimer.Update(this.gameTime);
+                        this.cameraLookingTimer.Update(delta);
                     }
                     if (this.gameScreen.camerabuttonactive == 3)
                     {
                         this.cameraLookingTimer.Reset();
                     }
-                    if (this.Name == "Gustavo" && this.gameScreen.garble.State != SoundState.Playing)
-                    {
-                        this.gameScreen.garble.Play();
-                    }
+                    // if (this.Name == "Gustavo" && this.gameScreen.garble.State != SoundState.Playing)
+                    // {
+                    //     this.gameScreen.garble.Play();
+                    // }
                 }
         } 
         
@@ -675,7 +676,7 @@ movementOpportunity()
     {
         if (this.Name != "Nasir")
         {
-            if (this.gameScreen.screenState == 1 && this.gameScreen.cameraScreen.cameraspot == this.location && this.gameScreen.cameraScreen.darieninterrupt == false)
+            if (this.gameScreen.screenState == 1 && this.cameraScreen.cameraspot == this.location && this.cameraScreen.darieninterrupt == false)
             {
                 console.log(this.Name + " movement failed, on camera");
             }
@@ -689,23 +690,23 @@ movementOpportunity()
             }
             else
             {
-                let chance = this.gameScreen.rng.Next(0, 23) + 1;
+                let chance = (Math.floor(Math.random() * 23)) + 1;
                 if (this.AInum >= chance && this.attacking < 2)
                 {
                     if (this.gameScreen.maskbuttonactive > 0 && this.gameScreen.maskbuttonactive < 3 && this.attacking == 1)
                     {
                         this.attacking = 2;
-                        this.scrollspeed = 0.20 + (this.gameScreen.rng.NextDouble() / 5); // randomize speed a bit
+                        this.scrollspeed = 0.20 + (Math.random() / 5); // randomize speed a bit
                         if (this.Name == "Juan")
                         {
-                            this.maskTimer = new Timer(TimeSpan.FromSeconds(this.gameScreen.rng.Next(3, 5)));
+                            this.maskTimer = new timer(Math.random() < 0.5 ? 5000 : 7000);
                             this.maskTimer.finishCallback = () => {
                                 this.alphaoverlay = 1;
                                 this.attacking = 0;
                                 this.location = 6;
                                 this.movementActive = false;
-                                this.gameScreen.ventwalk.Play();
-                                this.gameScreen.stare.Stop();
+                                //this.gameScreen.ventwalk.Play();
+                                //this.gameScreen.stare.Stop();
                                 this.AInum = 0;
                                 this.gameScreen.danger = 0;
                                 console.log("Juan attack evaded");
@@ -714,12 +715,12 @@ movementOpportunity()
                         }
                         if (this.Name == "Carlos")
                         {
-                            this.maskTimer = new Timer(TimeSpan.FromSeconds(this.gameScreen.rng.Next(5, 7)));
+                            this.maskTimer = new timer(Math.random() < 0.5 ? 5000 : 7000);
                             this.maskTimer.finishCallback = () => {
                                 this.attacking = 0;
                                 this.location = 9;
                                 this.movementActive = false;
-                                this.gameScreen.ventwalk.Play();
+                                // this.gameScreen.ventwalk.Play();
                                 this.AInum = 0;
                                 this.gameScreen.danger = 0;
                                 console.log("Carlos attack evaded");
@@ -728,12 +729,12 @@ movementOpportunity()
                         }
                         if (this.Name == "Gustavo")
                         {
-                            this.maskTimer = new Timer(TimeSpan.FromSeconds(this.gameScreen.rng.Next(5, 7)));
+                            this.maskTimer = new timer(Math.random() < 0.5 ? 5000 : 7000);
                             this.maskTimer.finishCallback = () => {
                                 this.attacking = 0;
                                 this.location = 11;
                                 this.movementActive = false;
-                                this.gameScreen.ventwalk.Play();
+                                // this.gameScreen.ventwalk.Play();
                                 this.AInum = 0;
                                 this.gameScreen.danger = 0;
                                 console.log("Gustavo attack evaded");
@@ -743,59 +744,59 @@ movementOpportunity()
                         console.log(this.Name + " is attacking!");
                     }
 
-                    let index = Array.indexOf(this.movementPath, this.location);
+                    let index = this.movementPath.indexOf(this.location);
                     if (index < this.movementPath.length - 1)
                     {
                         if ((this.ID < 3 || this.ID == 7 || this.ID == 6) && index != this.movementPath.length - 2) {
                             this.location = this.movementPath[index + 1];
 
-                            if (this.Name == "Gustavo") // just plays anytime he moves i guess
-                            {
-                                if (this.location != 4 && this.location != 5 && this.location != 12 && this.location != 13)
-                                {
-                                    this.gameScreen.metalwalk.Play();
-                                }
-                            }
-                            if (this.Name == "Carlos")
-                            {
-                                switch (this.gameScreen.rng.Next(1, 4))
-                                {
-                                    case 2:
-                                    this.gameScreen.carlos2.Play();
-                                    break;
-                                    case 3:
-                                    this.gameScreen.carlos3.Play();
-                                    break;
-                                    default:
-                                    this.gameScreen.carlos1.Play();
-                                    break;
-                                }
+                            // if (this.Name == "Gustavo") // just plays anytime he moves i guess
+                            // {
+                            //     if (this.location != 4 && this.location != 5 && this.location != 12 && this.location != 13)
+                            //     {
+                            //         this.gameScreen.metalwalk.Play();
+                            //     }
+                            // }
+                            // if (this.Name == "Carlos")
+                            // {
+                            //     switch (Math.floor(Math.random() * 3) + 1)
+                            //     {
+                            //         case 2:
+                            //         this.gameScreen.carlos2.Play();
+                            //         break;
+                            //         case 3:
+                            //         this.gameScreen.carlos3.Play();
+                            //         break;
+                            //         default:
+                            //         this.gameScreen.carlos1.Play();
+                            //         break;
+                            //     }
 
-                            }
-                            if (this.location == 4 || this.location == 5)
-                            {
-                                this.gameScreen.ventwalk.Play();
-                            }
-                            if (this.location == 12 || this.location == 13) // vent locations
-                            {
-                                this.gameScreen.metalwalk.Play();
-                            }
+                            // }
+                            // if (this.location == 4 || this.location == 5)
+                            // {
+                            //     this.gameScreen.ventwalk.Play();
+                            // }
+                            // if (this.location == 12 || this.location == 13) // vent locations
+                            // {
+                            //     this.gameScreen.metalwalk.Play();
+                            // }
                             this.moved = true;
-                            Console.WriteLine(this.Name + " movement successful");
+                            console.log(this.Name + " movement successful");
                             this.movedTimer = new timer(500);
-                            this.movedTimer.finishCallback = () => { this.moved = false; this.gameScreen.cameraScreen.animatronicForceOff = false; };
+                            this.movedTimer.finishCallback = () => { this.moved = false; this.cameraScreen.animatronicForceOff = false; };
                             this.movedTimer.Start(); // so cameras disable for a second after moving
                         }
                         else if (this.Name != "Misa" && this.Name != "Juan" && this.Name != "Carlos" && this.Name != "Gustavo")
                         {
                             this.location = this.movementPath[index + 1];
                             this.moved = true;
-                            Console.WriteLine(this.Name + " movement successful");
-                            this.movedTimer = new Timer(TimeSpan.FromMilliseconds(500));
-                            this.movedTimer.finishCallback = () => { this.moved = false; this.gameScreen.cameraScreen.animatronicForceOff = false; };
+                            console.log(this.Name + " movement successful");
+                            this.movedTimer = new timer(500);
+                            this.movedTimer.finishCallback = () => { this.moved = false; this.cameraScreen.animatronicForceOff = false; };
                             this.movedTimer.Start(); // so cameras disable for a second after movin
                         }
-                        if ((this.ID < 3 || this.ID == 7 || this.ID == 6) && index + 1 == movementPath.Length - 2)
+                        if ((this.ID < 3 || this.ID == 7 || this.ID == 6) && index + 1 == this.movementPath.length - 2)
                         {
                             if (this.attacking == 0) {
                                 this.attacking = 1;
@@ -819,7 +820,7 @@ movementOpportunity()
         {
             if (this.nasirValue3 == 0)
             {
-                if (this.AInum >= 21 + game.rng.Next(1, 5) - this.nasirValue1)
+                if (this.AInum >= 21 + Math.floor(Math.random() * 4) - this.nasirValue1)
                 {
                     this.nasirValue1 = 0;
                     this.nasirValue2 = 0;
@@ -833,8 +834,8 @@ movementOpportunity()
                     if (this.location == 7) this.location = 15;
                     this.moved = true;
                     console.log(this.Name + " movement successful");
-                    this.movedTimer = new Timer(TimeSpan.FromMilliseconds(500));
-                    this.movedTimer.finishCallback = () => { this.moved = false; this.gameScreen.cameraScreen.animatronicForceOff = false; };
+                    this.movedTimer = new timer(500);
+                    this.movedTimer.finishCallback = () => { this.moved = false; this.cameraScreen.animatronicForceOff = false; };
                     this.movedTimer.Start(); // so cameras disable for a second after moving
                 } 
                 else

@@ -56,6 +56,7 @@ export default class cameraScreen extends Phaser.Scene {
             'prizecorner',
             'kidscove'
     ];
+    this.darieninterrupt = false;
   }
   preload() {
         this.winding = false;
@@ -141,7 +142,10 @@ export default class cameraScreen extends Phaser.Scene {
         this.locationNameTextures[i] = this.add.image(this.gameScreen.camerarect.x + 55, this.gameScreen.height - this.gameScreen.camerarect.height - 390, `camName${i+1}`);
         this.locationNameTextures[i].setVisible(false);
     }
+    this.musicboxbuttontexture = this.add.image(this.musicboxbutton.x + 78, this.musicboxbutton.y + 32, 'boxbutton').setVisible(false);
+    this.musicboxtext = this.add.image(this.musicboxbutton.x + 78, this.musicboxbutton.y + 25, 'wind').setVisible(false);
     this.border = this.add.image(1024 /2, 768 /2, 'border');
+    this.boxTimeLeft = this.add.image(this.musicboxbutton.x - 40, this.musicboxbutton.y + 20, 'box1').setVisible(false);
   }
   update(time, delta) {
     var mouse = this.input.activePointer;
@@ -205,7 +209,9 @@ export default class cameraScreen extends Phaser.Scene {
             if (this.gameScreen.animatronics[i].moved)
             {
                 this.animatronicForceOff = true;
+                this.switchstatic.anims.play('switchstatic', true);
                 this.switchStatic = true;
+                this.drawChange = true;
                 break;
             }
         }
@@ -269,44 +275,45 @@ export default class cameraScreen extends Phaser.Scene {
                   }
               }
           }
-    //     // music box
-    //     if (cameraspot == 10)
-    //     {
-    //         if (this.gameScreen.CurrentMouse.LeftButtonDown) {
-    //             if (mouse.X >= musicboxbutton.X  && mouse.X <= musicboxbutton.X + musicboxbutton.Width && mouse.Y >= musicboxbutton.Y && mouse.Y <= musicboxbutton.Y + musicboxbutton.Height)
-    //             {
-    //                 winding = true;
-    //                 if (this.gameScreen.musicTimer.ElapsedTime > TimeSpan.Zero) {
-    //                     this.gameScreen.musicTimer.RemoveTime(TimeSpan.FromMilliseconds(elapsedMs * 5.9));
-    //                     this.gameScreen.PlaySound(this.gameScreen.windup);
-    //                 }
-    //                 else {
-    //                     this.gameScreen.StopSound(this.gameScreen.windsound);
-    //                 }
-    //                 // i know it says remove time, but it adds time to the music box timer
-    //             }
-    //         }
-    //         else
-    //         {
-    //             winding = false;
-    //         }
-    //     }
-    //     else
-    //     {
-    //         if (winding)
-    //         {
-    //             this.gameScreen.StopSound(this.gameScreen.windup);
-    //         }
-    //         this.gameScreen.PauseSoundAsync(this.gameScreen.windsound);
-    //         winding = false;
-    //     }
-    //     if (this.gameScreen.musicTimer.IsFinished())
-    //     {
-    //         this.gameScreen.musicTimer.Stop();
-    //         this.gameScreen.musicTimer.SetTargetTime(TimeSpan.Zero);
-    //         this.gameScreen.StopSound(this.gameScreen.windsound);
-    //         winding = false;
-    //     }
+        // music box
+        if (this.cameraspot == 10)
+        {
+            if (mouse.leftButtonDown()) {
+                if (this.musicboxbutton.contains(mouse.x + 30, mouse.y + 20))
+                {
+                    this.winding = true;
+                    if (this.gameScreen.musicTimer._elapsedTime >= 0) {
+                        this.gameScreen.musicTimer.RemoveTime(delta * 5.9);
+                        this.drawChange = true;
+                        // this.gameScreen.PlaySound(this.gameScreen.windup);
+                    }
+                    else {
+                        // this.gameScreen.StopSound(this.gameScreen.windsound);
+                    }
+                    // i know it says remove time, but it adds time to the music box timer
+                }
+            }
+            else
+            {
+                this.winding = false;
+            }
+        }
+        else
+        {
+            if (this.winding)
+            {
+                // this.gameScreen.StopSound(this.gameScreen.windup);
+            }
+            // this.gameScreen.PauseSoundAsync(this.gameScreen.windsound);
+            // this.winding = false;
+        }
+        if (this.gameScreen.musicTimer.IsFinished())
+        {
+            this.gameScreen.musicTimer.Stop();
+            this.gameScreen.musicTimer.SetTargetTime(0);
+            // this.gameScreen.StopSound(this.gameScreen.windsound);
+            this.winding = false;
+        }
         
     //         if (this.gameScreen.animatronics[3].location == cameraspot) {
     //             // I'm lazy so I'm just going to add this sound code here
@@ -350,6 +357,23 @@ export default class cameraScreen extends Phaser.Scene {
       this.stageFlash.setPosition(-this.gameScreen.cameraX +500, -this.gameScreen.cameraY + 500);
     }
     else {this.stageFlash.setVisible(false);}
+    if (this.cameraspot == 10) {
+        if (this.musicboxbuttontexture.visible == false) this.musicboxbuttontexture.setVisible(true);
+        if (this.musicboxtext.visible == false) this.musicboxtext.setVisible(true);
+        if (this.boxTimeLeft.visible == false) this.boxTimeLeft.setVisible(true);
+        if (this.gameScreen.musicTimer.IsFinished() == false) {
+            this.boxTimeLeft.setTexture('box' + (22 - Math.floor((this.gameScreen.musicTimer._targetTime - this.gameScreen.musicTimer._elapsedTime) / 2857)));
+        }
+        else {
+            if (this.boxTimeLeft.visible) this.boxTimeLeft.setVisible(false);
+        }
+        if (this.musicboxbuttontexture.texture.key != (this.winding ? 'boxbuttonhover' : 'boxbutton')) this.musicboxbuttontexture.setTexture(this.winding ? 'boxbuttonhover' : 'boxbutton');
+
+    }
+    else {
+        if (this.musicboxbuttontexture.visible) this.musicboxbuttontexture.setVisible(false);
+        if (this.musicboxtext.visible) this.musicboxtext.setVisible(false);
+    }
     if (this.battery.texture.key != 'battery' + (this.gameScreen.batterynum+1)) this.battery.setTexture('battery' + (this.gameScreen.batterynum+1));
     this.maplocationtextures[this.cameraspot].setTexture('locationspot');
     if (this.oldcameraspot != null) this.maplocationtextures[this.oldcameraspot].setTexture('locationbox');

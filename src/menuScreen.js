@@ -92,7 +92,6 @@ export default class menuScreen extends Phaser.Scene {
             // set up code
             for (let i = 0; i < this.gameScreen.animatronics.length; i++)
             {
-                console.log('super duper');
                 switch (this.gameScreen.nightnum)
                 {
                     case 1:
@@ -217,14 +216,14 @@ export default class menuScreen extends Phaser.Scene {
                     if (this.selectionCooldown == null)
                     {
                       
-                        if (this.nightSelected == 2) this.nightSelected = 3; // ALWAYS MAKE SURE TO PUT IT IN REVERSE ORDER
+                        //if (this.nightSelected == 2) this.nightSelected = 3; // ALWAYS MAKE SURE TO PUT IT IN REVERSE ORDER
                         if (this.nightSelected == 1) this.nightSelected = 2;
                         this.selectionCooldown = new timer(180);
                         this.selectionCooldown.Start();
                     }
                     if (this.selectionCooldown.IsFinished())
                     {
-                        if (this.nightSelected == 2) this.nightSelected = 3; // ALWAYS MAKE SURE TO PUT IT IN REVERSE ORDER
+                        //if (this.nightSelected == 2) this.nightSelected = 3; // ALWAYS MAKE SURE TO PUT IT IN REVERSE ORDER
                         if (this.nightSelected == 1) this.nightSelected = 2;
                         this.selectionCooldown.Reset();
                     }
@@ -315,6 +314,10 @@ export default class menuScreen extends Phaser.Scene {
       this.arrow.setVisible(false);
       if (this.nightPreview == null) {
         this.nightPreview = this.add.image(1024/2, 768/2, 'night' + (this.gameScreen.nightnum));
+      }
+      else {
+        if (this.nightPreview.texture.key != 'night' + (this.gameScreen.nightnum)) this.nightPreview.setTexture('night' + (this.gameScreen.nightnum));
+        if (this.nightPreview.visible == false) this.nightPreview.setVisible(true);
       }
     }
   }
