@@ -90,27 +90,28 @@ export default class menuScreen extends Phaser.Scene {
             this.gameScreen.nightTimer.Start();
             this.gameScreen.timers.push(this.gameScreen.nightTimer);
             // set up code
-            // for (let i = 0; i < this.gameScreen.animatronics.length; i++)
-            // {
-            //     switch (this.gameScreen.nightnum)
-            //     {
-            //         case 1:
-            //         if (i < 3) {
-            //         this.gameScreen.animatronics[i].Activate();
-            //         }
-            //         break;
-            //         case 2:
-            //         if (i < 6)
-            //         {
-            //             this.gameScreen.animatronics[i].Activate();
-            //         }
-            //         break;
-            //         case 3:
-            //         if (this.gameScreen.animatronics[i].Name == "Darien" || this.gameScreen.animatronics[i].Name == "Marlon") this.gameScreen.animatronics[i].Activate();
-            //         // make sure to change this here and in setup game after done with night 3
-            //         break;
-            //     }
-            // }
+            for (let i = 0; i < this.gameScreen.animatronics.length; i++)
+            {
+                console.log('super duper');
+                switch (this.gameScreen.nightnum)
+                {
+                    case 1:
+                    if (i < 3) {
+                    this.gameScreen.animatronics[i].Activate();
+                    }
+                    break;
+                    case 2:
+                    if (i < 6)
+                    {
+                        this.gameScreen.animatronics[i].Activate();
+                    }
+                    break;
+                    case 3:
+                    if (this.gameScreen.animatronics[i].Name == "Darien" || this.gameScreen.animatronics[i].Name == "Marlon") this.gameScreen.animatronics[i].Activate();
+                    // make sure to change this here and in setup game after done with night 3
+                    break;
+                }
+            }
             // set battery milliseconds based on night
 
             switch (true)

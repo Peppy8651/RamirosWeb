@@ -72,18 +72,20 @@ export default class gameScreen extends Phaser.Scene {
     this.clockChimePlayed = false;
     this.yayPlayed = false;
     this.dangerSoundTimer;
+    this.animatronics[0] = new Animatronic(this, "Misa"); // Misa animatronic
+    this.animatronics[1] = new Animatronic(this, "Juan"); // Juan animatronic
+    this.animatronics[2] = new Animatronic(this, "Ramiro"); // Ramiro animatronic 
+    this.animatronics[3] = new Animatronic(this, "Gustavo");
+    this.animatronics[4] = new Animatronic(this, "Carlos");
+    this.animatronics[5] = new Animatronic(this, "Nasir");
+    this.animatronics[6] = new Animatronic(this, "Darien");
+    this.animatronics[7] = new Animatronic(this, "Marlon");
   }
   preload() {
         this.leftvent = new Rectangle(-this.cameraX + 75, -this.cameraY + 385, 60, 90);
         this.rightvent = new Rectangle(-this.cameraX + this.width - 160, -this.cameraY + 385, 60, 90);
         this.maskrect = new Rectangle(10, this.height-60, 500, 40);
         this.camerarect = new Rectangle(510, this.height-60, 500, 40);
-        this.animatronics[0] = new Animatronic(this, "Misa"); // Misa animatronic
-        this.animatronics[1] = new Animatronic(this, "Juan"); // Juan animatronic
-        this.animatronics[2] = new Animatronic(this, "Ramiro"); // Ramiro animatronic 
-        this.animatronics[3] = new Animatronic(this, "Gustavo");
-        this.animatronics[4] = new Animatronic(this, "Carlos");
-        this.animatronics[5] = new Animatronic(this, "Nasir");
         // musicTimer = new Timer(musicMilliseconds);   
         // musicTimer.Start();
         // timers.Add(musicTimer);
@@ -523,6 +525,36 @@ export default class gameScreen extends Phaser.Scene {
                     // StopSound(flashlightbuzz);
                 }
             }
+             for (let i = 0; i < this.timers.length; i++) {
+                     this.timers[i].Update(delta);
+                 }
+            for (let i = 0; i < this.animatronics.length; i++)
+                    {
+                        this.animatronics[i].update(delta);
+//                         switch (animatronics[i].location) { // play scary ambience when animatronic is nearby
+//                             case 14:
+//                                 gameScreen.danger+= 0.001;
+//                             break;
+//                             case 15:
+//                                 gameScreen.danger+= 0.001;
+//                             break;
+//                             case 16:
+//                                 gameScreen.danger+= 0.001;
+//                             break;
+//                             case 4:
+//                                 gameScreen.danger+= 0.001;
+//                             break;
+//                             case 5:
+//                                 gameScreen.danger+= 0.001;
+//                             break;
+//                             case 12:
+//                                 gameScreen.danger+= 0.001;
+//                             break;
+//                             case 13:
+//                                 gameScreen.danger+= 0.001;
+//                             break;
+//                         }
+                    }
         }
         if (this.nightTimer.IsFinished())
             {
@@ -570,34 +602,7 @@ export default class gameScreen extends Phaser.Scene {
                 if (this.blackRectangle.alpha < 1) this.blackRectangle.alpha += 0.001 * delta;
             }
                 
-//                     for (let i = 0; i < animatronics.length; i++)
-//                     {
-//                         animatronics[i].Update(delta);
-//                         switch (animatronics[i].location) { // play scary ambience when animatronic is nearby
-//                             case 14:
-//                                 gameScreen.danger+= 0.001;
-//                             break;
-//                             case 15:
-//                                 gameScreen.danger+= 0.001;
-//                             break;
-//                             case 16:
-//                                 gameScreen.danger+= 0.001;
-//                             break;
-//                             case 4:
-//                                 gameScreen.danger+= 0.001;
-//                             break;
-//                             case 5:
-//                                 gameScreen.danger+= 0.001;
-//                             break;
-//                             case 12:
-//                                 gameScreen.danger+= 0.001;
-//                             break;
-//                             case 13:
-//                                 gameScreen.danger+= 0.001;
-//                             break;
-//                         }
-//                     }
-//                 }
+                    
                 var elapsed = this.nightTimer._elapsedTime; // optimization i guess
                 if      (elapsed < 70000) this.hournum = 0;
                 else if (elapsed < 140000) this.hournum = 1;
@@ -606,9 +611,7 @@ export default class gameScreen extends Phaser.Scene {
                 else if (elapsed < 350000) this.hournum = 4;
                 else if (elapsed < 420000) this.hournum = 5;
                 else                    this.hournum = 6;
-                 for (let i = 0; i < this.timers.length; i++) {
-                     this.timers[i].Update(delta);
-                 }
+                
 //   
             // battery indicator
             switch (true)
