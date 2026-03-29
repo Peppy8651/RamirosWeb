@@ -14,7 +14,7 @@ export default class cameraScreen extends Phaser.Scene {
   constructor() {
     super({key: 'cameraScreen'});
     this.cameraspot=8;
-    this.oldcameraspot = 8;
+    this.oldcameraspot = null;
     this.maplocationbuttons = null;
     this.maplocationtextures = [];
     this.camNameTextures = [];
@@ -58,7 +58,14 @@ export default class cameraScreen extends Phaser.Scene {
     ];
   }
   preload() {
-    this.gameScreen = this.screens[0];
+        this.winding = false;
+        // this.cameraAmbience = this.gameScreen.GetId("cameras.mp3");
+        this.waitTimer = new timer(1500);
+        this.waitTimer.Start();
+  }
+  create() {
+    console.log('cameraScreen created');
+    this.gameScreen = this.scene.get('gameScreen');
     this.maplocationbuttons = [
             // map is located this.gameScreen.camerarect.x + 50
             new Rectangle(this.gameScreen.camerarect.x + 50 + 28, this.gameScreen.height - this.gameScreen.camerarect.height - 350 + 190, 60, 40),// in order of 1-12
@@ -75,13 +82,12 @@ export default class cameraScreen extends Phaser.Scene {
             new Rectangle(this.gameScreen.camerarect.x + 50 + 357, this.gameScreen.height - this.gameScreen.camerarect.height - 350 + 190, 60 ,40),
         ];
         this.musicboxbutton = new Rectangle(this.gameScreen.camerarect.x - 150, this.gameScreen.height - this.gameScreen.camerarect.height - 150, 156, 65);
-        this.winding = false;
-        // this.cameraAmbience = this.gameScreen.GetId("cameras.mp3");
-        this.waitTimer = new timer(1500);
-        this.waitTimer.Start();
-  }
-  create() {
+
+
     this.background = this.add.image(this.gameScreen.width/2, this.gameScreen.height/2, 'stage');
+    this.stageFlash = this.add.image(-this.gameScreen.cameraX +500, -this.gameScreen.cameraY + 500, 'flashlighttex').setDisplaySize(966,963);
+    this.stageFlash.setVisible(false);
+    this.stageFlash.setAlpha(0.5);
     this.static = this.add.sprite(this.gameScreen.width/2, this.gameScreen.height/2, 'static1').setAlpha(0.5);
     this.static.anims.create({
         key: "static",
@@ -111,9 +117,12 @@ export default class cameraScreen extends Phaser.Scene {
     });
     this.switchstatic.anims.play('switchstatic');
     this.battery = this.add.image(80, 60, "battery1");
-    this.night = this.add.image(this.gameScreen.width - 150, 50, "night");
+    this.night = this.add.image(this.gameScreen.width - 125, 50, "night");
+    this.nightNumShow = this.add.image(this.gameScreen.width - 50, 50, "num" + this.nightnum);
     // this.numberUI = this.add.image("", width - 65, 25);
     this.am = this.add.image(this.gameScreen.width - 60, 90, "am");
+    this.hourNumShow = this.add.image(this.gameScreen.width - 120, 90, "num" + 1);
+    this.hourNumShow2 = this.add.image(this.gameScreen.width - 100, 90, "num" + 2);
     this.camerause = this.add.image(760, this.gameScreen.height - this.gameScreen.camerarect.height, "camerause");
     // This method is called once, just after preload()
     // It will initialize our scene, like the positions of the sprites
@@ -190,17 +199,16 @@ export default class cameraScreen extends Phaser.Scene {
 
           }
 
-    //     // check for animatronic movement
-    //     for (int i = 0; i < this.gameScreen.animatronics.Length; i++)
-    //     {
-    //         if (this.gameScreen.animatronics[i].moved)
-    //         {
-    //             animatronicForceOff = true;
-    //             switchstaticframe = 0;
-    //             switchStatic = true;
-    //             break;
-    //         }
-    //     }
+        // check for animatronic movement
+        for (let i = 0; i < this.gameScreen.animatronics.length; i++)
+        {
+            if (this.gameScreen.animatronics[i].moved)
+            {
+                this.animatronicForceOff = true;
+                this.switchStatic = true;
+                break;
+            }
+        }
 
         // flashlight in cams
         if (this.gameScreen.keyShift.isDown && this.gameScreen.batterymilliseconds > 0)
@@ -215,29 +223,10 @@ export default class cameraScreen extends Phaser.Scene {
             this.drawChange = true;
         }
 
-    //     if (camFlashOn)
-    //     {
-    //         this.gameScreen.batterymilliseconds -= elapsedMs;
-    //         // battery indicator
-    //         switch (this.gameScreen.nightnum)
-    //         {
-    //             case 1:
-    //             this.gameScreen.batteryNumCheck(117000);
-    //             break;
-    //             case 2:
-    //             this.gameScreen.batteryNumCheck(100000);
-    //             break;
-    //             case 3:
-    //             this.gameScreen.batteryNumCheck(83000);
-    //             break;
-    //             case 4:
-    //             this.gameScreen.batteryNumCheck(67000);
-    //             break;
-    //             case >= 5:
-    //             this.gameScreen.batteryNumCheck(50000);
-    //             break;
-    //         }
-    //     }        
+        if (this.camFlashOn)
+        {
+            this.gameScreen.batterymilliseconds -= delta;
+        }        
 
         // exit cameras
 
@@ -356,12 +345,32 @@ export default class cameraScreen extends Phaser.Scene {
     if (this.cameraspot > 5) this.background.setPosition(-this.gameScreen.cameraX + this.gameScreen.width/2, -this.gameScreen.cameraY +  this.gameScreen.height/2);
     if (this.cameraspot <= 5) this.background.setPosition(1024/2, 768/2);
     this.background.setTexture(this.getBackground());
+    if (this.cameraspot == 8 && this.camFlashOn){
+      this.stageFlash.setVisible(true);
+      this.stageFlash.setPosition(-this.gameScreen.cameraX +500, -this.gameScreen.cameraY + 500);
+    }
+    else {this.stageFlash.setVisible(false);}
+    if (this.battery.texture.key != 'battery' + (this.gameScreen.batterynum+1)) this.battery.setTexture('battery' + (this.gameScreen.batterynum+1));
     this.maplocationtextures[this.cameraspot].setTexture('locationspot');
-    this.maplocationtextures[this.oldcameraspot].setTexture('locationbox');
+    if (this.oldcameraspot != null) this.maplocationtextures[this.oldcameraspot].setTexture('locationbox');
+    if (this.locationNameTextures[this.cameraspot].visible == false) this.locationNameTextures[this.cameraspot].setVisible(true);
+    if (this.oldcameraspot != null && this.locationNameTextures[this.oldcameraspot].visible) this.locationNameTextures[this.oldcameraspot].setVisible(false);
       if (this.static.anims.isPlaying == false) {
           this.static.anims.play("static");
       }
+      if (this.battery.texture.key != 'battery' + (this.gameScreen.batterynum+1)) this.battery.setTexture('battery' + (this.gameScreen.batterynum+1));
+        if (this.nightNumShow.texture.key != 'num' + (this.gameScreen.nightnum)) this.nightNumShow.setTexture('num' + (this.gameScreen.nightnum));
+        if (this.gameScreen.hournum != 0) {
+            if (this.hourNumShow.visible) this.hourNumShow.setVisible(false);
+            if (this.hourNumShow2.texture.key != 'num' + (this.gameScreen.hournum)) this.hourNumShow2.setTexture('num' + (this.gameScreen.hournum));
+        }
+        else {
+            if (this.hourNumShow.visible == false) this.hourNumShow.setVisible(true);
+            if (this.hourNumShow.texture.key != 'num' + (1)) this.hourNumShow.setTexture('num' + (1));
+            if (this.hourNumShow2.texture.key != 'num' + (2)) this.hourNumShow2.setTexture('num' + (2));
+        }
     }
+    
     getBackground()
     {
         let background;
@@ -370,96 +379,96 @@ export default class cameraScreen extends Phaser.Scene {
             background = this.flashlightbackgrounds[this.cameraspot];
             let animatronicsIDcount = 0;
             let animatronicscount = 0;
-            // for (let i = 0; i < this.gameScreen.animatronics.length; i++)
-            // {
-            //     if (this.gameScreen.animatronics[i].location == cameraspot)
-            //         {
-            //             animatronicsIDcount += this.gameScreen.animatronics[i].ID;
-            //             animatronicscount++;
-            //             switch(cameraspot)
-            //             {
-            //                 case 0:
-            //                 if (this.gameScreen.animatronics[i].Name == "Juan") background = this.gameScreen.partyroom1juan;
-            //                 break;
-            //                 case 1:
-            //                 if (this.gameScreen.animatronics[i].Name == "Misa") background = this.gameScreen.partyroom2misa;
-            //                 break;
-            //                 case 2:
-            //                 if (this.gameScreen.animatronics[i].Name == "Misa") background = this.gameScreen.partyroom3misa;
-            //                 break;
-            //                 case 3:
-            //                 if (this.gameScreen.animatronics[i].Name == "Misa") background = this.gameScreen.partyroom4misaflash;
-            //                 break;
-            //                 case 4: 
-            //                 if (this.gameScreen.animatronics[i].Name == "Juan") background = this.gameScreen.leftventjuan;
-            //                 if (this.gameScreen.animatronics[i].Name == "Carlos") background = this.gameScreen.leftventcarlos; // it kinda doesn't matter in the original game, plus I'm lazy
-            //                 break;
-            //                 case 5: 
-            //                 if (this.gameScreen.animatronics[i].Name == "Misa") background = this.gameScreen.rightventmisa;
-            //                 if (this.gameScreen.animatronics[i].Name == "Gustavo") background = this.gameScreen.rightventgooch;
-            //                 break;
-            //                 case 6:
-            //                 if (this.gameScreen.animatronics[i].Name == "Juan") background = this.gameScreen.mainhalljuanflash;
-            //                 break;
-            //                 case 7:
-            //                 if (this.gameScreen.animatronics[i].Name == "Nasir") background = this.gameScreen.partsflashnas;
-            //                 break;
-            //                 case 8: 
-            //                 if (animatronicsIDcount == 1) background = this.gameScreen.stagemisa;
-            //                 if (animatronicsIDcount == 2) background = this.gameScreen.stagejuan;
-            //                 if (animatronicsIDcount == 3 && animatronicscount == 2) background = this.gameScreen.stagemisajuan;
-            //                 if (animatronicsIDcount == 3 && animatronicscount == 1) background = this.gameScreen.stageramiro;
-            //                 if (animatronicsIDcount == 4) background = this.gameScreen.stagemisaramiro;
-            //                 if (animatronicsIDcount == 5) background = this.gameScreen.stagejuanramiro;
-            //                 if (animatronicsIDcount == 6) background = this.gameScreen.stagefull;
-            //                 break;
-            //                 case 9:
-            //                 if (animatronicsIDcount == 3 || animatronicsIDcount == 9) background = this.gameScreen.gamescornerram;
-            //                 if (animatronicsIDcount == 10 || animatronicsIDcount == 16) background = this.gameScreen.gamescornercarlosram;
-            //                 if (animatronicsIDcount == 7 || animatronicsIDcount == 13) background = this.gameScreen.gamescornercarlosflash;
-            //                 break;
-            //                 case 11:
-            //                 background = this.gameScreen.kidscovegooch;
-            //                 break;
-            //             }
-            //         }
-            // }
+            for (let i = 0; i < this.gameScreen.animatronics.length; i++)
+            {
+                if (this.gameScreen.animatronics[i].location == this.cameraspot)
+                    {
+                        animatronicsIDcount += this.gameScreen.animatronics[i].ID;
+                        animatronicscount++;
+                        switch(this.cameraspot)
+                        {
+                            case 0:
+                            if (this.gameScreen.animatronics[i].Name == "Juan") background = 'partyroom1juan';
+                            break;
+                            case 1:
+                            if (this.gameScreen.animatronics[i].Name == "Misa") background = 'partyroom2misa';
+                            break;
+                            case 2:
+                            if (this.gameScreen.animatronics[i].Name == "Misa") background = 'partyroom3misa';
+                            break;
+                            case 3:
+                            if (this.gameScreen.animatronics[i].Name == "Misa") background = 'partyroom4misaflash';
+                            break;
+                            case 4: 
+                            if (this.gameScreen.animatronics[i].Name == "Juan") background = 'leftventjuan';
+                            if (this.gameScreen.animatronics[i].Name == "Carlos") background = 'leftventcarlos'; // it kinda doesn't matter in the original game, plus I'm lazy
+                            break;
+                            case 5: 
+                            if (this.gameScreen.animatronics[i].Name == "Misa") background = 'rightventmisa';
+                            if (this.gameScreen.animatronics[i].Name == "Gustavo") background = 'rightventgooch';
+                            break;
+                            case 6:
+                            if (this.gameScreen.animatronics[i].Name == "Juan") background = 'mainhalljuanflash';
+                            break;
+                            case 7:
+                            if (this.gameScreen.animatronics[i].Name == "Nasir") background = 'partsflashnas';
+                            break;
+                            case 8: 
+                            if (animatronicsIDcount == 1) background = 'stagemisa';
+                            if (animatronicsIDcount == 2) background = 'stagejuan';
+                            if (animatronicsIDcount == 3 && animatronicscount == 2) background = 'stagemisajuan';
+                            if (animatronicsIDcount == 3 && animatronicscount == 1) background = 'stageramiro';
+                            if (animatronicsIDcount == 4) background = 'stagemisaramiro';
+                            if (animatronicsIDcount == 5) background = 'stagejuanramiro';
+                            if (animatronicsIDcount == 6) background = 'stagefull';
+                            break;
+                            case 9:
+                            if (animatronicsIDcount == 3 || animatronicsIDcount == 9) background = 'gamescornerram';
+                            if (animatronicsIDcount == 10 || animatronicsIDcount == 16) background = 'gamescornercarlosram';
+                            if (animatronicsIDcount == 7 || animatronicsIDcount == 13) background = 'gamescornercarlosflash';
+                            break;
+                            case 11:
+                            background = 'kidscovegooch';
+                            break;
+                        }
+                    }
+            }
         }
         else
         {
             background = this.backgrounds[this.cameraspot];
             let animatronicsIDcount = 0;
             let animatronicscount = 0;
-            // for (let i = 0; i < this.gameScreen.animatronics.Length; i++)
-            // {
-            //     if (this.gameScreen.animatronics[i].location == cameraspot)
-            //         {
-            //             animatronicsIDcount += this.gameScreen.animatronics[i].ID;
-            //             animatronicscount++;
-            //             if (cameraspot == 8) // stage with animatronic
-            //             {
-            //                 if (animatronicsIDcount == 1) background = this.gameScreen.stagemisa;
-            //                 if (animatronicsIDcount == 2) background = this.gameScreen.stagejuan;
-            //                 if (animatronicsIDcount == 3 && animatronicscount == 2) background = this.gameScreen.stagemisajuan;
-            //                 if (animatronicsIDcount == 3 && animatronicscount == 1) background = this.gameScreen.stageramiro;
-            //                 if (animatronicsIDcount == 4) background = this.gameScreen.stagemisaramiro;
-            //                 if (animatronicsIDcount == 5) background = this.gameScreen.stagejuanramiro;
-            //                 if (animatronicsIDcount == 6) background = this.gameScreen.stagefull;
-            //             }
-            //             if (cameraspot == 3) // partyroom4 with animatronic
-            //             {
-            //                 if (this.gameScreen.animatronics[i].Name == "Misa") background = this.gameScreen.partyroom4misa;
-            //             }
-            //             if (cameraspot == 6) // mainhall with animatronic
-            //             {
-            //                 if (this.gameScreen.animatronics[i].Name == "Juan") background = this.gameScreen.mainhalljuan;
-            //             }
-            //             if (cameraspot == 9)
-            //             {
-            //                 if (this.gameScreen.animatronics[i].Name == "Carlos") background = this.gameScreen.gamescornercarlos;
-            //             }
-            //         }
-            // }
+            for (let i = 0; i < this.gameScreen.animatronics.length; i++)
+            {
+                if (this.gameScreen.animatronics[i].location == this.cameraspot)
+                    {
+                        animatronicsIDcount += this.gameScreen.animatronics[i].ID;
+                        animatronicscount++;
+                        if (this.cameraspot == 8) // stage with animatronic
+                        {
+                            if (animatronicsIDcount == 1) background = 'stagemisa';
+                            if (animatronicsIDcount == 2) background = 'stagejuan';
+                            if (animatronicsIDcount == 3 && animatronicscount == 2) background = 'stagemisajuan';
+                            if (animatronicsIDcount == 3 && animatronicscount == 1) background = 'stageramiro';
+                            if (animatronicsIDcount == 4) background = 'stagemisaramiro';
+                            if (animatronicsIDcount == 5) background = 'stagejuanramiro';
+                            if (animatronicsIDcount == 6) background = 'stagefull';
+                        }
+                        if (this.cameraspot == 3) // partyroom4 with animatronic
+                        {
+                            if (this.gameScreen.animatronics[i].Name == "Misa") background = 'partyroom4misa';
+                        }
+                        if (this.cameraspot == 6) // mainhall with animatronic
+                        {
+                            if (this.gameScreen.animatronics[i].Name == "Juan") background = 'mainhalljuan';
+                        }
+                        if (this.cameraspot == 9)
+                        {
+                            if (this.gameScreen.animatronics[i].Name == "Carlos") background = 'gamescornercarlos';
+                        }
+                    }
+            }
         }
         return background;
       }
