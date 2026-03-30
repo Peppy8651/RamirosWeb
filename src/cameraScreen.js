@@ -27,6 +27,7 @@ export default class cameraScreen extends Phaser.Scene {
     this.winding = false;
     this.garbleTimer; // cancel after like 30 seconds or if cameras are closed
     this.waitTimer;
+    this.triangleflash = 0;
     this.drawChange = false;
     this.flashlightbackgrounds = [
             'partyroom1flash',
@@ -86,6 +87,7 @@ export default class cameraScreen extends Phaser.Scene {
 
 
     this.background = this.add.image(this.gameScreen.width/2, this.gameScreen.height/2, 'stage');
+    this.gooch = this.add.image(-this.gameScreen.cameraX + 800 -297, -this.gameScreen.cameraY + 400 -226, 'prizecornergooch').setVisible(false);
     this.stageFlash = this.add.image(-this.gameScreen.cameraX +500, -this.gameScreen.cameraY + 500, 'flashlighttex').setDisplaySize(966,963);
     this.stageFlash.setVisible(false);
     this.stageFlash.setAlpha(0.5);
@@ -146,6 +148,11 @@ export default class cameraScreen extends Phaser.Scene {
     this.musicboxtext = this.add.image(this.musicboxbutton.x + 78, this.musicboxbutton.y + 25, 'wind').setVisible(false);
     this.border = this.add.image(1024 /2, 768 /2, 'border');
     this.boxTimeLeft = this.add.image(this.musicboxbutton.x - 40, this.musicboxbutton.y + 20, 'box1').setVisible(false);
+    
+    this.yellowtriangle = this.add.image(1024- 105, 768 - 110, "yellowtriangle");
+    this.yellowtriangle.setAlpha(0);
+    this.yellowtriangle.setVisible(false);
+    
   }
   update(time, delta) {
     var mouse = this.input.activePointer;
@@ -279,7 +286,7 @@ export default class cameraScreen extends Phaser.Scene {
         if (this.cameraspot == 10)
         {
             if (mouse.leftButtonDown()) {
-                if (this.musicboxbutton.contains(mouse.x + 30, mouse.y + 20))
+                if (this.musicboxbutton.contains(mouse.x, mouse.y))
                 {
                     this.winding = true;
                     if (this.gameScreen.musicTimer._elapsedTime >= 0) {
@@ -310,10 +317,32 @@ export default class cameraScreen extends Phaser.Scene {
         if (this.gameScreen.musicTimer.IsFinished())
         {
             this.gameScreen.musicTimer.Stop();
+            if (this.yellowtriangle.visible) this.yellowtriangle.setVisible(false);
             this.gameScreen.musicTimer.SetTargetTime(0);
             // this.gameScreen.StopSound(this.gameScreen.windsound);
             this.winding = false;
         }
+        var remainingTime = this.gameScreen.musicTimer.RemainingTime();
+                switch (true)
+                        {
+
+                            case (remainingTime > 0 && remainingTime < 5000):
+                            if (this.yellowtriangle.alpha >= 1) this.yellowtriangle.alpha -= 1;
+                            this.yellowtriangle.alpha += delta * 0.008;
+                            if (this.yellowtriangle.texture.key == 'yellowtriangle') this.yellowtriangle.setTexture('redtriangle');
+                            // this.yellowtriangle.alpha = this.triangleflash;
+                            break;
+                            case (remainingTime > 5000 && remainingTime < 12500):
+                            this.yellowtriangle.alpha += delta * 0.003;
+                            if (this.yellowtriangle.alpha >= 1) this.yellowtriangle.alpha -= 1;
+                            if (this.yellowtriangle.visible == false) this.yellowtriangle.setVisible(true);
+                            if (this.yellowtriangle.texture.key != 'yellowtriangle') this.yellowtriangle.setTexture('yellowtriangle');
+                            // this.yellowtriangle.alpha = this.triangleflash;
+                            break;
+                            default:
+                            if (this.yellowtriangle.visible) this.yellowtriangle.setVisible(false);
+                            break;
+                        }
         
     //         if (this.gameScreen.animatronics[3].location == cameraspot) {
     //             // I'm lazy so I'm just going to add this sound code here
@@ -357,6 +386,40 @@ export default class cameraScreen extends Phaser.Scene {
       this.stageFlash.setPosition(-this.gameScreen.cameraX +500, -this.gameScreen.cameraY + 500);
     }
     else {this.stageFlash.setVisible(false);}
+    if (this.gameScreen.animatronics[3].location == this.cameraspot && this.cameraspot != 11 && this.cameraspot != 5) {
+        if (this.gooch.visible == false) this.gooch.setVisible(true);
+        switch (this.cameraspot)
+        {
+            case 10:
+            if (this.gooch.texture.key != 'prizecornergooch') {
+                this.gooch.setTexture('prizecornergooch');
+            }
+            this.gooch.setPosition(-this.gameScreen.cameraX + 800 -297, -this.gameScreen.cameraY + 400 -226);
+            break;
+            case 9:
+            if (this.gooch.texture.key != 'gamescornergooch') {
+                this.gooch.setTexture('gamescornergooch');
+            }
+            this.gooch.setPosition(-this.gameScreen.cameraX - 300 - 211, -this.gameScreen.cameraY - 200 - 197);
+            break;
+            case 6, 0:
+            if (this.gooch.texture.key != 'mainhallgooch') {
+                this.gooch.setTexture('mainhallgooch');
+            }
+            this.gooch.setPosition(-this.gameScreen.cameraX + 750 -242, -this.gameScreen.cameraY + 400 - 210);
+            break;
+            case 1:
+            if (this.gooch.texture.key != 'partyroom2gooch') {
+                this.gooch.setTexture('partyroom2gooch');
+            } 
+            this.gooch.setPosition(-this.gameScreen.cameraX -150 - 121, -this.gameScreen.cameraY + 200 - 278);
+            break;
+        }
+    }
+    else {
+        if (this.gooch.visible) this.gooch.setVisible(false);
+    }
+
     if (this.cameraspot == 10) {
         if (this.musicboxbuttontexture.visible == false) this.musicboxbuttontexture.setVisible(true);
         if (this.musicboxtext.visible == false) this.musicboxtext.setVisible(true);
@@ -373,6 +436,7 @@ export default class cameraScreen extends Phaser.Scene {
     else {
         if (this.musicboxbuttontexture.visible) this.musicboxbuttontexture.setVisible(false);
         if (this.musicboxtext.visible) this.musicboxtext.setVisible(false);
+        if (this.boxTimeLeft.visible) this.boxTimeLeft.setVisible(false);
     }
     if (this.battery.texture.key != 'battery' + (this.gameScreen.batterynum+1)) this.battery.setTexture('battery' + (this.gameScreen.batterynum+1));
     this.maplocationtextures[this.cameraspot].setTexture('locationspot');

@@ -64,6 +64,10 @@ export default class Timer {
         {
             this._elapsedTime += timeToAdd;
         }
+        RemainingTime()
+        {
+            return Math.max(0, this._targetTime - this._elapsedTime);
+        }
 
         Reset()
         {

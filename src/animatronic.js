@@ -156,6 +156,7 @@ export default class Animatronic {
                         this.nasirValue2 += 0.04 * delta;
                         if (this.nasirValue2 > 100 * this.gameScreen.nightnum)
                         {
+                            if (this.gameScreen.screenState == 0) this.gameScreen.drawChange = true;
                             this.location = 7;
                             this.nasirValue1 = 0;
                             this.nasirValue2 = 0;
@@ -709,6 +710,7 @@ movementOpportunity()
                                 //this.gameScreen.stare.Stop();
                                 this.AInum = 0;
                                 this.gameScreen.danger = 0;
+                                if (this.gameScreen.screenState == 0) this.gameScreen.drawChange = true;
                                 console.log("Juan attack evaded");
                             };
                             this.maskTimer.Start();
@@ -723,6 +725,7 @@ movementOpportunity()
                                 // this.gameScreen.ventwalk.Play();
                                 this.AInum = 0;
                                 this.gameScreen.danger = 0;
+                                if (this.gameScreen.screenState == 0) this.gameScreen.drawChange = true;
                                 console.log("Carlos attack evaded");
                             };
                             this.maskTimer.Start();
@@ -737,6 +740,7 @@ movementOpportunity()
                                 // this.gameScreen.ventwalk.Play();
                                 this.AInum = 0;
                                 this.gameScreen.danger = 0;
+                                if (this.gameScreen.screenState == 0) this.gameScreen.drawChange = true;
                                 console.log("Gustavo attack evaded");
                             };
                             this.maskTimer.Start();
@@ -783,6 +787,7 @@ movementOpportunity()
                             // }
                             this.moved = true;
                             console.log(this.Name + " movement successful");
+                            if (this.gameScreen.screenState == 0) this.gameScreen.drawChange = true;
                             this.movedTimer = new timer(500);
                             this.movedTimer.finishCallback = () => { this.moved = false; this.cameraScreen.animatronicForceOff = false; };
                             this.movedTimer.Start(); // so cameras disable for a second after moving
@@ -792,6 +797,7 @@ movementOpportunity()
                             this.location = this.movementPath[index + 1];
                             this.moved = true;
                             console.log(this.Name + " movement successful");
+                            if (this.gameScreen.screenState == 0) this.gameScreen.drawChange = true;
                             this.movedTimer = new timer(500);
                             this.movedTimer.finishCallback = () => { this.moved = false; this.cameraScreen.animatronicForceOff = false; };
                             this.movedTimer.Start(); // so cameras disable for a second after movin
@@ -811,6 +817,7 @@ movementOpportunity()
                 {
                     if (this.attacking != 2) console.log(this.Name + " movement failed");
                 }
+                
             }
             if (this.attacking == 0) this.movementOpportunityTime = 5000;
             if (this.attacking > 0) this.movementOpportunityTime = 500;
@@ -833,6 +840,7 @@ movementOpportunity()
                     }
                     if (this.location == 7) this.location = 15;
                     this.moved = true;
+                    if (this.gameScreen.screenState == 0) this.gameScreen.drawChange = true;
                     console.log(this.Name + " movement successful");
                     this.movedTimer = new timer(500);
                     this.movedTimer.finishCallback = () => { this.moved = false; this.cameraScreen.animatronicForceOff = false; };
@@ -852,4 +860,36 @@ movementOpportunity()
             this.movementActive = false;
         }
     }
+    // public void Draw()
+    // {
+    //     // Draw animatronic sprite if attacking
+    //     if (game.maskbuttonactive > 0 && game.maskbuttonactive < 3 && attacking == 2)
+    //     {
+    //         switch (Name)
+    //         {
+    //             case "Misa":
+    //             game._spriteBatch.Draw(game.misaoffice, new Vector2(x, y), Color.White);
+    //             game._spriteBatch.Draw(game.blackscreen, new Rectangle(0, 0, game.width, game.height), Color.Black * alphaoverlay);
+    //                 break;
+    //             case "Juan":
+    //             game._spriteBatch.Draw(game.blackscreen, new Rectangle(0, 0, game.width, game.height), Color.Black * alphaoverlay);
+    //                 break;    
+    //         }
+    //     }
+    //     if (Name == "Carlos" && location == 14)
+    //     {
+    //         game._spriteBatch.Draw(game.carlos, new Vector2(-game.cameraX + 100, -game.cameraY + 225), Color.White);
+    //     }
+    //     if (Name == "Darien" && location == 14)
+    //     {
+    //         game._spriteBatch.Draw(game.darien, new Vector2(-game.cameraX + 400, -game.cameraY + 200), Color.White);
+    //         game._spriteBatch.Draw(game.darienaura, new Vector2(-game.cameraX + 400 - 140, -game.cameraY + 200 - 140), Color.White * 0.25f);
+    //         game._spriteBatch.Draw(game.blackscreen, new Rectangle(0, 0, game.width, game.height), Color.Red * alphaoverlay);
+    //     }
+    //     if (Name == "Marlon" && location == 14)
+    //     {
+    //         game._spriteBatch.Draw(game.marlonoffice, new Vector2(-game.cameraX + 350, -game.cameraY + 250), Color.White);
+    //         game._spriteBatch.Draw(game.blackscreen, new Rectangle(0, 0, game.width, game.height), Color.Black * alphaoverlay);
+    //     }
+    // }
 }

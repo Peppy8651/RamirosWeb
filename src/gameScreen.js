@@ -221,6 +221,7 @@ export default class gameScreen extends Phaser.Scene {
         ],
         repeat: -1     // -1 makes it loop infinitely
     });
+    this.gooch = this.add.image(-this.cameraX + 250, -this.cameraY - 120, 'goochdesk').setVisible(false);
     this.battery = this.add.image(80, 60, "battery4");
     this.night = this.add.image(this.width - 125, 50, "night");
     this.nightNumShow = this.add.image(this.width - 50, 50, "num" + this.nightnum);
@@ -300,6 +301,9 @@ export default class gameScreen extends Phaser.Scene {
     this.sixamnum.setVisible(false);
     this.sixamletters = this.add.image(1024/2 + 60, 768/2, 'sixam');
     this.sixamletters.setVisible(false);
+    this.yellowtriangle = this.add.image(1024 - 75, 768 - 110, "yellowtriangle");
+    this.yellowtriangle.setVisible(false);
+    this.yellowtriangle.setAlpha(0);
     this.fpsText = document.getElementById("fps");
 
   }
@@ -420,6 +424,9 @@ export default class gameScreen extends Phaser.Scene {
                         this.flashlightstate = 0;
                         this.drawChange = true;
                     }
+                    if (this.animatronics[3].location == 14) {
+                        this.gooch.setVisible(true);
+                    }
                     // freddy mask
                     if (this.camerabuttonactive == 0 || this.camerabuttonactive == 3 )
                     {
@@ -504,17 +511,14 @@ export default class gameScreen extends Phaser.Scene {
                                 }
                             }
                         }
-                        else
+                    }
+                    if (this.camerabuttonactive == 3) {
+                        if (this.camCooldown == null)
                         {
-                            if (this.camerabuttonactive == 3)
-                            {
-                                this.cameraopen.anims.playReverse('camerabuttonactive', true);
-                                if (this.camCooldown == null)
-                                {
-                                    this.camCooldown = new timer(250);
-                                    this.camCooldown.Start();
-                                }
-                            }
+                            this.cameraopen.anims.playReverse('camerabuttonactive', true);
+                            this.drawChange = true;
+                            this.camCooldown = new timer(250);
+                            this.camCooldown.Start();
                         }
                     }
                             // different flashlights in main hallway + vents
@@ -559,6 +563,27 @@ export default class gameScreen extends Phaser.Scene {
                         }
                     }
         }
+        var remainingTime = this.musicTimer.RemainingTime();
+                switch (true)
+                        {
+
+                            case (remainingTime > 0 && remainingTime < 5000):
+                            if (this.yellowtriangle.alpha >= 1) this.yellowtriangle.alpha -= 1;
+                            this.yellowtriangle.alpha += delta * 0.008;
+                            if (this.yellowtriangle.texture.key == 'yellowtriangle') this.yellowtriangle.setTexture('redtriangle');
+                            // this.yellowtriangle.alpha = this.triangleflash;
+                            break;
+                            case (remainingTime > 5000 && remainingTime < 12500):
+                            this.yellowtriangle.alpha += delta * 0.003;
+                            if (this.yellowtriangle.alpha >= 1) this.yellowtriangle.alpha -= 1;
+                            if (this.yellowtriangle.visible == false) this.yellowtriangle.setVisible(true);
+                            if (this.yellowtriangle.texture.key != 'yellowtriangle') this.yellowtriangle.setTexture('yellowtriangle');
+                            // this.yellowtriangle.alpha = this.triangleflash;
+                            break;
+                            default:
+                            if (this.yellowtriangle.visible) this.yellowtriangle.setVisible(false);
+                            break;
+                        }
         if (this.nightTimer.IsFinished())
             {
                 this.pause = true;
@@ -603,6 +628,8 @@ export default class gameScreen extends Phaser.Scene {
                 if (this.sixamnum.alpha < 1)this.sixamnum.alpha += 0.001 * delta;
                 if (this.sixamletters.alpha < 1) this.sixamletters.alpha += 0.001 * delta;
                 if (this.blackRectangle.alpha < 1) this.blackRectangle.alpha += 0.001 * delta;
+
+                
             }
                 
                     
@@ -655,6 +682,7 @@ export default class gameScreen extends Phaser.Scene {
             if (this.jackPlayed == false)
             {
                 this.jackPlayed = true;
+                if (this.yellowtriangle.visible) this.yellowtriangle.setVisible(false);
                 let jackTimer = new timer(2000);
                 let jackTimer2 = new timer(Math.random() < 0.5 ? 2000 : 3000);
                 jackTimer2.finishCallback = () =>
@@ -748,7 +776,7 @@ export default class gameScreen extends Phaser.Scene {
             if (this.hourNumShow.texture.key != 'num' + (1)) this.hourNumShow.setTexture('num' + (1));
             if (this.hourNumShow2.texture.key != 'num' + (2)) this.hourNumShow2.setTexture('num' + (2));
         }
-        
+       
        }
        switchScreenState(num)
         {
@@ -896,6 +924,7 @@ export default class gameScreen extends Phaser.Scene {
         this.hourNumShow2.setTexture("num" + 2);
         this.freddymask.setTexture("freddymask1");
         this.freddymask.anims.stop();
+        this.gooch.setVisible(false);
         this.cameraopen.setTexture("monitor1");
         this.cameraopen.anims.stop();
         this.freddymask.setVisible(false);
@@ -908,6 +937,7 @@ export default class gameScreen extends Phaser.Scene {
         this.sixamletters.setTexture('sixam');
         this.sixamletters.setAlpha(0);
         this.sixamletters.setVisible(false);
+        this.yellowtriangle.setVisible(false);
 
         this.animatronics[0] = new Animatronic(this, "Misa"); // Misa animatronic
         this.animatronics[1] = new Animatronic(this, "Juan"); // Juan animatronic
