@@ -79,7 +79,7 @@ export default class menuScreen extends Phaser.Scene {
         this.switchstatic.anims.play('switchstatic');
         this.newgame = this.add.image(1024 / 2 - 275, 768 / 2 + 50, 'newgame');
     // this.load.image("options", '/images/options.png');
-        this.arrow = this.add.image(1024 / 2 - 450, 768/2 + 55, "arrow");
+        this.arrow = this.add.image(1024 / 2 - 450, 768/2 + 50, "arrow");
         this.firstnight = this.add.image(1024/2 - 275, 768 / 2 + 50, 'firstnight').setVisible(false);
         this.secondnight = this.add.image(1024/2 - 275, 768 / 2 + 50 + 42, 'secondnight').setVisible(false);
         this.logo = this.add.image(1024 / 2 - 300, 768 / 2 - 260, "logo");
@@ -291,8 +291,8 @@ export default class menuScreen extends Phaser.Scene {
   }
   drawUpdate() {
     if (this.nightOpen == false) {
-      if (this.nightSelected == 2) this.arrow.setPosition(1024 / 2 - 450, 768/2 + 55 + 42);
-      if (this.nightSelected == 1) this.arrow.setPosition(1024 / 2 - 450, 768/2 + 55);
+      if (this.nightSelected == 2) this.arrow.setPosition(1024 / 2 - 450, 768/2 + 50 + 42);
+      if (this.nightSelected == 1) this.arrow.setPosition(1024 / 2 - 450, 768/2 + 50);
       if (this.nightSelection == true) {
         if (this.firstnight.visible == false) this.firstnight.setVisible(true);
         if (this.secondnight.visible == false) this.secondnight.setVisible(true);

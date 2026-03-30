@@ -79,8 +79,8 @@ export default class gameScreen extends Phaser.Scene {
     this.animatronics[3] = new Animatronic(this, "Gustavo");
     this.animatronics[4] = new Animatronic(this, "Carlos");
     this.animatronics[5] = new Animatronic(this, "Nasir");
-    // this.animatronics[6] = new Animatronic(this, "Darien");
-    // this.animatronics[7] = new Animatronic(this, "Marlon");
+    this.animatronics[6] = new Animatronic(this, "Darien");
+    this.animatronics[7] = new Animatronic(this, "Marlon");
   }
   preload() {
         this.leftvent = new Rectangle(-this.cameraX + 75, -this.cameraY + 385, 60, 90);
@@ -222,8 +222,8 @@ export default class gameScreen extends Phaser.Scene {
         ],
         repeat: -1     // -1 makes it loop infinitely
     });
-
-    this.gooch = this.add.image(-this.cameraX + 250, -this.cameraY - 120, 'goochdesk').setVisible(false);
+    this.ramiro = this.add.image(-this.cameraX + 250 + 219, -this.cameraY + 170 + 369, 'ramiro').setVisible(false);
+    this.gooch = this.add.image(-this.cameraX + 250 + 135, -this.cameraY - 120 + 159, 'goochdesk').setVisible(false);
     this.misa = this.add.image(this.animatronics[0].x, this.animatronics[0].y, 'misaoffice').setVisible(false);
     this.stareRectangle = this.add.graphics({ fillStyle: { color: 0x000000 } });
     this.stareRectangle.setAlpha(0); // Start fully transparent
@@ -280,7 +280,7 @@ export default class gameScreen extends Phaser.Scene {
     this.monitorclosed = this.sound.add("close");
 
     this.keyShift = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SHIFT);
-    this.key6 = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SIX);
+    this.keyPlus = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.PLUS);
     this.cursorKeys = this.input.keyboard.createCursorKeys(); // Helper for arrow keys, space, and shift
      // for fade out
     this.blackRectangle = this.add.graphics({ fillStyle: { color: 0x000000 } });
@@ -317,8 +317,8 @@ export default class gameScreen extends Phaser.Scene {
         this.fpsText.innerHTML = 'FPS: ' + Math.floor(this.game.loop.actualFps);
         var mouse = this.input.activePointer;
         this.drawChange = false;
-        if (this.key6.isDown) {
-            this.nightTimer.AddTime(this.nightTimer._targetTime - this.nightTimer._elapsedTime);
+        if (this.keyPlus.isDown) {
+            this.nightTimer.AddTime(10000);
         }
 //                 // Unpaused/main game
         if (this.pause == false) {
@@ -371,16 +371,16 @@ export default class gameScreen extends Phaser.Scene {
                         this.camerabuttonactive = 0;
                         this.camCooldown = null;
                         this.monitoropenPlayed = false;
-                        // if (animatronics[3].location == 14) // gustavo 5% jumpscare code
-                        // {
-                        //     console.log("5% jumpscare");
-                        //     const random = rng.Next(0, 21);
-                        //     if (random == 20)
-                        //     {
-                        //         jumpscareID = 6;
-                        //         switchScreenState(2);
-                        //     }
-                        // }
+                        if (this.animatronics[3].location == 14) // gustavo 5% jumpscare code
+                        {
+                            console.log("5% jumpscare");
+                            const random = Math.floor(Math.random() * 20);
+                            if (random == 20)
+                            {
+                                this.jumpscareID = 6;
+                                this.switchScreenState(2);
+                            }
+                        }
                 }
                     //Move left or right
                     if (mouse.x > this.width - this.width/3)
@@ -438,7 +438,10 @@ export default class gameScreen extends Phaser.Scene {
                         this.drawChange = true;
                     }
                     if (this.animatronics[3].location == 14) {
-                        this.gooch.setVisible(true);
+                        if (this.gooch.visible == false) {
+                            this.gooch.setVisible(true);
+                            this.drawChange = true;
+                        }
                     }
                     // freddy mask
                     if (this.camerabuttonactive == 0 || this.camerabuttonactive == 3 )
@@ -725,6 +728,13 @@ export default class gameScreen extends Phaser.Scene {
         if (this.table.anims.isPlaying == false) {
             this.table.anims.play("fanmove");
         }
+        if (this.animatronics[2].location == 14) {
+            if (this.ramiro.visible == false) this.ramiro.setVisible(true);
+            this.ramiro.setPosition(-this.cameraX + 250 + 219, -this.cameraY + 170 + 369);
+        }
+        else {
+            if (this.ramiro.visible) this.ramiro.setVisible(false);
+        }
         switch (this.flashlightstate) {
             case 0:
             this.rightventtex.setTexture('vents3');
@@ -754,6 +764,7 @@ export default class gameScreen extends Phaser.Scene {
             }
             break;
             case 2:
+            this.office.setTexture('officeleft');
             this.leftventtex.setTexture('vents2');
             for (let i = 0; i < this.animatronics.length; i++)
             {
@@ -763,10 +774,10 @@ export default class gameScreen extends Phaser.Scene {
                     if (this.animatronics[i].Name == "Carlos") this.office.setTexture('officeleftcarlos');
                 }
             }
-            this.office.setTexture('officeleft');
             break;
             case 3:
             this.rightventtex.setTexture('vents4');
+            this.office.setTexture('officeright');
             for (let i = 0; i < this.animatronics.length; i++)
             {
                 if (this.animatronics[i].location == 12) // right vent with misa
@@ -775,19 +786,18 @@ export default class gameScreen extends Phaser.Scene {
                     if (this.animatronics[i].Name == "Gustavo") this.office.setTexture('officerightgooch');
                 }
             }
-            this.office.setTexture('officeright');
             break;
         }
 
         if (this.maskbuttonactive > 0 && this.maskbuttonactive < 3 && this.animatronics[0].attacking == 2)
         {
-            console.log('misa in office');
             if (this.misa.visible == false) this.misa.setVisible(true);
             this.misa.setPosition(this.animatronics[0].x + 668, this.animatronics[0].y + 796);
         }
         else {
             if (this.misa.visible) this.misa.setVisible(false);
         }
+        this.gooch.setPosition(-this.cameraX + 250 + 135, -this.cameraY - 120 + 159);
         if (this.battery.texture.key != 'battery' + (this.batterynum+1)) this.battery.setTexture('battery' + (this.batterynum+1));
         if (this.nightNumShow.texture.key != 'num' + (this.nightnum)) this.nightNumShow.setTexture('num' + (this.nightnum));
         if (this.hournum != 0) {
@@ -874,6 +884,50 @@ export default class gameScreen extends Phaser.Scene {
                 this.nightTimer.Start();
                 this.timers.push(this.nightTimer);
                 menuScreen.nightOpenTimer = null;
+
+                // set up code
+                for (let i = 0; i < this.animatronics.length; i++)
+                {
+                    switch (this.nightnum)
+                    {
+                        case 1:
+                        if (i < 3) {
+                        this.animatronics[i].Activate();
+                        }
+                        break;
+                        case 2:
+                        if (i < 6)
+                        {
+                            this.animatronics[i].Activate();
+                        }
+                        break;
+                        case 3:
+                        if (this.animatronics[i].Name == "Darien" || this.animatronics[i].Name == "Marlon") this.animatronics[i].Activate();
+                        // make sure to change this here and in setup game after done with night 3
+                        break;
+                    }
+                }
+
+                // set battery milliseconds based on night
+
+                switch (true)
+                {
+                    case (this.nightnum == 1):
+                        this.batterymilliseconds = 127000;
+                        break;
+                        case (this.nightnum == 2):
+                        this.batterymilliseconds = 110000;
+                        break;
+                        case (this.nightnum == 3):
+                        this.batterymilliseconds = 84000;
+                        break;
+                        case (this.nightnum == 4):
+                        this.batterymilliseconds = 68000;
+                        break;
+                        case (this.gameScreen.nightnum >= 5):
+                        this.batterymilliseconds = 51000;
+                        break;
+                }
                 this.switchScreenState(0);
             };
             // PlaySound(menuScreen.menuMusic, true);
@@ -962,13 +1016,15 @@ export default class gameScreen extends Phaser.Scene {
         this.sixamletters.setVisible(false);
         this.yellowtriangle.setVisible(false);
         this.stareRectangle.setAlpha(0);
-
+        this.animatronics.splice(0, this.animatronics.length);
         this.animatronics[0] = new Animatronic(this, "Misa"); // Misa animatronic
         this.animatronics[1] = new Animatronic(this, "Juan"); // Juan animatronic
         this.animatronics[2] = new Animatronic(this, "Ramiro"); // Ramiro animatronic 
         this.animatronics[3] = new Animatronic(this, "Gustavo");
         this.animatronics[4] = new Animatronic(this, "Carlos");
         this.animatronics[5] = new Animatronic(this, "Nasir");
+        this.animatronics[6] = new Animatronic(this, "Darien");
+        this.animatronics[7] = new Animatronic(this, "Marlon");
 
         this.maskonPlayed = false;
         this.monitoropenPlayed = false;
@@ -1022,6 +1078,17 @@ export default class gameScreen extends Phaser.Scene {
         cameraScreen.camFlashOn = false;
         cameraScreen.animatronicForceOff = false;
         cameraScreen.winding = false;
+        for (let i = 0; i < cameraScreen.maplocationtextures.length; i++) {
+            if (i != 8) {
+                if (cameraScreen.maplocationtextures[i].texture.key == 'locationspot') cameraScreen.maplocationtextures[i].setTexture('locationbox');
+                if (cameraScreen.locationNameTextures[i].visible) cameraScreen.locationNameTextures[i].setVisible(false);
+            }
+        }
+        if (cameraScreen.maplocationtextures.length != 0) {
+            cameraScreen.maplocationtextures[8].setTexture('locationspot');
+            cameraScreen.locationNameTextures[8].setVisible(true);
+        }
+
         // reset timers
         this.timers.splice(0, this.timers.length); // clear timers
         menuScreen.nightOpenTimer.Reset();

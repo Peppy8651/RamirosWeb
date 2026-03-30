@@ -44,7 +44,6 @@ export default class Animatronic {
             case "Juan":
                 this.ID = 2;
                 this.movementPath = [8, 6, 15, 0, 4, 13, 14]; // 13 is left vent visible from office, 14 is office, 15 is office hall
-                this.movementPath = [4, 13, 14]; // 12 is right vent visible from office, 14 is office
                 break;
             case "Ramiro":
                 this.ID = 3;
@@ -70,6 +69,7 @@ export default class Animatronic {
             case "Gustavo":
                 this.ID = 6;
                 this.movementPath = [11, 10, 9, 6, 15, 0, 1, 5, 12, 14];
+                this.movementPath = [14];
             break;
             case "Carlos":
                 this.ID = 7;
@@ -173,7 +173,7 @@ export default class Animatronic {
                         }
                         if (this.nasirJumpscareTimer._isRunning)
                         {
-                            this.nasirJumpscareTimer.AddTime(this.nasirJumpscareTimer._targetTime - this.nasirJumpscareTimer._elapsedTime); // reset jumpscare timer if flashlight is on him, so you have to keep it on him for a while to make him go away, but if you take it off even for a second he gets ready to jumpscare you again
+                            this.nasirJumpscareTimer.AddTime(this.nasirJumpscareTimer.RemainingTime()); // reset jumpscare timer if flashlight is on him, so you have to keep it on him for a while to make him go away, but if you take it off even for a second he gets ready to jumpscare you again
                         }
                         if (this.nasirValue1 < 0) this.nasirValue1 = 0;
                     }
@@ -316,7 +316,9 @@ export default class Animatronic {
                     else
                     {
                         if (this.gameScreen.jumpscareID == 0) { // 0 means haven't jumpscared yet
+                        console.log('misa pizza')
                         this.gameScreen.jumpscareID = 1;
+                        this.gameScreen.misa.setVisible(false);
                         //game.stare.Stop();
                         this.gameScreen.stare = false;
                         this.gameScreen.switchScreenState(2);
@@ -465,13 +467,13 @@ export default class Animatronic {
                     if (this.officeAnimatronicsRNGAttemptMade == false && this.gameScreen.camerabuttonactive == 3 && this.gameScreen.animatronics[6].location != 14)
                     {
                         this.officeAnimatronicsRNGAttemptMade = true;
-                        // fix  this.officeAnimatronicsRNG = this.gameScreen.rng.Next(1,11);
+                        this.officeAnimatronicsRNG = Math.random() * 10;
                     }
                     else
                     {
                         if (this.gameScreen.camerabuttonactive == 0) this.officeAnimatronicsRNGAttemptMade = false;
                     }
-                    if (this.officeAnimatronicsRNG >= 8 && this.gameScreen.camerabuttonactive == 3) // makes it a bit more unpredictable, waits for darien to leave
+                    if (this.officeAnimatronicsRNG >= 6 && this.gameScreen.camerabuttonactive == 3) // makes it a bit more unpredictable, waits for darien to leave
                     {
                         // this.gameScreen.stare.Play();
                         this.movementActive = true;
@@ -486,6 +488,7 @@ export default class Animatronic {
                                     // this.gameScreen.stare.Stop();
                                     if (this.gameScreen.jumpscareID == 0) { // 0 means haven't jumpscared yet
                                     this.gameScreen.jumpscareID = this.ID;
+                                    this.gameScreen.ramiro.setVisible(false);
                                     this.gameScreen.stare = false;
                                     this.gameScreen.switchScreenState(2); // force jumpscare if leaving cameras
                                     }
@@ -495,6 +498,7 @@ export default class Animatronic {
                                     this.alphaoverlay = 1;
                                     //this.gameScreen.stare.Stop();
                                     this.camTimer.Stop();
+                                    this.gameScreen.ramiro.setVisible(false);
                                     this.gameScreen.stare = false;
                                     this.camTimer = null;
                                     this.location = 8;
@@ -570,7 +574,7 @@ export default class Animatronic {
                     {
                         if (this.gameScreen.camerabuttonactive == 0) this.officeAnimatronicsRNGAttemptMade = false;
                     }
-                    if (this.officeAnimatronicsRNG >= 7 && this.gameScreen.camerabuttonactive == 3) // final attack attempt
+                    if (this.officeAnimatronicsRNG >= 5 && this.gameScreen.camerabuttonactive == 3) // final attack attempt
                     {
                         //this.gameScreen.stare.Play();
                         this.movementActive = true;
