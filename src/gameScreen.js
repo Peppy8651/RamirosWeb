@@ -47,7 +47,7 @@ export default class gameScreen extends Phaser.Scene {
     this.screenState = 3; // 0: game, 1: camera 2: jumpscare 3: main menu 4: game over 5: win screen
     this.triangleflash = 0;
     this.musicTimer;
-    this.jumpscareID = 16;
+    this.jumpscareID = 0;
     this.musicMilliseconds = 60000;
     this.jumpscareScale = 0;
         // 6 am
@@ -71,6 +71,7 @@ export default class gameScreen extends Phaser.Scene {
     this.clockChimePlayed = false;
     this.yayPlayed = false;
     this.jackPlayed = false;
+    this.stare = false;
     this.dangerSoundTimer;
     this.animatronics[0] = new Animatronic(this, "Misa"); // Misa animatronic
     this.animatronics[1] = new Animatronic(this, "Juan"); // Juan animatronic
@@ -221,7 +222,13 @@ export default class gameScreen extends Phaser.Scene {
         ],
         repeat: -1     // -1 makes it loop infinitely
     });
+
     this.gooch = this.add.image(-this.cameraX + 250, -this.cameraY - 120, 'goochdesk').setVisible(false);
+    this.misa = this.add.image(this.animatronics[0].x, this.animatronics[0].y, 'misaoffice').setVisible(false);
+    this.stareRectangle = this.add.graphics({ fillStyle: { color: 0x000000 } });
+    this.stareRectangle.setAlpha(0); // Start fully transparent
+    let coverScreen = new Phaser.Geom.Rectangle(0, 0, this.game.config.width, this.game.config.height);
+    this.stareRectangle.fillRectShape(coverScreen);
     this.battery = this.add.image(80, 60, "battery4");
     this.night = this.add.image(this.width - 125, 50, "night");
     this.nightNumShow = this.add.image(this.width - 50, 50, "num" + this.nightnum);
@@ -278,7 +285,6 @@ export default class gameScreen extends Phaser.Scene {
      // for fade out
     this.blackRectangle = this.add.graphics({ fillStyle: { color: 0x000000 } });
     this.blackRectangle.setAlpha(0); // Start fully transparent
-    let coverScreen = new Phaser.Geom.Rectangle(0, 0, this.game.config.width, this.game.config.height);
     this.blackRectangle.fillRectShape(coverScreen);
     this.sixamnum = this.add.sprite(1024/2 - 120, 768/2, 'nightEnd1');
     this.sixamnum.anims.create({
@@ -390,6 +396,13 @@ export default class gameScreen extends Phaser.Scene {
                             this.cameraX -= delta * 0.70;
                             this.drawChange = true;
                         }
+                    }
+                    if (this.stare) {
+                        if (this.stareRectangle.alpha >= 1) this.stareRectangle.alpha -= 1;
+                        this.stareRectangle.alpha += delta * 0.008;
+                    }
+                    else {
+                        if (this.stareRectangle.alpha != 0) this.stareRectangle.alpha = 0;
                     }
                     // Flashlight control
                     if (this.maskbuttonactive == 0 && this.camerabuttonactive == 0 && this.batterymilliseconds > 0) // only if not using mask and cameras
@@ -765,6 +778,16 @@ export default class gameScreen extends Phaser.Scene {
             this.office.setTexture('officeright');
             break;
         }
+
+        if (this.maskbuttonactive > 0 && this.maskbuttonactive < 3 && this.animatronics[0].attacking == 2)
+        {
+            console.log('misa in office');
+            if (this.misa.visible == false) this.misa.setVisible(true);
+            this.misa.setPosition(this.animatronics[0].x + 668, this.animatronics[0].y + 796);
+        }
+        else {
+            if (this.misa.visible) this.misa.setVisible(false);
+        }
         if (this.battery.texture.key != 'battery' + (this.batterynum+1)) this.battery.setTexture('battery' + (this.batterynum+1));
         if (this.nightNumShow.texture.key != 'num' + (this.nightnum)) this.nightNumShow.setTexture('num' + (this.nightnum));
         if (this.hournum != 0) {
@@ -938,6 +961,7 @@ export default class gameScreen extends Phaser.Scene {
         this.sixamletters.setAlpha(0);
         this.sixamletters.setVisible(false);
         this.yellowtriangle.setVisible(false);
+        this.stareRectangle.setAlpha(0);
 
         this.animatronics[0] = new Animatronic(this, "Misa"); // Misa animatronic
         this.animatronics[1] = new Animatronic(this, "Juan"); // Juan animatronic
@@ -958,6 +982,7 @@ export default class gameScreen extends Phaser.Scene {
         this.tableframe = 0;
         this.freddymaskframe = 0;
         this.maskbuttonactive = 0;
+        this.stare = false;
         this.camerabuttonactive = 0;
         this.cameraframe =0;
         this.hournum = 0;

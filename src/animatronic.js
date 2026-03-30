@@ -44,6 +44,7 @@ export default class Animatronic {
             case "Juan":
                 this.ID = 2;
                 this.movementPath = [8, 6, 15, 0, 4, 13, 14]; // 13 is left vent visible from office, 14 is office, 15 is office hall
+                this.movementPath = [4, 13, 14]; // 12 is right vent visible from office, 14 is office
                 break;
             case "Ramiro":
                 this.ID = 3;
@@ -60,8 +61,10 @@ export default class Animatronic {
                 this.nasirJumpscareTimer = new timer(10000);
                 this.nasirJumpscareTimer.finishCallback = () =>
                     {
-                        this.gameScreen.jumpscareID = 5;
-                        this.gameScreen.switchScreenState(2); // force jumpscare if leaving cameras
+                        if (this.gameScreen.jumpscareID == 0) { // 0 means haven't jumpscared yet
+                            this.gameScreen.jumpscareID = 5;
+                            this.gameScreen.switchScreenState(2); // force jumpscare if leaving cameras
+                        }
                     }
                 break;
             case "Gustavo":
@@ -89,13 +92,17 @@ export default class Animatronic {
         {
             if (this.Name != "Carlos" && this.Name != "Gustavo") // Gooch only jumpscares you if you exit the cameras
             {
+                if (this.gameScreen.jumpscareID == 0) { // 0 means haven't jumpscared yet
                 this.gameScreen.jumpscareID = this.ID;
                 this.gameScreen.switchScreenState(2);
+                }
             }
             if (this.Name == "Gustavo" && this.location == 14)
             {
+                if (this.gameScreen.jumpscareID == 0) { // 0 means haven't jumpscared yet
                 this.gameScreen.jumpscareID = this.ID;
                 this.gameScreen.switchScreenState(2);
+                }
             }
         };
         this.cameraLookingTimer.Start();
@@ -259,11 +266,11 @@ export default class Animatronic {
                 //     if (this.game.carlos3.State != SoundState.Playing) this.game.carlos3.Play();
                 // }
             }
-            // if (this.game.cameraScreen.camFlashOn && this.location == this.game.cameraScreen.cameraspot) // reset timer and stuff by flashing
-            // {
-            //     this.movementOpportunityTime = 6670;
-            //     this.movementActive = false;
-            // }
+            if (this.cameraScreen.camFlashOn && this.location == this.cameraScreen.cameraspot) // reset timer and stuff by flashing
+            {
+                this.movementOpportunityTime = 6670;
+                this.movementActive = false;
+            }
             if (this.gameScreen.flashlightstate == 3 && this.location == 12)
             {
                 this.movementActive = false;
@@ -283,35 +290,18 @@ export default class Animatronic {
                     case "Misa":
                     if (this.gameScreen.maskbuttonactive > 0 && this.gameScreen.maskbuttonactive < 3)
                     {
+                        if (this.gameScreen.stare == false) this.gameScreen.stare = true;
+                        this.gameScreen.drawChange = true;
                         this.x -= (delta * this.scrollspeed);
                         // if (this.gameScree.stare.State != SoundState.Playing)
                         // {
                         //     this.game.stare.Play();
                         // }
-                        switch (this.alphaoverlay)
-                        {
-                            case 0:
-                                this.alphaoverlay = 0.25;
-                                break;
-                            case 0.25:
-                                this.alphaoverlay = 0.5;
-                                break;
-                            case 0.5:
-                                this.alphaoverlay = 0.75;
-                                break;
-                            case 0.75:
-                                this.alphaoverlay = 1;
-                                break;
-                            case 1:
-                                this.alphaoverlay = 0;
-                                break;
-                            default:
-                                this.alphaoverlay = 0;
-                                break;
-                        }
                         if (this.x < -800)
                         {
+                            // console.log(this.gameScreen.stare);
                             this.attacking = 0;
+                            this.gameScreen.stare = false;
                             this.location = 2;
                             this.x = 0 + 600;
                             this.movementOpportunityTime = 5000;
@@ -325,47 +315,33 @@ export default class Animatronic {
                     }
                     else
                     {
+                        if (this.gameScreen.jumpscareID == 0) { // 0 means haven't jumpscared yet
                         this.gameScreen.jumpscareID = 1;
                         //game.stare.Stop();
+                        this.gameScreen.stare = false;
                         this.gameScreen.switchScreenState(2);
+                        }
                     }
                     break;
                     case "Juan":
                     if (this.gameScreen.maskbuttonactive > 0 && this.gameScreen.maskbuttonactive < 3)
                     {
+                        if (this.gameScreen.stare == false) this.gameScreen.stare = true;
                         // I am just lazy  
                         // if (this.gameScreen.stare.State != SoundState.Playing)
                         // {
                         //     this.gameScreen.stare.Play();
                         // }
                         this.maskTimer.Update(delta);
-                        switch (this.alphaoverlay)
-                        {
-                            case 0:
-                                this.alphaoverlay = 0.25;
-                                break;
-                            case 0.25:
-                                this.alphaoverlay = 0.5;
-                                break;
-                            case 0.5:
-                                this.alphaoverlay = 0.75;
-                                break;
-                            case 0.75:
-                                this.alphaoverlay = 1;
-                                break;
-                            case 1:
-                                this.alphaoverlay = 0;
-                                break;
-                            default:
-                                this.alphaoverlay = 0;
-                                break;
-                        }
                     }
                     else
                     {
+                        if (this.gameScreen.jumpscareID == 0) { // 0 means haven't jumpscared yet
                         this.gameScreen.jumpscareID = 2;
+                        this.gameScreen.stare = false;
                        //  this.gameScreen.stare.Stop();
                         this.gameScreen.switchScreenState(2);
+                        }
                     }
                     break;
                     case "Carlos":
@@ -377,6 +353,7 @@ export default class Animatronic {
                     {
                         this.location = 14;
                         this.attacking = 0;
+                        this.gameScreen.stare = false;
                         this.active = false; // just freeze him
                         this.AInum = 0;
                         this.gameScreen.batterymilliseconds = 0;
@@ -389,6 +366,7 @@ export default class Animatronic {
                     }
                     else
                     {
+                        this.gameScreen.stare = false;
                         this.location = 14;
                         this.attacking = 0;
                         this.AInum = 0;
@@ -406,13 +384,17 @@ export default class Animatronic {
                             if (this.Name != "Carlos" && this.Name != "Gustavo") {
                                 if (this.gameScreen.maskbuttonactive == 0)
                                 {
+                                    if (this.gameScreen.jumpscareID == 0) { // 0 means haven't jumpscared yet
                                     this.gameScreen.jumpscareID = this.ID;
                                     // this.gameScreen.stare.Stop();
+                                    this.gameScreen.stare = false;
                                     this.gameScreen.switchScreenState(2); // force jumpscare if leaving cameras
+                                    }
                                 }
                                 else
                                 {
                                     this.camTimer.Stop();
+                                    this.gameScreen.stare = false;
                                     // this.game.stare.Stop();
                                     this.camTimer = null;
                                 }
@@ -425,6 +407,7 @@ export default class Animatronic {
                                     this.attacking = 0;
                                     this.active = false; // just freeze him
                                     this.AInum = 0;
+                                    this.gameScreen.stare = false;
                                     this.gameScreen.batterymilliseconds = 0;
                                     // switch (this.gameScreen.nightnum)
                                     // {
@@ -448,6 +431,7 @@ export default class Animatronic {
                                 else
                                 {
                                     this.camTimer.Stop();
+                                    this.gameScreen.stare = false;
                                     this.camTimer = null;
                                 }
                             }
@@ -456,12 +440,14 @@ export default class Animatronic {
                                 if (this.gameScreen.maskbuttonactive == 0)
                                 {
                                     this.location = 14;
+                                    this.gameScreen.stare = false;
                                     this.attacking = 0;
                                     this.AInum = 0;
                                 }
                                 else
                                 {
                                     this.camTimer.Stop();
+                                    this.gameScreen.stare = false;
                                     this.camTimer = null;
                                 }
                             }
@@ -487,9 +473,10 @@ export default class Animatronic {
                     }
                     if (this.officeAnimatronicsRNG >= 8 && this.gameScreen.camerabuttonactive == 3) // makes it a bit more unpredictable, waits for darien to leave
                     {
-                        this.gameScreen.stare.Play();
+                        // this.gameScreen.stare.Play();
                         this.movementActive = true;
                         this.location = 14; // he's about to jumpscare
+                        this.gameScreen.stare = true;
                         this.camTimer = new timer(1000);
                         if (this.camTimer._isRunning == false)
                         {
@@ -497,14 +484,18 @@ export default class Animatronic {
                             {
                                 if (this.gameScreen.maskbuttonactive == 0 || this.gameScreen.maskbuttonactive == 3) {
                                     // this.gameScreen.stare.Stop();
+                                    if (this.gameScreen.jumpscareID == 0) { // 0 means haven't jumpscared yet
                                     this.gameScreen.jumpscareID = this.ID;
+                                    this.gameScreen.stare = false;
                                     this.gameScreen.switchScreenState(2); // force jumpscare if leaving cameras
+                                    }
                                 }
                                 else
                                 {
                                     this.alphaoverlay = 1;
                                     //this.gameScreen.stare.Stop();
                                     this.camTimer.Stop();
+                                    this.gameScreen.stare = false;
                                     this.camTimer = null;
                                     this.location = 8;
                                     this.movementActive = false;
@@ -525,6 +516,7 @@ export default class Animatronic {
                         //this.gameScreen.stare.Play();
                         //this.gameScreen.darienlaugh2.Play();
                         this.movementActive = true;
+                        this.gameScreen.stare = true;
                         this.location = 14; // he's about to jumpscare
                         let jumpscareInterval = Math.random() < 0.5 ? 5000 : 8000;
                         this.officeJumpscareTimer = new timer(jumpscareInterval);
@@ -535,8 +527,11 @@ export default class Animatronic {
                             {
                                 if (this.gameScreen.maskbuttonactive == 0 || this.gameScreen.maskbuttonactive == 3) {
                                     // this.gameScreen.stare.Stop();
+                                    if (this.gameScreen.jumpscareID == 0) { // 0 means haven't jumpscared yet
+                                    this.gameScreen.stare = false;
                                     this.gameScreen.jumpscareID = this.ID;
                                     this.gameScreen.switchScreenState(2); // force jumpscare if leaving cameras
+                                    }
                                 }
                             };  
                             this.camTimer.Start();
@@ -547,6 +542,7 @@ export default class Animatronic {
                             {
                                 if (this.gameScreen.maskbuttonactive == 1 || this.gameScreen.maskbuttonactive == 2) {
                                     this.alphaoverlay = 1;
+                                    this.gameScreen.stare = false;
                                     //this.gameScreen.stare.Stop();
                                     this.camTimer.Stop();
                                     this.camTimer = null;
@@ -580,6 +576,7 @@ export default class Animatronic {
                         this.movementActive = true;
                         this.location = 14; // he's about to jumpscare
                         let jumpscareInterval = Math.random() < 0.5 ? 4000 : 9000;
+                        this.gameScreen.stare = true;
                         this.officeJumpscareTimer = new timer(jumpscareInterval);
                         this.camTimer = new timer(1250 / (this.marlonBlackoutCounter + 1));
                         if (this.camTimer._isRunning == false)
@@ -588,8 +585,11 @@ export default class Animatronic {
                             {
                                 if (this.gameScreen.maskbuttonactive == 0 || this.gameScreen.maskbuttonactive == 3) {
                                     // this.gameScreen.stare.Stop();
+                                    if (this.gameScreen.jumpscareID == 0) { // 0 means haven't jumpscared yet
+                                    this.gameScreen.stare = false;
                                     this.gameScreen.jumpscareID = this.ID;
                                     this.gameScreen.switchScreenState(2); // force jumpscare if leaving cameras
+                                    }
                                 }
                             };  
                             this.camTimer.Start();
@@ -603,11 +603,12 @@ export default class Animatronic {
                                     this.alphaoverlay = 1;
                                     // this.gameScreen.stare.Stop();
                                     this.camTimer.Stop();
+                                    this.gameScreen.stare = false;
                                     this.camTimer = null;
                                     this.officeJumpscareTimer.Stop();
                                     this.officeJumpscareTimer = null;
                                     if (this.marlonBlackoutCounter == this.gameScreen.nightnum) 
-                                    { 
+                                    {
                                         this.location = 7;
                                         this.marlonBlackoutCounter = 0;
                                     }
@@ -628,31 +629,13 @@ export default class Animatronic {
                 if (this.camTimer != null && this.camTimer._isRunning) {
                     this.camTimer.Update(delta);
                     if (this.officeJumpscareTimer != null && this.officeJumpscareTimer._isRunning) this.officeJumpscareTimer.Update(delta);
-                    switch (this.alphaoverlay)
-                        {
-                            case 0:
-                                this.alphaoverlay = 0.25;
-                                break;
-                            case 0.25:
-                                this.alphaoverlay = 0.5;
-                                break;
-                            case 0.5:
-                                this.alphaoverlay = 0.75;
-                                break;
-                            case 0.75:
-                                this.alphaoverlay = 1;
-                                break;
-                            case 1:
-                                this.alphaoverlay = 0;
-                                break;
-                            default:
-                                this.alphaoverlay = 0;
-                                break;
-                        }
                     if (this.Name == "Darien" && (this.gameScreen.maskbuttonactive == 3)) {
                         // this.gameScreen.stare.Stop();
+                        if (this.gameScreen.jumpscareID == 0) { // 0 means haven't jumpscared yet
                         this.gameScreen.jumpscareID = this.ID;
+                        this.gameScreen.stare = false;
                         this.gameScreen.switchScreenState(2); // force jumpscare if leaving cameras
+                        }
                     }
                 }
                 if (this.location == 14 || this.location == 13 || this.location == 12 || this.location == 17)
@@ -705,6 +688,7 @@ movementOpportunity()
                                 this.alphaoverlay = 1;
                                 this.attacking = 0;
                                 this.location = 6;
+                                this.gameScreen.stare = false;
                                 this.movementActive = false;
                                 //this.gameScreen.ventwalk.Play();
                                 //this.gameScreen.stare.Stop();
@@ -722,6 +706,7 @@ movementOpportunity()
                                 this.attacking = 0;
                                 this.location = 9;
                                 this.movementActive = false;
+                                this.gameScreen.stare = false;
                                 // this.gameScreen.ventwalk.Play();
                                 this.AInum = 0;
                                 this.gameScreen.danger = 0;
@@ -737,6 +722,7 @@ movementOpportunity()
                                 this.attacking = 0;
                                 this.location = 11;
                                 this.movementActive = false;
+                                this.gameScreen.stare = false;
                                 // this.gameScreen.ventwalk.Play();
                                 this.AInum = 0;
                                 this.gameScreen.danger = 0;
@@ -863,19 +849,6 @@ movementOpportunity()
     // public void Draw()
     // {
     //     // Draw animatronic sprite if attacking
-    //     if (game.maskbuttonactive > 0 && game.maskbuttonactive < 3 && attacking == 2)
-    //     {
-    //         switch (Name)
-    //         {
-    //             case "Misa":
-    //             game._spriteBatch.Draw(game.misaoffice, new Vector2(x, y), Color.White);
-    //             game._spriteBatch.Draw(game.blackscreen, new Rectangle(0, 0, game.width, game.height), Color.Black * alphaoverlay);
-    //                 break;
-    //             case "Juan":
-    //             game._spriteBatch.Draw(game.blackscreen, new Rectangle(0, 0, game.width, game.height), Color.Black * alphaoverlay);
-    //                 break;    
-    //         }
-    //     }
     //     if (Name == "Carlos" && location == 14)
     //     {
     //         game._spriteBatch.Draw(game.carlos, new Vector2(-game.cameraX + 100, -game.cameraY + 225), Color.White);
