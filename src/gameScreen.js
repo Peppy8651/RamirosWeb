@@ -990,7 +990,6 @@ export default class gameScreen extends Phaser.Scene {
                     if (this.phoneguy2.isPlaying) this.phoneguy2.stop();
                 break;
             }
-            this.phoneHasPlayed = false;
             let newtimer = new timer(2000);
             newtimer.playWhenPaused = true;
             newtimer.finishCallback = async () =>
@@ -1171,6 +1170,7 @@ export default class gameScreen extends Phaser.Scene {
         this.monitoropenPlayed = false;
         this.clockChimePlayed = false;
         this.jackPlayed = false;
+        this.phoneHasPlayed = false;
         this.yayPlayed = false;
         this.batterynum = 4;
         this.flashlightstate = 0;
