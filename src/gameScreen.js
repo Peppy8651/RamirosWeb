@@ -293,6 +293,7 @@ export default class gameScreen extends Phaser.Scene {
     // phone guy
     this.phoneguy1 = this.sound.add('misael');
     this.phoneguy2 = this.sound.add('misael2');
+    this.mutecall = this.add.image(this.muteCallButton.x + 45, this.muteCallButton.y + 10, "mutecall");
 
     this.keyShift = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SHIFT);
     this.keyPlus = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.PLUS);
@@ -325,7 +326,7 @@ export default class gameScreen extends Phaser.Scene {
     this.yellowtriangle = this.add.image(1024 - 75, 768 - 110, "yellowtriangle");
     this.yellowtriangle.setVisible(false);
     this.yellowtriangle.setAlpha(0);
-    this.mutecall = this.add.image(this.muteCallButton.x + 45, this.muteCallButton.y + 10, "mutecall");
+    this.jumpscaretex = this.add.image(0, 0, 'ryan').setVisible(false);
     this.fpsText = document.getElementById("fps");
 
   }
@@ -341,6 +342,50 @@ export default class gameScreen extends Phaser.Scene {
             // sounds
             if (this.fanSound.isPlaying == false) {
                 this.fanSound.play();
+            }
+
+            if (this.screenState == 2) {
+                if (this.jumpscaretex.visible == false) this.jumpscaretex.setVisible(true);
+                switch (this.jumpscareID) {
+                    case 1:
+                    if (this.jumpscaretex.texture.key != 'misaoffice') this.jumpscaretex.setTexture('misaoffice');
+                    if (this.jumpscareScale < 1) this.jumpscareScale += 0.2;
+                    this.jumpscaretex.setPosition(50 + (this.jumpscaretex.width/2), 50 + (this.jumpscaretex.height/2));
+                    this.jumpscaretex.setDisplaySize(this.jumpscaretex.width * this.jumpscareScale, this.jumpscaretex.height * this.jumpscareScale);
+                    break;
+                    case 2:
+                    if (this.jumpscaretex.texture.key != 'juanjumpscare') this.jumpscaretex.setTexture('juanjumpscare');
+                    if (this.jumpscareScale < 1) this.jumpscareScale += 0.15;
+                    this.jumpscaretex.setPosition(-100 + (this.jumpscaretex.width/2), -250 + (this.jumpscaretex.height/2));
+                    this.jumpscaretex.setDisplaySize(this.jumpscaretex.width * this.jumpscareScale, this.jumpscaretex.height * this.jumpscareScale);
+                    break;
+                    case 3:
+                        // it's not actually yoltzin it's ramiro
+                    if (this.jumpscaretex.texture.key != 'yoltzin') this.jumpscaretex.setTexture('yoltzin');
+                    if (this.jumpscareScale < 1.3) this.jumpscareScale += 0.2;
+                    this.jumpscaretex.setPosition(100 + (this.jumpscaretex.width/2), 0 + (this.jumpscaretex.height/2));
+                    this.jumpscaretex.setDisplaySize(this.jumpscaretex.width * this.jumpscareScale, this.jumpscaretex.height * this.jumpscareScale);
+                    break;
+                    case 4:
+                    if (this.jumpscaretex.texture.key != 'ryan') this.jumpscaretex.setTexture('ryan');
+                    if (this.jumpscareScale < 1.3) this.jumpscareScale += 0.2;
+                    this.jumpscaretex.setPosition(100 + (this.jumpscaretex.width/2), 0 + (this.jumpscaretex.height/2));
+                    this.jumpscaretex.setDisplaySize(this.jumpscaretex.width * this.jumpscareScale, this.jumpscaretex.height * this.jumpscareScale);
+                    break;
+                    case 5:
+                    if (this.jumpscaretex.texture.key != 'nasir') this.jumpscaretex.setTexture('nasir');
+                    if (this.jumpscareScale < 2) this.jumpscareScale += 0.3;
+                    this.jumpscaretex.setPosition(300 + (this.jumpscaretex.width/2), 50 + (this.jumpscaretex.height/2));
+                    this.jumpscaretex.setDisplaySize(this.jumpscaretex.width * this.jumpscareScale, this.jumpscaretex.height * this.jumpscareScale);
+                    break;
+                    case 6:
+                    if (this.jumpscaretex.texture.key != 'spookygooch') this.jumpscaretex.setTexture('spookygooch');
+                    if (this.jumpscareScale < 0.75) this.jumpscareScale += 0.2;
+                    this.jumpscaretex.setPosition(50 + (this.jumpscaretex.width/2), -600 + (this.jumpscaretex.height/2));
+                    this.jumpscaretex.setDisplaySize(this.jumpscaretex.width * this.jumpscareScale, this.jumpscaretex.height * this.jumpscareScale);
+                    break;
+                }
+                
             }
             if (this.danger > 0)
                     {
@@ -934,6 +979,7 @@ export default class gameScreen extends Phaser.Scene {
             case 2:
             if (this.screenState == 1) this.scene.sleep('cameraScreen');
             console.log("Jumpscared by: "+ this.jumpscareID);
+            if (this.jumpscare.isPlaying == false) this.jumpscare.play();
             this.blackRectangle.setAlpha(1);
             // this.jumpscareimg.setVisible(true);
             switch (this.nightnum) {
@@ -1111,6 +1157,7 @@ export default class gameScreen extends Phaser.Scene {
         this.yellowtriangle.setVisible(false);
         this.stareRectangle.setAlpha(0);
         this.animatronics.splice(0, this.animatronics.length);
+        this.jumpscaretex.setVisible(false);
         this.animatronics[0] = new Animatronic(this, "Misa"); // Misa animatronic
         this.animatronics[1] = new Animatronic(this, "Juan"); // Juan animatronic
         this.animatronics[2] = new Animatronic(this, "Ramiro"); // Ramiro animatronic 
