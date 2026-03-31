@@ -535,6 +535,7 @@ export default class Animatronic {
                                     // this.gameScreen.stare.Stop();
                                     if (this.gameScreen.jumpscareID == 0) { // 0 means haven't jumpscared yet
                                     this.gameScreen.stare = false;
+                                    this.gameScreen.darien.setVisible(false);
                                     this.gameScreen.jumpscareID = this.ID;
                                     this.gameScreen.switchScreenState(2); // force jumpscare if leaving cameras
                                     }
@@ -553,6 +554,7 @@ export default class Animatronic {
                                     this.camTimer.Stop();
                                     this.camTimer = null;
                                     this.officeJumpscareTimer.Stop();
+                                    this.gameScreen.darien.setVisible(false);
                                     this.officeJumpscareTimer = null;
                                     this.location = Math.random() < 0.5 ? 10 : 3; // either prize corner or party room 4
                                     this.movementActive = false;
@@ -593,6 +595,7 @@ export default class Animatronic {
                                     // this.gameScreen.stare.Stop();
                                     if (this.gameScreen.jumpscareID == 0) { // 0 means haven't jumpscared yet
                                     this.gameScreen.stare = false;
+                                    this.gameScreen.marlon.setVisible(false);
                                     this.gameScreen.jumpscareID = this.ID;
                                     this.gameScreen.switchScreenState(2); // force jumpscare if leaving cameras
                                     }
@@ -623,6 +626,7 @@ export default class Animatronic {
                                     } // repeated attacks
                                     this.movementActive = false;
                                     this.AInum = 0;
+                                    this.gameScreen.marlon.setVisible(false);
                                     this.gameScreen.danger = 0;
                                     console.log("Marlon attack evaded");
                                 }

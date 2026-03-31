@@ -142,12 +142,24 @@ export default class gameScreen extends Phaser.Scene {
             if (l != "stage") this.load.image(`${l}flash`, `/images/cameras/locations/flashlight/${l}.png`);
         });
 
+
+        for (let i = 1; i <= 6; i++) {
+            this.load.image(`darienstatic${i}`, `/images/cameras/darienstatic/${i}.png`);
+        }
+
         this.load.image("stagefull", "/images/cameras/locations/stagefull.png");
         this.load.image("partyroom3misa", "/images/cameras/locations/flashlight/partyroom3misa.png");
+        this.load.image('partyroom3marlonflash', "/images/cameras/locations/flashlight/partyroom3marlon.png");
+        this.load.image('partyroom3marlon', "/images/cameras/locations/partyroom3marlon.png");
         this.load.image("partyroom2misa", "/images/cameras/locations/flashlight/partyroom2misa.png");
         this.load.image("partyroom4misa", "/images/cameras/locations/partyroom4misa.png");
         this.load.image("partyroom4misaflash", "/images/cameras/locations/flashlight/partyroom4misa.png");
+        this.load.image('partyroom4darienflash', "/images/cameras/locations/flashlight/partyroom4darien.png");
+        this.load.image('partyroom2darienflash', "/images/cameras/locations/flashlight/partyroom2darien.png");
+        this.load.image('partyroom4darien', "/images/cameras/locations/partyroom4darien.png");
+        this.load.image('partyroom2darien', "/images/cameras/locations/partyroom2darien.png");
         this.load.image("rightventmisa", "/images/cameras/locations/flashlight/rightventmisa.png");
+        this.load.image('rightventdarien', "/images/cameras/locations/flashlight/rightventdarien.png");
         this.load.image("rightventgooch", "/images/cameras/locations/flashlight/rightventgooch.png");
         this.load.image("officerightmisa", "/images/officerightmisa.png");
         this.load.image("officerightgooch", "/images/officerightgooch.png");
@@ -160,12 +172,18 @@ export default class gameScreen extends Phaser.Scene {
         this.load.image("stagejuanramiro", "/images/cameras/locations/stagejuanramiro.png");
         this.load.image("mainhalljuan", "/images/cameras/locations/mainhalljuan.png");
         this.load.image("mainhalljuanflash", "/images/cameras/locations/flashlight/mainhalljuan.png");
+        this.load.image('mainhallmarlonflash', "/images/cameras/locations/flashlight/mainhallmarlon.png");
         this.load.image("officeflashjuan", "/images/officeflashjuan.png");
         this.load.image("officeflashram", "/images/officeflashram.png");
         this.load.image("officeflashnas", "/images/officeflashnas.png");
+        this.load.image("officeflashmarlon", '/images/officeflashmarlon.png');
+        this.load.image("officeflashmarlondoor", '/images/officeflashmarlondoor.png');
         this.load.image("officeflashnasgooch", "/images/officeflashnasgooch.png");
         this.load.image("officeflashramdoor", "/images/officeflashramdoor.png");
         this.load.image("partsflashnas", "/images/cameras/locations/flashlight/partsnas.png");
+        this.load.image('partsflashdarien', "/images/cameras/locations/flashlight/partsdarien.png");
+        this.load.image('partsflashdarienmarlon', "/images/cameras/locations/flashlight/partsdarienmarlon.png");
+        this.load.image('partsflashmarlon', "/images/cameras/locations/flashlight/partsmarlon.png");
         this.load.image("partyroom1juan", "/images/cameras/locations/flashlight/partyroom1juan.png");
         this.load.image("leftventjuan", "/images/cameras/locations/flashlight/leftventjuan.png");
         this.load.image("leftventcarlos", "/images/cameras/locations/flashlight/leftventcarlos.png");
@@ -179,6 +197,13 @@ export default class gameScreen extends Phaser.Scene {
         this.load.image("juanjumpscare", "/images/juanjumpscare.png");
         this.load.image("ryan", "/images/ryan.png");
         this.load.image("ramiro", "/images/ramiro.png");
+        this.load.image("marlonoffice", '/images/marlonoffice.png');
+        this.load.image("marlonjump", '/images/marlonjump.png');
+        this.load.image("darien", '/images/darien.png');
+        this.load.image("dariensoftjump", '/images/cameras/darien.png');
+        this.load.image("darienaura", '/images/darienaura.png');
+        this.load.image("darienjump", '/images/darienjump.png');
+        this.load.image('darienprizecorner', '/images/cameras/darienprizecorner.png');
         this.load.image("nasir", "/images/nasir.png");
         this.load.image("carlos", "/images/carlos.png");
         this.load.image("spookygooch", "/images/spookygooch.png");
@@ -208,6 +233,10 @@ export default class gameScreen extends Phaser.Scene {
     this.leftventtex = this.add.image(-this.cameraX - 150, -this.cameraY + 430, "vents1");
     this.rightventtex = this.add.image(-this.cameraX + this.width + 150, -this.cameraY + 430, "vents3");
     this.carlos = this.add.image(-this.cameraX + 100 + 190, -this.cameraY + 225 + 221, 'carlos').setVisible(false);
+    this.marlon = this.add.image(-this.cameraX + 350, -this.cameraY + 250, 'marlonoffice').setVisible(false);
+    this.darien = this.add.image(-this.cameraX + 400 + 123, -this.cameraY + 200 + 265, 'darien').setVisible(false);
+    this.darienaura = this.add.image(-this.cameraX + 400 - 140, -this.cameraY + 200 - 140, 'darienaura').setVisible(false);
+    this.darienaura.setAlpha(0.25);
     this.table = this.add.sprite(-this.cameraX + 610, -this.cameraY + 570, "table1");
     this.table.anims.create({
         key: "fanmove",
@@ -382,6 +411,18 @@ export default class gameScreen extends Phaser.Scene {
                     if (this.jumpscaretex.texture.key != 'spookygooch') this.jumpscaretex.setTexture('spookygooch');
                     if (this.jumpscareScale < 0.75) this.jumpscareScale += 0.2;
                     this.jumpscaretex.setPosition(50 + (this.jumpscaretex.width/2), -600 + (this.jumpscaretex.height/2));
+                    this.jumpscaretex.setDisplaySize(this.jumpscaretex.width * this.jumpscareScale, this.jumpscaretex.height * this.jumpscareScale);
+                    break;
+                    case 8:
+                    if (this.jumpscaretex.texture.key != 'darienjump') this.jumpscaretex.setTexture('darienjump');
+                    if (this.jumpscareScale < 1) this.jumpscareScale += 0.2;
+                    this.jumpscaretex.setPosition(50 + (this.jumpscaretex.width/2), -200 + (this.jumpscaretex.height/2));
+                    this.jumpscaretex.setDisplaySize(this.jumpscaretex.width * this.jumpscareScale, this.jumpscaretex.height * this.jumpscareScale);
+                    break;
+                    case 9:
+                    if (this.jumpscaretex.texture.key != 'marlonjump') this.jumpscaretex.setTexture('marlonjump');
+                    if (this.jumpscareScale < 1) this.jumpscareScale += 0.2;
+                    this.jumpscaretex.setPosition(100 + (this.jumpscaretex.width/2), 0 + (this.jumpscaretex.height/2));
                     this.jumpscaretex.setDisplaySize(this.jumpscaretex.width * this.jumpscareScale, this.jumpscaretex.height * this.jumpscareScale);
                     break;
                 }
@@ -847,6 +888,25 @@ export default class gameScreen extends Phaser.Scene {
         else {
             if (this.ramiro.visible) this.ramiro.setVisible(false);
         }
+
+        if (this.animatronics[6].location == 14) {
+            if (this.darien.visible == false) this.darien.setVisible(true);
+            if (this.darienaura.visible == false) this.darienaura.setVisible(true);
+            this.darien.setPosition(-this.cameraX + 400 + 123, -this.cameraY + 200 + 265);
+            this.darienaura.setPosition(-this.cameraX + 400 - 140 + 261, -this.cameraY + 200 - 140 + 337);
+        }
+        else {
+            if (this.darien.visible) this.darien.setVisible(false);
+            if (this.darienaura.visible) this.darienaura.setVisible(false);
+        }
+
+        if (this.animatronics[7].location == 14) {
+            if (this.marlon.visible == false) this.marlon.setVisible(true);
+            this.marlon.setPosition(-this.cameraX + 350 + 100, -this.cameraY + 250 + 263);
+        }
+        else {
+            if (this.marlon.visible) this.marlon.setVisible(false);
+        }
         switch (this.flashlightstate) {
             case 0:
             this.rightventtex.setTexture('vents3');
@@ -868,10 +928,12 @@ export default class gameScreen extends Phaser.Scene {
                     if (this.animatronics[i].Name == "Gustavo") this.office.setTexture('officeflashgooch');
                     if (this.animatronics[i].Name == "Nasir") this.office.setTexture('officeflashnas'); // ALWAYS MAKE SURE HE GOES LAST
                     if (animatronicscount > 2 && animatronicsIDcount == 11) this.office.setTexture('officeflashnasgooch'); // unless they're both in the office lol
+                    if (this.animatronics[i].Name == "Marlon") this.office.setTexture('officeflashmarlon');
                 }
                 if (this.animatronics[i].location == 16)
                 {
                     if (this.animatronics[i].Name == "Ramiro") this.office.setTexture('officeflashramdoor');
+                    if (this.animatronics[i].Name == "Marlon") this.office.setTexture('officeflashmarlondoor');
                 }
             }
             break;
@@ -1141,6 +1203,11 @@ export default class gameScreen extends Phaser.Scene {
         this.freddymask.setTexture("freddymask1");
         this.freddymask.anims.stop();
         this.gooch.setVisible(false);
+        this.ramiro.setVisible(false);
+        this.darien.setVisible(false);
+        this.darienaura.setVisible(false);
+        this.marlon.setVisible(false);
+        this.misa.setVisible(false);
         this.cameraopen.setTexture("monitor1");
         this.cameraopen.anims.stop();
         this.freddymask.setVisible(false);

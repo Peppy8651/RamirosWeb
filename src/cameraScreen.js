@@ -90,6 +90,8 @@ export default class cameraScreen extends Phaser.Scene {
     this.stageFlash = this.add.image(-this.gameScreen.cameraX +500, -this.gameScreen.cameraY + 500, 'flashlighttex').setDisplaySize(966,963);
     this.stageFlash.setVisible(false);
     this.stageFlash.setAlpha(0.5);
+    this.darienprizecorner = this.add.image(-this.gameScreen.cameraX - 200, -this.gameScreen.cameraY + 100, 'darienprizecorner').setVisible(false);
+    this.darienSoftJump = this.add.image(1024/2, 768/2, 'dariensoftjump').setVisible(false);
     this.static = this.add.sprite(this.gameScreen.width/2, this.gameScreen.height/2, 'static1').setAlpha(0.5);
     this.static.anims.create({
         key: "static",
@@ -104,6 +106,24 @@ export default class cameraScreen extends Phaser.Scene {
         ],
         repeat: -1     // -1 makes it loop infinitely
     });
+
+    this.darienstatic = this.add.sprite(this.gameScreen.width/2, this.gameScreen.height/2, 'darienstatic1').setAlpha(0.45);
+    this.darienstatic.setVisible(false);
+    this.darienstatic.anims.create({
+        key: "darienstatic",
+        frameRate: 55,
+        frames: [
+        { key: 'darienstatic1' },
+        { key: 'darienstatic2' },
+        { key: 'darienstatic3' },
+        { key: 'darienstatic4' },
+        { key: 'darienstatic5' },
+        { key: 'darienstatic6' },
+        ],
+        repeat: -1     // -1 makes it loop infinitely
+    });
+    this.darienstatic.setTint(0xff0000);
+
     this.switchstatic = this.add.sprite(this.gameScreen.width/2, this.gameScreen.height/2, 'staticSwitch1').setAlpha(0.50);
     this.switchstatic.anims.create({
         key: "switchstatic",
@@ -224,9 +244,12 @@ export default class cameraScreen extends Phaser.Scene {
             if (this.gameScreen.animatronics[i].moved)
             {
                 this.animatronicForceOff = true;
-                this.switchstatic.anims.play('switchstatic', true);
-                this.switchStatic = true;
-                this.drawChange = true;
+                if (darieninterrupt == false)
+                {
+                    this.switchstatic.anims.play('switchstatic', true);
+                    this.switchStatic = true;
+                    this.drawChange = true;
+                }
                 break;
             }
         }
@@ -260,6 +283,10 @@ export default class cameraScreen extends Phaser.Scene {
                         if (this.musicsound.isPlaying) this.musicsound.stop();
                         if (this.cameraambience.isPlaying) this.cameraambience.stop();
                         if (this.garble.isPlaying) this.garble.stop();
+                        if (this.darienInterruptWait != null && this.darienInterruptWait.IsFinished()) this.darieninterrupt = false;
+                        if (this.darienInterruptTimer != null && this.darienInterruptTimer.IsFinished()) {
+                            this.darienInterruptTimer = null;
+                        }
                 }
                 if (this.gameScreen.camerabuttonactive == 3)
                 {
@@ -293,11 +320,54 @@ export default class cameraScreen extends Phaser.Scene {
                   }
               }
           }
+        if (this.gameScreen.animatronics[6].location == this.cameraspot) 
+        {
+            if (this.darienInterruptTimer == null)
+            {
+                this.darienInterruptTimer = new timer(6000);
+                this.darienInterruptTimer.finishCallback = () =>
+                {
+                    console.log('darien spooked the cameras');
+                    // darienLaugh.Play();
+                    this.switchstatic.anims.play('switchstatic', true);
+                    this.switchStatic = true;
+                    this.darieninterrupt = true;
+                    this.darienInterruptWait = new timer(2000);
+                    this.darienInterruptWait.Start();
+                };
+                this.darienInterruptTimer.Start();
+            }
+            else if (this.darienInterruptTimer.IsFinished() == false)
+            {
+                this.darienInterruptTimer.Update(delta);
+            }
+        }
+        if (this.darieninterrupt) {
+            if (this.darienstatic.visible == false) {
+                console.log('switch to darien static');
+                this.darienSoftJump.setVisible(true);
+                this.darienstatic.setVisible(true);
+                this.static.setVisible(false);
+                this.darienstatic.anims.play('darienstatic');
+                this.static.anims.stop();
+            }
+        }
+        else {
+            if (this.static.visible == false) {
+                console.log('back to normal');
+                this.static.setVisible(true);
+                this.darienSoftJump.setVisible(false);
+                this.darienstatic.setVisible(false);
+                this.darienstatic.anims.stop();
+                this.static.anims.play('static');
+            }
+        }
+
         // music box
         if (this.cameraspot == 10)
         {
             if (this.gameScreen.camerabuttonactive > 1 && this.gameScreen.camerabuttonactive < 3 && this.gameScreen.musicTimer._elapsedTime > 0 && this.musicsound.isPlaying == false) this.musicsound.play();
-            if (mouse.leftButtonDown()) {
+            if (mouse.leftButtonDown() && this.darieninterrupt == false) {
                 if (this.musicboxbutton.contains(mouse.x, mouse.y))
                 {
                     this.winding = true;
@@ -425,7 +495,13 @@ export default class cameraScreen extends Phaser.Scene {
             if (this.boxTimeLeft.visible) this.boxTimeLeft.setVisible(false);
         }
         if (this.musicboxbuttontexture.texture.key != (this.winding ? 'boxbuttonhover' : 'boxbutton')) this.musicboxbuttontexture.setTexture(this.winding ? 'boxbuttonhover' : 'boxbutton');
-
+        if (this.gameScreen.animatronics[6].location == 10) {
+            if (this.darienprizecorner.visible == false) this.darienprizecorner.setVisible(true);
+            this.darienprizecorner.setPosition(-this.gameScreen.cameraX - 200 + 406, -this.gameScreen.cameraY + 100 + 350);
+        }
+        else {
+            if (this.darienprizecorner.visible) this.darienprizecorner.setVisible(false);
+        }
     }
     else {
         if (this.musicboxbuttontexture.visible) this.musicboxbuttontexture.setVisible(false);
@@ -474,12 +550,15 @@ export default class cameraScreen extends Phaser.Scene {
                             break;
                             case 1:
                             if (this.gameScreen.animatronics[i].Name == "Misa") background = 'partyroom2misa';
+                            if (this.gameScreen.animatronics[i].Name == "Darien") background = 'partyroom2darienflash';
                             break;
                             case 2:
                             if (this.gameScreen.animatronics[i].Name == "Misa") background = 'partyroom3misa';
+                            if (this.gameScreen.animatronics[i].Name == "Marlon") background = 'partyroom3marlonflash';
                             break;
                             case 3:
                             if (this.gameScreen.animatronics[i].Name == "Misa") background = 'partyroom4misaflash';
+                            if (this.gameScreen.animatronics[i].Name == "Darien") background = 'partyroom4darienflash';
                             break;
                             case 4: 
                             if (this.gameScreen.animatronics[i].Name == "Juan") background = 'leftventjuan';
@@ -488,12 +567,21 @@ export default class cameraScreen extends Phaser.Scene {
                             case 5: 
                             if (this.gameScreen.animatronics[i].Name == "Misa") background = 'rightventmisa';
                             if (this.gameScreen.animatronics[i].Name == "Gustavo") background = 'rightventgooch';
+                            if (this.gameScreen.animatronics[i].Name == "Darien") background = 'rightventdarien';
                             break;
                             case 6:
                             if (this.gameScreen.animatronics[i].Name == "Juan") background = 'mainhalljuanflash';
+                            if (this.gameScreen.animatronics[i].Name == "Marlon") background = 'mainhallmarlonflash';
                             break;
                             case 7:
-                            if (this.gameScreen.animatronics[i].Name == "Nasir") background = 'partsflashnas';
+                            if (this.gameScreen.animatronics[i].Name == "Nasir") {
+                                animatronicscount--;
+                                animatronicsIDcount -= 5; // don't include nas until he's alone
+                                background = 'partsflashnas';
+                            }
+                            if (animatronicsIDcount == 8) background = 'partsflashdarien';
+                            if (animatronicsIDcount == 9) background = 'partsflashmarlon';
+                            if (animatronicsIDcount == 17 && animatronicscount == 2) background = 'partsflashdarienmarlon';
                             break;
                             case 8: 
                             if (animatronicsIDcount == 1) background = 'stagemisa';
@@ -527,8 +615,9 @@ export default class cameraScreen extends Phaser.Scene {
                     {
                         animatronicsIDcount += this.gameScreen.animatronics[i].ID;
                         animatronicscount++;
-                        if (this.cameraspot == 8) // stage with animatronic
+                        switch (this.cameraspot) // stage with animatronic
                         {
+                            case 8:
                             if (animatronicsIDcount == 1) background = 'stagemisa';
                             if (animatronicsIDcount == 2) background = 'stagejuan';
                             if (animatronicsIDcount == 3 && animatronicscount == 2) background = 'stagemisajuan';
@@ -536,18 +625,23 @@ export default class cameraScreen extends Phaser.Scene {
                             if (animatronicsIDcount == 4) background = 'stagemisaramiro';
                             if (animatronicsIDcount == 5) background = 'stagejuanramiro';
                             if (animatronicsIDcount == 6) background = 'stagefull';
-                        }
-                        if (this.cameraspot == 3) // partyroom4 with animatronic
-                        {
+                            break;
+                            case 1:
+                            if (this.gameScreen.animatronics[i].Name == "Darien") background = 'partyroom2darien';
+                            break;
+                            case 2:
+                            if (this.gameScreen.animatronics[i].Name == "Marlon") background = 'partyroom3marlon';
+                            break;
+                            case 3:
                             if (this.gameScreen.animatronics[i].Name == "Misa") background = 'partyroom4misa';
-                        }
-                        if (this.cameraspot == 6) // mainhall with animatronic
-                        {
+                            if (this.gameScreen.animatronics[i].Name == "Darien") background = 'partyroom4darien';
+                            break;
+                            case 6:
                             if (this.gameScreen.animatronics[i].Name == "Juan") background = 'mainhalljuan';
-                        }
-                        if (this.cameraspot == 9)
-                        {
+                            break;
+                            case 9:
                             if (this.gameScreen.animatronics[i].Name == "Carlos") background = 'gamescornercarlos';
+                            break;
                         }
                     }
             }
