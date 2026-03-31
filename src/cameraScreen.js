@@ -53,7 +53,7 @@ export default class cameraScreen extends Phaser.Scene {
             'mainhall',
             'parts',
             'stage',
-            'gamescorner',
+            'gamescorner', 
             'prizecorner',
             'kidscove'
     ];
@@ -61,7 +61,6 @@ export default class cameraScreen extends Phaser.Scene {
   }
   preload() {
         this.winding = false;
-        // this.cameraAmbience = this.gameScreen.GetId("cameras.mp3");
         this.waitTimer = new timer(1500);
         this.waitTimer.Start();
   }
@@ -147,6 +146,7 @@ export default class cameraScreen extends Phaser.Scene {
     this.blip = this.sound.add("blip");
     this.cameraambience = this.sound.add("cameras");
     this.musicsound = this.sound.add("wind");
+    this.windup = this.sound.add("windup");
     this.garble = this.sound.add("garble");
     this.musicboxbuttontexture = this.add.image(this.musicboxbutton.x + 78, this.musicboxbutton.y + 32, 'boxbutton').setVisible(false);
     this.musicboxtext = this.add.image(this.musicboxbutton.x + 78, this.musicboxbutton.y + 25, 'wind').setVisible(false);
@@ -304,7 +304,7 @@ export default class cameraScreen extends Phaser.Scene {
                     if (this.gameScreen.musicTimer._elapsedTime > 200) {
                         this.gameScreen.musicTimer.RemoveTime(delta * 5.9);
                         this.drawChange = true;
-                        // this.gameScreen.PlaySound(this.gameScreen.windup);
+                        if (this.windup.isPlaying == false) this.windup.play();
                     }
                     else {
                         // if (this.musicsound.isPlaying) this.musicsound.stop();
@@ -321,7 +321,7 @@ export default class cameraScreen extends Phaser.Scene {
         {
             if (this.winding)
             {
-                // this.gameScreen.StopSound(this.gameScreen.windup);
+                if (this.windup.isPlaying == false) this.windup.stop();
             }
             if (this.musicsound.isPlaying) this.musicsound.pause();
             this.winding = false;

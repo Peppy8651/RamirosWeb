@@ -284,7 +284,16 @@ export default class gameScreen extends Phaser.Scene {
     this.jackinthebox = this.sound.add('jackinthebox');
     this.jumpscare = this.sound.add('jumpscare');
     this.metalwalk = this.sound.add('metalwalk');
+    this.garble = this.sound.add('garble');
     this.ventwalk = this.sound.add('ventwalk');
+    this.carlos1 = this.sound.add('carlos1');
+    this.carlos2 = this.sound.add('carlos2');
+    this.carlos3 = this.sound.add('carlos3');
+
+    // phone guy
+    this.phoneguy1 = this.sound.add('misael');
+    this.phoneguy2 = this.sound.add('misael2');
+
     this.keyShift = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SHIFT);
     this.keyPlus = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.PLUS);
     this.cursorKeys = this.input.keyboard.createCursorKeys(); // Helper for arrow keys, space, and shift
@@ -316,6 +325,7 @@ export default class gameScreen extends Phaser.Scene {
     this.yellowtriangle = this.add.image(1024 - 75, 768 - 110, "yellowtriangle");
     this.yellowtriangle.setVisible(false);
     this.yellowtriangle.setAlpha(0);
+    this.mutecall = this.add.image(this.muteCallButton.x + 45, this.muteCallButton.y + 10, "mutecall");
     this.fpsText = document.getElementById("fps");
 
   }
@@ -328,8 +338,48 @@ export default class gameScreen extends Phaser.Scene {
         }
 //                 // Unpaused/main game
         if (this.pause == false) {
+            // sounds
             if (this.fanSound.isPlaying == false) {
                 this.fanSound.play();
+            }
+            if (this.danger > 0)
+                    {
+                        if (this.dangerSound.isPlaying == false) {
+                            console.log('danger played');
+                            this.dangerSound.play();
+                        }
+                    }
+                    else
+                    {
+                        if (this.dangerSound.isPlaying) {
+                            console.log('danger stopped');
+                            this.dangerSound.stop();
+                        }
+                    }
+            if (this.phoneHasPlayed == false) {
+                this.phoneHasPlayed = true;
+                console.log('phone played');
+                switch (this.nightnum) {
+                    case 1:
+                        this.phoneguy1.play();
+                    break;
+                    case 2:
+                        this.phoneguy2.play();
+                    break;
+                }
+            }
+            else {
+                if (this.muteCallButton.contains(mouse.x + 15, mouse.y) && mouse.leftButtonDown()) {
+                    switch (this.nightnum) {
+                        case 1:
+                            if (this.phoneguy1.isPlaying) this.phoneguy1.stop();
+                        break;
+                        case 2:
+                            if (this.phoneguy2.isPlaying) this.phoneguy2.stop();
+                        break;
+                    }
+
+                }
             }
                     // mask
             if (this.screenState == 0) {
@@ -351,20 +401,7 @@ export default class gameScreen extends Phaser.Scene {
                 {
                         this.camCooldown.Update(delta);
                 }
-                    if (this.danger > 0)
-                    {
-                        if (this.dangerSound.isPlaying == false) {
-                            console.log('danger played');
-                            this.dangerSound.play();
-                        }
-                    }
-                    else
-                    {
-                        if (this.dangerSound.isPlaying) {
-                            console.log('danger stopped');
-                            this.dangerSound.stop();
-                        }
-                    }
+                    
                 if (this.camCooldown != null && this.camCooldown.IsFinished())
                 {
                         this.cameraopen.setVisible(false);
@@ -400,7 +437,10 @@ export default class gameScreen extends Phaser.Scene {
                     if (this.stare) {
                         if (this.stareRectangle.alpha >= 1) this.stareRectangle.alpha -= 1;
                         this.stareRectangle.alpha += delta * 0.008;
-                        if (this.stareSound.isPlaying == false) this.stareSound.play();
+                        if (this.stareSound.isPlaying == false) {
+                            console.log('stare played');
+                             this.stareSound.play();
+                        }
                     }
                     else {
                         if (this.stareRectangle.alpha != 0) this.stareRectangle.alpha = 0;
@@ -719,22 +759,27 @@ export default class gameScreen extends Phaser.Scene {
                 this.jackPlayed = true;
                 if (this.yellowtriangle.visible) this.yellowtriangle.setVisible(false);
                 let jackTimer = new timer(2000);
-                let jackTimer2 = new timer(Math.random() < 0.5 ? 4000 : 6000);
+                let jackTimer2 = new timer(Math.random() < 0.5 ? 2000 : 3000);
                 jackTimer2.finishCallback = () =>
                 {
-                        if (this.jackinthebox.isPlaying) this.jackinthebox.stop();
-                        jackTimer = null;
-                        jackTimer2 = null;
-                        if (this.jumpscareID == 0) {
-                             this.jumpscareID = 4;
+                        if (this.jackinthebox.isPlaying) {
+                            this.jackinthebox.stop();
+                            if (this.jumpscareID == 0) {
+                            this.jumpscareID = 4;
                             this.switchScreenState(2);
-                        }
+                            }
+                        } 
+
                 };
-                this.timers.push(jackTimer2);
                 jackTimer.Start();
                 jackTimer.finishCallback = async () => {
-                    if (this.jackinthebox.isPlaying == false) this.jackinthebox.play();
-                    jackTimer2.Start();
+                    if (this.jackinthebox.isPlaying == false) {
+                        this.jackinthebox.play();
+                        jackTimer = null;
+                        jackTimer2.Start();
+                        this.timers.push(jackTimer2);
+                    }
+
                 };
                 this.timers.push(jackTimer);
                 }
@@ -832,8 +877,13 @@ export default class gameScreen extends Phaser.Scene {
             if (this.hourNumShow.texture.key != 'num' + (1)) this.hourNumShow.setTexture('num' + (1));
             if (this.hourNumShow2.texture.key != 'num' + (2)) this.hourNumShow2.setTexture('num' + (2));
         }
-       
+       if (this.phoneguy1.isPlaying || this.phoneguy2.isPlaying) {
+         if (this.mutecall.visible == false) this.mutecall.setVisible(true);
        }
+       else {
+        if (this.mutecall.visible) this.mutecall.setVisible(false);
+       }
+    }
        switchScreenState(num)
         {
         switch (num)
@@ -886,6 +936,15 @@ export default class gameScreen extends Phaser.Scene {
             console.log("Jumpscared by: "+ this.jumpscareID);
             this.blackRectangle.setAlpha(1);
             // this.jumpscareimg.setVisible(true);
+            switch (this.nightnum) {
+                case 1:
+                    if (this.phoneguy1.isPlaying) this.phoneguy1.stop();
+                break;
+                case 2:
+                    if (this.phoneguy2.isPlaying) this.phoneguy2.stop();
+                break;
+            }
+            this.phoneHasPlayed = false;
             let newtimer = new timer(2000);
             newtimer.playWhenPaused = true;
             newtimer.finishCallback = async () =>
@@ -895,6 +954,11 @@ export default class gameScreen extends Phaser.Scene {
             };
             newtimer.Start();
             this.timers.push(newtimer);
+            let cameraScreen2 = this.scene.get('cameraScreen');
+            if (cameraScreen2.musicsound != null && cameraScreen2.musicsound.isPlaying) cameraScreen2.musicsound.stop();
+            if (cameraScreen2.cameraambience != null && cameraScreen2.cameraambience.isPlaying) cameraScreen2.cameraambience.stop();
+            if (cameraScreen2.garble != null && cameraScreen2.garble.isPlaying) cameraScreen2.garble.stop();
+            if (this.stareSound != null && this.stareSound.isPlaying) this.stareSound.stop();
             // StopSound(windsound);
             break;
             case 3:
@@ -986,6 +1050,13 @@ export default class gameScreen extends Phaser.Scene {
                     this.switchScreenState(3);
                 }; 
             winScreen.changeTimer.Start();
+            if (this.screenState == 1) {
+                let cameraScreen2 = this.scene.get('cameraScreen');
+                if (cameraScreen2.musicsound != null && cameraScreen2.musicsound.isPlaying) cameraScreen2.musicsound.stop();
+                if (cameraScreen2.cameraambience != null && cameraScreen2.cameraambience.isPlaying) cameraScreen2.cameraambience.stop();
+                if (cameraScreen2.garble != null && cameraScreen2.garble.isPlaying) cameraScreen2.garble.stop();
+                this.scene.sleep('cameraScreen');
+            } 
             this.scene.switch('winScreen');
             break;
         }

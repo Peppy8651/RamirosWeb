@@ -260,10 +260,13 @@ export default class Animatronic {
                     case 6:
                         break;
                 }
-                // if (this.Name == "Carlos" && this.location == 14)
-                // {
-                //     if (this.game.carlos3.State != SoundState.Playing) this.game.carlos3.Play();
-                // }
+                if (this.Name == "Carlos" && this.location == 14)
+                {
+                    if (this.gameScreen.carlos3.isPlaying == false) {
+                        console.log('carlos is laughing lol');
+                        this.gameScreen.carlos3.play();
+                    } 
+                }
             }
             if (this.cameraScreen.camFlashOn && this.location == this.cameraScreen.cameraspot) // reset timer and stuff by flashing
             {
@@ -294,7 +297,7 @@ export default class Animatronic {
                         this.x -= (delta * this.scrollspeed);
                         // if (this.gameScree.stare.State != SoundState.Playing)
                         // {
-                        //     this.game.stare.Play();
+                        //     this.game.stare.play();
                         // }
                         if (this.x < -800)
                         {
@@ -305,7 +308,7 @@ export default class Animatronic {
                             this.x = 0 + 600;
                             this.movementOpportunityTime = 5000;
                             this.movementActive = false;
-                            // game.ventwalk.Play();
+                            this.gameScreen.ventwalk.play();
                             // game.stare.Stop();
                             this.AInum = 0;
                             this.gameScreen.danger = 0;
@@ -331,7 +334,7 @@ export default class Animatronic {
                         // I am just lazy  
                         // if (this.gameScreen.stare.State != SoundState.Playing)
                         // {
-                        //     this.gameScreen.stare.Play();
+                        //     this.gameScreen.stare.play();
                         // }
                         this.maskTimer.Update(delta);
                     }
@@ -463,7 +466,7 @@ export default class Animatronic {
                 // lowkey just repeat this code for ramiro
                 if (this.Name == "Ramiro" && this.location == 16)
                 {
-                    if (this.officeAnimatronicsRNGAttemptMade == false && this.gameScreen.camerabuttonactive == 3 && this.gameScreen.animatronics[6].location != 14)
+                    if (this.officeAnimatronicsRNGAttemptMade == false && this.gameScreen.camerabuttonactive == 3 && this.gameScreen.animatronics[6].location != 14 && this.gameScreen.animatronics[4].location != 14)
                     {
                         this.officeAnimatronicsRNGAttemptMade = true;
                         this.officeAnimatronicsRNG = Math.random() * 10;
@@ -474,7 +477,7 @@ export default class Animatronic {
                     }
                     if (this.officeAnimatronicsRNG >= 6 && this.gameScreen.camerabuttonactive == 3) // makes it a bit more unpredictable, waits for darien to leave
                     {
-                        // this.gameScreen.stare.Play();
+                        // this.gameScreen.stare.play();
                         this.movementActive = true;
                         this.location = 14; // he's about to jumpscare
                         this.gameScreen.stare = true;
@@ -516,8 +519,8 @@ export default class Animatronic {
                     if (this.gameScreen.animatronics[6].location != 14)
                     {
                         this.officeAnimatronicsRNGAttemptMade = true;
-                        //this.gameScreen.stare.Play();
-                        //this.gameScreen.darienlaugh2.Play();
+                        //this.gameScreen.stare.play();
+                        //this.gameScreen.darienlaugh2.play();
                         this.movementActive = true;
                         this.gameScreen.stare = true;
                         this.location = 14; // he's about to jumpscare
@@ -575,7 +578,7 @@ export default class Animatronic {
                     }
                     if (this.officeAnimatronicsRNG >= 5 && this.gameScreen.camerabuttonactive == 3) // final attack attempt
                     {
-                        //this.gameScreen.stare.Play();
+                        //this.gameScreen.stare.play();
                         this.movementActive = true;
                         this.location = 14; // he's about to jumpscare
                         let jumpscareInterval = Math.random() < 0.5 ? 4000 : 9000;
@@ -651,10 +654,11 @@ export default class Animatronic {
                     {
                         this.cameraLookingTimer.Reset();
                     }
-                    // if (this.Name == "Gustavo" && this.gameScreen.garble.State != SoundState.Playing)
-                    // {
-                    //     this.gameScreen.garble.Play();
-                    // }
+                    if (this.Name == "Gustavo" && this.gameScreen.garble.isPlaying == false)
+                    {
+                        console.log('gustavo is garbling lol');
+                        this.gameScreen.garble.play();
+                    }
                 }
         } 
         
@@ -693,7 +697,7 @@ movementOpportunity()
                                 this.location = 6;
                                 this.gameScreen.stare = false;
                                 this.movementActive = false;
-                                //this.gameScreen.ventwalk.Play();
+                                this.gameScreen.ventwalk.play();
                                 //this.gameScreen.stare.Stop();
                                 this.AInum = 0;
                                 this.gameScreen.danger = 0;
@@ -710,7 +714,7 @@ movementOpportunity()
                                 this.location = 9;
                                 this.movementActive = false;
                                 this.gameScreen.stare = false;
-                                // this.gameScreen.ventwalk.Play();
+                                this.gameScreen.ventwalk.play();
                                 this.AInum = 0;
                                 this.gameScreen.danger = 0;
                                 if (this.gameScreen.screenState == 0) this.gameScreen.drawChange = true;
@@ -726,7 +730,7 @@ movementOpportunity()
                                 this.location = 11;
                                 this.movementActive = false;
                                 this.gameScreen.stare = false;
-                                // this.gameScreen.ventwalk.Play();
+                                this.gameScreen.ventwalk.play();
                                 this.AInum = 0;
                                 this.gameScreen.danger = 0;
                                 if (this.gameScreen.screenState == 0) this.gameScreen.drawChange = true;
@@ -743,37 +747,37 @@ movementOpportunity()
                         if ((this.ID < 3 || this.ID == 7 || this.ID == 6) && index != this.movementPath.length - 2) {
                             this.location = this.movementPath[index + 1];
 
-                            // if (this.Name == "Gustavo") // just plays anytime he moves i guess
-                            // {
-                            //     if (this.location != 4 && this.location != 5 && this.location != 12 && this.location != 13)
-                            //     {
-                            //         this.gameScreen.metalwalk.Play();
-                            //     }
-                            // }
-                            // if (this.Name == "Carlos")
-                            // {
-                            //     switch (Math.floor(Math.random() * 3) + 1)
-                            //     {
-                            //         case 2:
-                            //         this.gameScreen.carlos2.Play();
-                            //         break;
-                            //         case 3:
-                            //         this.gameScreen.carlos3.Play();
-                            //         break;
-                            //         default:
-                            //         this.gameScreen.carlos1.Play();
-                            //         break;
-                            //     }
+                            if (this.Name == "Gustavo") // just plays anytime he moves i guess
+                            {
+                                if (this.location != 4 && this.location != 5 && this.location != 12 && this.location != 13)
+                                {
+                                    this.gameScreen.metalwalk.play();
+                                }
+                            }
+                            if (this.Name == "Carlos")
+                            {
+                                switch (Math.floor(Math.random() * 3) + 1)
+                                {
+                                    case 2:
+                                    this.gameScreen.carlos2.play();
+                                    break;
+                                    case 3:
+                                    this.gameScreen.carlos3.play();
+                                    break;
+                                    default:
+                                    this.gameScreen.carlos1.play();
+                                    break;
+                                }
 
-                            // }
-                            // if (this.location == 4 || this.location == 5)
-                            // {
-                            //     this.gameScreen.ventwalk.Play();
-                            // }
-                            // if (this.location == 12 || this.location == 13) // vent locations
-                            // {
-                            //     this.gameScreen.metalwalk.Play();
-                            // }
+                            }
+                            if (this.location == 4 || this.location == 5)
+                            {
+                                this.gameScreen.ventwalk.play();
+                            }
+                            if (this.location == 12 || this.location == 13) // vent locations
+                            {
+                                this.gameScreen.metalwalk.play();
+                            }
                             this.moved = true;
                             console.log(this.Name + " movement successful");
                             if (this.gameScreen.screenState == 0) this.gameScreen.drawChange = true;
