@@ -29,6 +29,7 @@ export default class menuScreen extends Phaser.Scene {
     this.load.image("titlepicblack", '/images/titlepicblack.png');
     this.load.image('firstnight', '/images/menu/nights/firstnight.png');
     this.load.image('secondnight', "/images/menu/nights/secondnight.png");
+    this.load.audio('blip', '/audio/blip.mp3');
     for (let i = 1; i <= 6; i++) {
             this.load.image(`static${i}`, `/images/cameras/static/${i}.png`);
             this.load.image(`staticSwitch${i}`, `/images/cameras/staticswitch/${i}.png`);
@@ -83,6 +84,7 @@ export default class menuScreen extends Phaser.Scene {
         this.firstnight = this.add.image(1024/2 - 275, 768 / 2 + 50, 'firstnight').setVisible(false);
         this.secondnight = this.add.image(1024/2 - 275, 768 / 2 + 50 + 42, 'secondnight').setVisible(false);
         this.logo = this.add.image(1024 / 2 - 300, 768 / 2 - 260, "logo");
+        this.blip = this.sound.add('blip');
         this.nightOpenTimer = new timer(3000);
         this.nightOpenTimer.finishCallback = () => { // start night
             // if (game.blip.State == SoundState.Playing) game.blip.Stop();
@@ -149,7 +151,7 @@ export default class menuScreen extends Phaser.Scene {
                         this.gameScreen.nightnum = this.nightSelected;
                         // this.Mouse.SetPosition( (int) (((game.width / 2)) * game.gameScreen.widthStretch), (int) (((game.height / 2)) * game.gameScreen.heightStretch));
                         // menuMusic.Stop();
-                        // game.blip.Play();
+                        if (this.blip.isPlaying == false) this.blip.play();
                         this.nightOpen = true;
                         this.drawChange = true;
                         this.switchstatic.play('switchstatic');
@@ -178,7 +180,7 @@ export default class menuScreen extends Phaser.Scene {
                     //     optionSelected = 1;
                     // }
                     // switchStatic = 16;
-                    // game.blip.Play();
+                    if (this.blip.isPlaying == false) this.blip.play();
                     this.buttonCooldown = new timer(400);
                     this.buttonCooldown.Start();
                 } 

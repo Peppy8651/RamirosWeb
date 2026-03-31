@@ -69,7 +69,6 @@ export default class Animatronic {
             case "Gustavo":
                 this.ID = 6;
                 this.movementPath = [11, 10, 9, 6, 15, 0, 1, 5, 12, 14];
-                this.movementPath = [14];
             break;
             case "Carlos":
                 this.ID = 7;
@@ -853,10 +852,7 @@ movementOpportunity()
     // public void Draw()
     // {
     //     // Draw animatronic sprite if attacking
-    //     if (Name == "Carlos" && location == 14)
-    //     {
-    //         game._spriteBatch.Draw(game.carlos, new Vector2(-game.cameraX + 100, -game.cameraY + 225), Color.White);
-    //     }
+    //     
     //     if (Name == "Darien" && location == 14)
     //     {
     //         game._spriteBatch.Draw(game.darien, new Vector2(-game.cameraX + 400, -game.cameraY + 200), Color.White);

@@ -87,7 +87,7 @@ export default class cameraScreen extends Phaser.Scene {
 
 
     this.background = this.add.image(this.gameScreen.width/2, this.gameScreen.height/2, 'stage');
-    this.gooch = this.add.image(-this.gameScreen.cameraX + 800 -297, -this.gameScreen.cameraY + 400 -226, 'prizecornergooch').setVisible(false);
+    this.gooch = this.add.image(-this.gameScreen.cameraX + 800 +297, -this.gameScreen.cameraY + 400 +226, 'prizecornergooch').setVisible(false);
     this.stageFlash = this.add.image(-this.gameScreen.cameraX +500, -this.gameScreen.cameraY + 500, 'flashlighttex').setDisplaySize(966,963);
     this.stageFlash.setVisible(false);
     this.stageFlash.setAlpha(0.5);
@@ -134,16 +134,20 @@ export default class cameraScreen extends Phaser.Scene {
     {
       if (i == 8)
       {
-           this.maplocationtextures[i] = this.add.image(this.maplocationbuttons[i].x, this.maplocationbuttons[i].y, 'locationspot');
+           this.maplocationtextures[i] = this.add.image(this.maplocationbuttons[i].x + 5,  this.maplocationbuttons[i].y, 'locationspot');
       }
       else
       {
-          this.maplocationtextures[i] = this.add.image(this.maplocationbuttons[i].x, this.maplocationbuttons[i].y, 'locationbox');
+          this.maplocationtextures[i] = this.add.image(this.maplocationbuttons[i].x + 5, this.maplocationbuttons[i].y, 'locationbox');
       }
         this.camNameTextures[i] = this.add.image(this.maplocationbuttons[i].x, this.maplocationbuttons[i].y, `cam${i+1}`);
         this.locationNameTextures[i] = this.add.image(this.gameScreen.camerarect.x + 55, this.gameScreen.height - this.gameScreen.camerarect.height - 390, `camName${i+1}`);
         this.locationNameTextures[i].setVisible(false);
     }
+    this.blip = this.sound.add("blip");
+    this.cameraambience = this.sound.add("cameras");
+    this.musicsound = this.sound.add("wind");
+    this.garble = this.sound.add("garble");
     this.musicboxbuttontexture = this.add.image(this.musicboxbutton.x + 78, this.musicboxbutton.y + 32, 'boxbutton').setVisible(false);
     this.musicboxtext = this.add.image(this.musicboxbutton.x + 78, this.musicboxbutton.y + 25, 'wind').setVisible(false);
     this.border = this.add.image(1024 /2, 768 /2, 'border');
@@ -164,6 +168,10 @@ export default class cameraScreen extends Phaser.Scene {
     else {
       this.switchStatic = false;
       this.switchstatic.visible = true;
+    }
+    if (this.cameraambience.isPlaying == false) {
+        console.log('camera ambience played');
+                this.cameraambience.play();
     }
     // getBackground();
     //     // cameramovement
@@ -249,6 +257,9 @@ export default class cameraScreen extends Phaser.Scene {
                 {
                         this.gameScreen.monitorclosed.play();
                         this.gameScreen.camerabuttonactive = 3;
+                        if (this.musicsound.isPlaying) this.musicsound.stop();
+                        if (this.cameraambience.isPlaying) this.cameraambience.stop();
+                        if (this.garble.isPlaying) this.garble.stop();
                 }
                 if (this.gameScreen.camerabuttonactive == 3)
                 {
@@ -273,8 +284,8 @@ export default class cameraScreen extends Phaser.Scene {
                       {
                           this.oldcameraspot = this.cameraspot;
                           this.cameraspot = i;
-                          // this.gameScreen.PlaySound(this.gameScreen.blip);
-                          // if (this.cameraspot == 10 && this.gameScreen.musicTimer.ElapsedTime > TimeSpan.Zero) this.gameScreen.PlaySound(this.gameScreen.windsound, true);
+                          if (this.blip.isPlaying == false) this.blip.play();
+                          if (this.cameraspot == 10 && this.gameScreen.musicTimer._elapsedTime > 0 && this.musicsound.isPlaying == false) this.musicsound.play();
                           this.switchStatic = true;
                           this.switchstatic.anims.play('switchstatic', true);
                           this.drawChange = true;
@@ -285,17 +296,18 @@ export default class cameraScreen extends Phaser.Scene {
         // music box
         if (this.cameraspot == 10)
         {
+            if (this.gameScreen.camerabuttonactive > 1 && this.gameScreen.camerabuttonactive < 3 && this.gameScreen.musicTimer._elapsedTime > 0 && this.musicsound.isPlaying == false) this.musicsound.play();
             if (mouse.leftButtonDown()) {
                 if (this.musicboxbutton.contains(mouse.x, mouse.y))
                 {
                     this.winding = true;
-                    if (this.gameScreen.musicTimer._elapsedTime >= 0) {
+                    if (this.gameScreen.musicTimer._elapsedTime > 200) {
                         this.gameScreen.musicTimer.RemoveTime(delta * 5.9);
                         this.drawChange = true;
                         // this.gameScreen.PlaySound(this.gameScreen.windup);
                     }
                     else {
-                        // this.gameScreen.StopSound(this.gameScreen.windsound);
+                        // if (this.musicsound.isPlaying) this.musicsound.stop();
                     }
                     // i know it says remove time, but it adds time to the music box timer
                 }
@@ -311,15 +323,15 @@ export default class cameraScreen extends Phaser.Scene {
             {
                 // this.gameScreen.StopSound(this.gameScreen.windup);
             }
-            // this.gameScreen.PauseSoundAsync(this.gameScreen.windsound);
-            // this.winding = false;
+            if (this.musicsound.isPlaying) this.musicsound.pause();
+            this.winding = false;
         }
         if (this.gameScreen.musicTimer.IsFinished())
         {
             this.gameScreen.musicTimer.Stop();
             if (this.yellowtriangle.visible) this.yellowtriangle.setVisible(false);
             this.gameScreen.musicTimer.SetTargetTime(0);
-            // this.gameScreen.StopSound(this.gameScreen.windsound);
+            if (this.musicsound.isPlaying) this.musicsound.stop();
             this.winding = false;
         }
         var remainingTime = this.gameScreen.musicTimer.RemainingTime();
@@ -330,51 +342,27 @@ export default class cameraScreen extends Phaser.Scene {
                             if (this.yellowtriangle.alpha >= 1) this.yellowtriangle.alpha -= 1;
                             this.yellowtriangle.alpha += delta * 0.008;
                             if (this.yellowtriangle.texture.key == 'yellowtriangle') this.yellowtriangle.setTexture('redtriangle');
-                            // this.yellowtriangle.alpha = this.triangleflash;
                             break;
                             case (remainingTime > 5000 && remainingTime < 12500):
                             this.yellowtriangle.alpha += delta * 0.003;
                             if (this.yellowtriangle.alpha >= 1) this.yellowtriangle.alpha -= 1;
                             if (this.yellowtriangle.visible == false) this.yellowtriangle.setVisible(true);
                             if (this.yellowtriangle.texture.key != 'yellowtriangle') this.yellowtriangle.setTexture('yellowtriangle');
-                            // this.yellowtriangle.alpha = this.triangleflash;
                             break;
                             default:
                             if (this.yellowtriangle.visible) this.yellowtriangle.setVisible(false);
                             break;
                         }
         
-    //         if (this.gameScreen.animatronics[3].location == cameraspot) {
-    //             // I'm lazy so I'm just going to add this sound code here
-
-    //             if (this.gameScreen.animatronics[3].garblePlaying == false) {
-    //                 this.gameScreen.PlaySound(this.gameScreen.garble);
-    //                 this.gameScreen.animatronics[3].garblePlaying = true;
-    //                 garbleTimer = new RamirosWeb.Timer(TimeSpan.FromMilliseconds(3100));
-    //                 garbleTimer.finishCallback = () =>
-    //                 {
-    //                     this.gameScreen.animatronics[3].garblePlaying = false;
-    //                     garbleTimer = null;
-    //                 };
-    //                 garbleTimer.Start();
-    //             }
-    //             else
-    //             {
-    //                 if (garbleTimer != null && garbleTimer.IsRunning)
-    //                 {
-    //                     garbleTimer.Update(elapsedMs);
-    //                 }
-    //             }
-    //         }
-    //         else
-    //         {
-    //             if (this.gameScreen.animatronics[3].garblePlaying == true)
-    //             {
-    //                 this.gameScreen.StopSound(this.gameScreen.garble);
-    //                 this.gameScreen.animatronics[3].garblePlaying = false;
-    //                 garbleTimer = null;
-    //             }
-    //         }
+            if (this.gameScreen.screenState == 1 && this.gameScreen.animatronics[3].location == this.cameraspot) {
+                if (this.garble.isPlaying == false) {
+                    console.log('gooch garble playing');
+                    this.garble.play();
+                } 
+            }
+            else {
+                if (this.garble.isPlaying) this.garble.stop();
+            }
         if (this.drawChange == true) this.drawUpdate();
   }
   drawUpdate() {
@@ -394,25 +382,31 @@ export default class cameraScreen extends Phaser.Scene {
             if (this.gooch.texture.key != 'prizecornergooch') {
                 this.gooch.setTexture('prizecornergooch');
             }
-            this.gooch.setPosition(-this.gameScreen.cameraX + 800 -297, -this.gameScreen.cameraY + 400 -226);
+            this.gooch.setPosition(-this.gameScreen.cameraX + 800 +297, -this.gameScreen.cameraY + 400 +226);
             break;
             case 9:
             if (this.gooch.texture.key != 'gamescornergooch') {
                 this.gooch.setTexture('gamescornergooch');
             }
-            this.gooch.setPosition(-this.gameScreen.cameraX - 300 - 211, -this.gameScreen.cameraY - 200 - 197);
+            this.gooch.setPosition(-this.gameScreen.cameraX - 300 + 200, -this.gameScreen.cameraY - 200 + 197);
             break;
-            case 6, 0:
+            case 6:
             if (this.gooch.texture.key != 'mainhallgooch') {
                 this.gooch.setTexture('mainhallgooch');
             }
-            this.gooch.setPosition(-this.gameScreen.cameraX + 750 -242, -this.gameScreen.cameraY + 400 - 210);
+            this.gooch.setPosition(-this.gameScreen.cameraX + 750 +242, -this.gameScreen.cameraY + 400 + 210);
+            break;
+            case 0:
+            if (this.gooch.texture.key != 'mainhallgooch') {
+                this.gooch.setTexture('mainhallgooch');
+            }
+            this.gooch.setPosition(-this.gameScreen.cameraX + 750 + 242, -this.gameScreen.cameraY + 400 + 210);
             break;
             case 1:
             if (this.gooch.texture.key != 'partyroom2gooch') {
                 this.gooch.setTexture('partyroom2gooch');
             } 
-            this.gooch.setPosition(-this.gameScreen.cameraX -150 - 121, -this.gameScreen.cameraY + 200 - 278);
+            this.gooch.setPosition(-this.gameScreen.cameraX + 150 + 121, -this.gameScreen.cameraY + 200 + 278);
             break;
         }
     }
@@ -425,7 +419,7 @@ export default class cameraScreen extends Phaser.Scene {
         if (this.musicboxtext.visible == false) this.musicboxtext.setVisible(true);
         if (this.boxTimeLeft.visible == false) this.boxTimeLeft.setVisible(true);
         if (this.gameScreen.musicTimer.IsFinished() == false) {
-            this.boxTimeLeft.setTexture('box' + (22 - Math.floor((this.gameScreen.musicTimer._targetTime - this.gameScreen.musicTimer._elapsedTime) / 2857)));
+            this.boxTimeLeft.setTexture('box' + (21 - Math.floor((this.gameScreen.musicTimer._targetTime - this.gameScreen.musicTimer._elapsedTime) / 2857)));
         }
         else {
             if (this.boxTimeLeft.visible) this.boxTimeLeft.setVisible(false);
