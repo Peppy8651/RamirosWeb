@@ -469,6 +469,9 @@ export default class gameScreen extends Phaser.Scene {
             }
                     // mask
             if (this.screenState == 0) {
+                    if (this.screens[1].darienInterruptWait != null && this.screens[1].darienInterruptWait.IsFinished() == false) {
+                        this.screens[1].darienInterruptWait.Update(delta);
+                    }
                     if (this.maskCooldown != null)
                     {
                         this.maskCooldown.Update(delta);

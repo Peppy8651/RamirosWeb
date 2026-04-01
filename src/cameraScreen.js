@@ -283,7 +283,9 @@ export default class cameraScreen extends Phaser.Scene {
                         if (this.musicsound.isPlaying) this.musicsound.stop();
                         if (this.cameraambience.isPlaying) this.cameraambience.stop();
                         if (this.garble.isPlaying) this.garble.stop();
-                        if (this.darienInterruptWait != null && this.darienInterruptWait.IsFinished()) this.darieninterrupt = false;
+                        if (this.darienInterruptWait != null && this.darienInterruptWait.IsFinished()) {
+                            this.darieninterrupt = false;
+                        } 
                         if (this.darienInterruptTimer != null && this.darienInterruptTimer.IsFinished()) {
                             this.darienInterruptTimer = null;
                         }

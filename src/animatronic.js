@@ -83,6 +83,10 @@ export default class Animatronic {
                 this.movementPath = [7, 6, 2, 15, 16, 14]; // 16 is office hall door
                 this.marlonBlackoutCounter = 0;
                 break;
+            case 'Sergio':
+                this.ID = 10;
+                this.movementPath = [7, 6, 15, 0, 4, 18, 14]; // 18 is left vent queue
+                break;
         }
         this.location = this.movementPath[0];
         this.camTimer = new timer(750);
