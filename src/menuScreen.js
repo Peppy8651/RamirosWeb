@@ -110,7 +110,7 @@ export default class menuScreen extends Phaser.Scene {
                     }
                     break;
                     case 3:
-                    if (this.gameScreen.animatronics[i].Name == "Darien" || this.gameScreen.animatronics[i].Name == "Marlon") this.gameScreen.animatronics[i].Activate();
+                    if (this.gameScreen.animatronics[i].Name != "Gustavo") this.gameScreen.animatronics[i].Activate();
                     // make sure to change this here and in setup game after done with night 3
                     break;
                 }

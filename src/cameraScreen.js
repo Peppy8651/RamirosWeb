@@ -244,7 +244,7 @@ export default class cameraScreen extends Phaser.Scene {
             if (this.gameScreen.animatronics[i].moved)
             {
                 this.animatronicForceOff = true;
-                if (darieninterrupt == false)
+                if (this.darieninterrupt == false)
                 {
                     this.switchstatic.anims.play('switchstatic', true);
                     this.switchStatic = true;
@@ -283,10 +283,6 @@ export default class cameraScreen extends Phaser.Scene {
                         if (this.musicsound.isPlaying) this.musicsound.stop();
                         if (this.cameraambience.isPlaying) this.cameraambience.stop();
                         if (this.garble.isPlaying) this.garble.stop();
-                        if (this.darienInterruptWait != null && this.darienInterruptWait.IsFinished()) this.darieninterrupt = false;
-                        if (this.darienInterruptTimer != null && this.darienInterruptTimer.IsFinished()) {
-                            this.darienInterruptTimer = null;
-                        }
                 }
                 if (this.gameScreen.camerabuttonactive == 3)
                 {
@@ -507,6 +503,7 @@ export default class cameraScreen extends Phaser.Scene {
         if (this.musicboxbuttontexture.visible) this.musicboxbuttontexture.setVisible(false);
         if (this.musicboxtext.visible) this.musicboxtext.setVisible(false);
         if (this.boxTimeLeft.visible) this.boxTimeLeft.setVisible(false);
+        if (this.darienprizecorner.visible) this.darienprizecorner.setVisible(false);
     }
     if (this.battery.texture.key != 'battery' + (this.gameScreen.batterynum+1)) this.battery.setTexture('battery' + (this.gameScreen.batterynum+1));
     this.maplocationtextures[this.cameraspot].setTexture('locationspot');

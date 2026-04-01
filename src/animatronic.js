@@ -83,6 +83,10 @@ export default class Animatronic {
                 this.movementPath = [7, 6, 2, 15, 16, 14]; // 16 is office hall door
                 this.marlonBlackoutCounter = 0;
                 break;
+            case 'Sergio':
+                this.ID = 10;
+                this.movementPath = [7, 6, 15, 0, 4, 18, 14]; // 18 is left vent queue
+                break;
         }
         this.location = this.movementPath[0];
         this.camTimer = new timer(750);
@@ -119,7 +123,7 @@ export default class Animatronic {
                 if (this.Name == "Misa" || this.Name == "Juan" || this.Name == "Ramiro" || this.Name == "Carlos" || this.Name == "Gustavo" || this.Name == "Nasir") this.AInum = 0;
                 break;
             case 3:
-            // Ramiro and Gustavo are not active here btw
+            //  Gustavo is not active here btw
                 if (this.Name == "Misa" || this.Name == "Juan" || this.Name == "Ramiro" || this.Name == "Gustavo" || this.Name == "Marlon") this.AInum = 0;
                 if (this.Name == "Carlos" || this.Name == "Darien") this.AInum = 1;
                 if (this.Name == "Nasir") this.AInum = 2;
@@ -237,18 +241,18 @@ export default class Animatronic {
                         if (this.Name == "Nasir" && this.gameScreen.hournum >= 1) this.AInum = 1;
                         break;
                     case 3:
-                        if (this.Name == "Misa" || this.Name == "Juan")
+                        if (this.Name == "Misa" || this.Name == "Juan" || this.Name == "Ramiro")
                         {
                             if (this.gameScreen.hournum >= 1)
                             {
-                                this.AInum = 1;
+                                this.AInum = 3;
                             }
                         }
                         if (this.Name == "Carlos" || this.Name == "Darien" || this.Name == "Marlon")
                         {
                             if (this.gameScreen.hournum >= 1)
                             {
-                                this.AInum = 2;
+                                this.AInum = 3;
                             }
                         }
                         if (this.Name == "Nasir" && this.gameScreen.hournum >= 1) this.AInum = 3;
@@ -746,7 +750,7 @@ movementOpportunity()
                     }
 
                     let index = this.movementPath.indexOf(this.location);
-                    if (index < this.movementPath.length - 1)
+                    if (index < this.movementPath.length - 2)
                     {
                         if ((this.ID < 3 || this.ID == 7 || this.ID == 6) && index != this.movementPath.length - 2) {
                             this.location = this.movementPath[index + 1];
@@ -857,20 +861,4 @@ movementOpportunity()
             this.movementActive = false;
         }
     }
-    // public void Draw()
-    // {
-    //     // Draw animatronic sprite if attacking
-    //     
-    //     if (Name == "Darien" && location == 14)
-    //     {
-    //         game._spriteBatch.Draw(game.darien, new Vector2(-game.cameraX + 400, -game.cameraY + 200), Color.White);
-    //         game._spriteBatch.Draw(game.darienaura, new Vector2(-game.cameraX + 400 - 140, -game.cameraY + 200 - 140), Color.White * 0.25f);
-    //         game._spriteBatch.Draw(game.blackscreen, new Rectangle(0, 0, game.width, game.height), Color.Red * alphaoverlay);
-    //     }
-    //     if (Name == "Marlon" && location == 14)
-    //     {
-    //         game._spriteBatch.Draw(game.marlonoffice, new Vector2(-game.cameraX + 350, -game.cameraY + 250), Color.White);
-    //         game._spriteBatch.Draw(game.blackscreen, new Rectangle(0, 0, game.width, game.height), Color.Black * alphaoverlay);
-    //     }
-    // }
 }

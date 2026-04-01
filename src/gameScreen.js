@@ -428,6 +428,10 @@ export default class gameScreen extends Phaser.Scene {
                 }
                 
             }
+            
+            if (this.screens[1].darienInterruptWait != null && this.screens[1].darienInterruptWait.IsFinished() == false) {
+                        this.screens[1].darienInterruptWait.Update(delta);
+                    }
             if (this.danger > 0)
                     {
                         if (this.dangerSound.isPlaying == false) {
@@ -483,7 +487,7 @@ export default class gameScreen extends Phaser.Scene {
                         this.freddymask.setVisible(false);
                 }
                    // cam
-                if (this.camCooldown != null)
+                if (this.camCooldown != null && this.camerarect.contains(mouse.x,mouse.y) == false)
                 {
                         this.camCooldown.Update(delta);
                 }
@@ -653,6 +657,10 @@ export default class gameScreen extends Phaser.Scene {
                                 this.cameraopen.setVisible(true);
                                 this.cameraopen.anims.play('camerabuttonactive', true);
                                 this.monitoropen.play();
+                                if (this.screens[1].darienInterruptWait != null && this.screens[1].darienInterruptWait.IsFinished()) this.screens[1].darieninterrupt = false;
+                                if (this.screens[1].darienInterruptTimer != null && this.screens[1].darienInterruptTimer.IsFinished()) {
+                                    this.screens[1].darienInterruptTimer = null;
+                                }
                                 const cameraSwitch = new timer(500);
                                 cameraSwitch.finishCallback = () =>
                                 {
@@ -772,8 +780,8 @@ export default class gameScreen extends Phaser.Scene {
                             changeTimer.playWhenPaused = true;
                             changeTimer.finishCallback = async () => {
                                 this.phoneHasPlayed = false;
-                                if (this.nightnum == 2) this.switchScreenState(5); // win screen
-                                if (this.nightnum == 1)
+                                if (this.nightnum == 3) this.switchScreenState(5); // win screen
+                                if (this.nightnum == 1 || this.nightnum == 2)
                                 {
                                     this.switchScreenState(3);
                                 }
@@ -1096,7 +1104,7 @@ export default class gameScreen extends Phaser.Scene {
                         }
                         break;
                         case 3:
-                        if (this.animatronics[i].Name == "Darien" || this.animatronics[i].Name == "Marlon") this.animatronics[i].Activate();
+                        if (this.animatronics[i].Name != "Gustavo") this.animatronics[i].Activate();
                         // make sure to change this here and in setup game after done with night 3
                         break;
                     }
