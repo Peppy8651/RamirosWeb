@@ -78,6 +78,7 @@ export default class gameScreen extends Phaser.Scene {
     this.animatronics[5] = new Animatronic(this, "Nasir");
     this.animatronics[6] = new Animatronic(this, "Darien");
     this.animatronics[7] = new Animatronic(this, "Marlon");
+    this.animatronics[8] = new Animatronic(this, "Sergio");
   }
   preload() {
         this.leftvent = new Rectangle(-this.cameraX + 75, -this.cameraY + 385, 60, 90);
