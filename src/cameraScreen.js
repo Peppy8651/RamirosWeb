@@ -328,7 +328,7 @@ export default class cameraScreen extends Phaser.Scene {
                     this.switchstatic.anims.play('switchstatic', true);
                     this.switchStatic = true;
                     this.darieninterrupt = true;
-                    this.darienInterruptWait = new timer(2000);
+                    this.darienInterruptWait = new timer(5000);
                     this.darienInterruptWait.Start();
                 };
                 this.darienInterruptTimer.Start();
