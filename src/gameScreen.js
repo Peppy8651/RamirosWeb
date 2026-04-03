@@ -208,6 +208,8 @@ export default class gameScreen extends Phaser.Scene {
         this.load.image("juanjumpscare", "/images/juanjumpscare.png");
         this.load.image("ryan", "/images/ryan.png");
         this.load.image("ramiro", "/images/ramiro.png");
+        this.load.image("sergio", "/images/sergio.png");
+        this.load.image('sergiojump', '/images/sergiojump.png');
         this.load.image("marlonoffice", '/images/marlonoffice.png');
         this.load.image("marlonjump", '/images/marlonjump.png');
         this.load.image("darien", '/images/darien.png');
@@ -233,6 +235,7 @@ export default class gameScreen extends Phaser.Scene {
         this.load.audio("deepbreaths", "/audio/deepbreaths.mp3");
         this.load.audio("misael", "/audio/misael.mp3");
         this.load.audio("misael2", "/audio/misael2.mp3");
+        this.load.audio('feralangelwaltz', '/audio/feralangelwaltz.mp3');
         // deepbreaths.Volume = 0.25f;
         // deepbreaths.IsLooped = false;
         this.load.image("mutecall", "/images/mutecall.png");
@@ -244,6 +247,8 @@ export default class gameScreen extends Phaser.Scene {
     this.leftventtex = this.add.image(-this.cameraX - 150, -this.cameraY + 430, "vents1");
     this.rightventtex = this.add.image(-this.cameraX + this.width + 150, -this.cameraY + 430, "vents3");
     this.carlos = this.add.image(-this.cameraX + 100 + 190, -this.cameraY + 225 + 221, 'carlos').setVisible(false);
+    this.sergio = this.add.image(-this.cameraX + 400, -this.cameraY + 250, 'sergio').setVisible(false);
+    this.sergio.setDisplaySize(this.sergio.width * 0.5, this.sergio.height * 0.5);
     this.marlon = this.add.image(-this.cameraX + 350, -this.cameraY + 250, 'marlonoffice').setVisible(false);
     this.darien = this.add.image(-this.cameraX + 400 + 123, -this.cameraY + 200 + 265, 'darien').setVisible(false);
     this.darienaura = this.add.image(-this.cameraX + 400 - 140, -this.cameraY + 200 - 140, 'darienaura').setVisible(false);
@@ -445,6 +450,12 @@ export default class gameScreen extends Phaser.Scene {
                     if (this.jumpscaretex.texture.key != 'marlonjump') this.jumpscaretex.setTexture('marlonjump');
                     if (this.jumpscareScale < 1) this.jumpscareScale += 0.2;
                     this.jumpscaretex.setPosition(100 + (this.jumpscaretex.width/2), 0 + (this.jumpscaretex.height/2));
+                    this.jumpscaretex.setDisplaySize(this.jumpscaretex.width * this.jumpscareScale, this.jumpscaretex.height * this.jumpscareScale);
+                    break;
+                    case 10:
+                    if (this.jumpscaretex.texture.key != 'sergiojump') this.jumpscaretex.setTexture('sergiojump');
+                    if (this.jumpscareScale < 1.4) this.jumpscareScale += 0.2;
+                    this.jumpscaretex.setPosition(100 + (this.jumpscaretex.width/2), -100 + (this.jumpscaretex.height/2));
                     this.jumpscaretex.setDisplaySize(this.jumpscaretex.width * this.jumpscareScale, this.jumpscaretex.height * this.jumpscareScale);
                     break;
                 }
@@ -803,9 +814,10 @@ export default class gameScreen extends Phaser.Scene {
                             changeTimer.playWhenPaused = true;
                             changeTimer.finishCallback = async () => {
                                 this.phoneHasPlayed = false;
-                                if (this.nightnum == 3) this.switchScreenState(5); // win screen
-                                if (this.nightnum == 1 || this.nightnum == 2)
-                                {
+                                if (this.nightnum == 5) {
+                                    this.switchScreenState(5); // win screen
+                                }
+                                else {
                                     this.switchScreenState(3);
                                 }
                             };
@@ -938,6 +950,13 @@ export default class gameScreen extends Phaser.Scene {
         else {
             if (this.marlon.visible) this.marlon.setVisible(false);
         }
+        if (this.animatronics[8].location == 14) {
+            if (this.sergio.visible == false) this.sergio.setVisible(true);
+            this.sergio.setPosition(-this.cameraX + 350 + 200, -this.cameraY + 250 + 263);
+        }
+        else {
+            if (this.sergio.visible) this.sergio.setVisible(false);
+        }
         switch (this.flashlightstate) {
             case 0:
             this.rightventtex.setTexture('vents3');
@@ -1029,20 +1048,7 @@ export default class gameScreen extends Phaser.Scene {
         switch (num)
         {
             case 0:
-            // if (phoneHasPlayed == false)
-            // {
-            //     switch(nightnum)
-            //         {
-            //             case 1:
-            //             PlaySound(gameScreen.phoneguy);
-            //             break;
-            //             case 2:
-            //             PlaySound(gameScreen.phoneguy2);
-            //             break;
-            //         }
-            //        gameScreen.phoneHasPlayed = true; 
-            //        gameScreen.phonePlaying = true;
-            // } 
+
             let cameraScreen = this.scene.get('cameraScreen');
             this.cameraX = this.oldcameraX;
             this.cameraY = this.oldcameraY;
@@ -1060,10 +1066,6 @@ export default class gameScreen extends Phaser.Scene {
             this.cameraX = 0;
             this.cameraY = 0;
             this.screens[1].switchStatic = true;
-            // this.screens[1].background = stage;
-            // PlaySound(fannoise, true);
-            // PlaySound(cameraScreen.cameraAmbience, true);
-            // if (cameraScreen.cameraspot == 10 && musicTimer.ElapsedTime > TimeSpan.Zero) PlaySound(windsound, true);
             if (this.scene.isActive('cameraScreen') || this.scene.isSleeping('cameraScreen')) {
                     this.scene.wake('cameraScreen');
                 } else {
@@ -1076,7 +1078,6 @@ export default class gameScreen extends Phaser.Scene {
             console.log("Jumpscared by: "+ this.jumpscareID);
             if (this.jumpscare.isPlaying == false) this.jumpscare.play();
             this.blackRectangle.setAlpha(1);
-            // this.jumpscareimg.setVisible(true);
             switch (this.nightnum) {
                 case 1:
                     if (this.phoneguy1.isPlaying) this.phoneguy1.stop();
@@ -1095,11 +1096,14 @@ export default class gameScreen extends Phaser.Scene {
             newtimer.Start();
             this.timers.push(newtimer);
             let cameraScreen2 = this.scene.get('cameraScreen');
+            if (this.jackinthebox != null && this.jackinthebox.isPlaying) this.jackinthebox.stop();
+            if (this.dangerSound != null && this.dangerSound.isPlaying) this.dangerSound.stop();
+            if (this.deepbreaths != null && this.deepbreaths.isPlaying) this.deepbreaths.stop();
+            if (this.fanSound != null && this.fanSound.isPlaying) this.fanSound.stop();
             if (cameraScreen2.musicsound != null && cameraScreen2.musicsound.isPlaying) cameraScreen2.musicsound.stop();
             if (cameraScreen2.cameraambience != null && cameraScreen2.cameraambience.isPlaying) cameraScreen2.cameraambience.stop();
             if (cameraScreen2.garble != null && cameraScreen2.garble.isPlaying) cameraScreen2.garble.stop();
             if (this.stareSound != null && this.stareSound.isPlaying) this.stareSound.stop();
-            // StopSound(windsound);
             break;
             case 3:
             let menuScreen = this.scene.get('menuScreen');
@@ -1130,7 +1134,9 @@ export default class gameScreen extends Phaser.Scene {
                         break;
                         case 3:
                         if (this.animatronics[i].Name != "Gustavo") this.animatronics[i].Activate();
-                        // make sure to change this here and in setup game after done with night 3
+                        break;
+                        default:
+                        this.animatronics[i].Activate();
                         break;
                     }
                 }
@@ -1164,24 +1170,18 @@ export default class gameScreen extends Phaser.Scene {
             if (this.screenState == 0) this.scene.switch('menuScreen');
             break;
             case 4:
-            // StopSound(jackinthebox);
             // PlaySound(menuScreen.menuMusic, false);
             let gameOverScreen = this.scene.get('gameOverScreen');
             gameOverScreen.changeTimer = new timer(7000);
             gameOverScreen.changeTimer.finishCallback = async () => {
+                    gameOverScreen.gameoverMusic.stop();
                     this.switchScreenState(3);
                 }; 
             gameOverScreen.changeTimer.Start();
             this.scene.switch('gameOverScreen');
             break;
             case 5:
-            // StopSound(garble);
-            // StopSound(fannoise);
-            // StopSound(flashlightbuzz);
-            // StopSound(cameraScreen.cameraAmbience);
-            // StopSound(jackinthebox);
-            // StopSound(gameScreen.hallwaydanger);
-            // StopSound(gameScreen.deepbreaths);
+
             let winScreen = this.scene.get('winScreen');
             winScreen.changeTimer = new timer(11500);
             winScreen.changeTimer.finishCallback = async () => {
@@ -1190,6 +1190,11 @@ export default class gameScreen extends Phaser.Scene {
                     this.switchScreenState(3);
                 }; 
             winScreen.changeTimer.Start();
+            if (this.jackinthebox != null && this.jackinthebox.isPlaying) this.jackinthebox.stop();
+            if (this.dangerSound != null && this.dangerSound.isPlaying) this.dangerSound.stop();
+            if (this.deepbreaths != null && this.deepbreaths.isPlaying) this.deepbreaths.stop();
+            if (this.fanSound != null && this.fanSound.isPlaying) this.fanSound.stop();
+            if (this.stareSound != null && this.stareSound.isPlaying) this.stareSound.stop();
             if (this.screenState == 1) {
                 let cameraScreen2 = this.scene.get('cameraScreen');
                 if (cameraScreen2.musicsound != null && cameraScreen2.musicsound.isPlaying) cameraScreen2.musicsound.stop();
@@ -1240,6 +1245,7 @@ export default class gameScreen extends Phaser.Scene {
         this.darien.setVisible(false);
         this.darienaura.setVisible(false);
         this.marlon.setVisible(false);
+        this.sergio.setVisible(false);
         this.misa.setVisible(false);
         this.cameraopen.setTexture("monitor1");
         this.cameraopen.anims.stop();

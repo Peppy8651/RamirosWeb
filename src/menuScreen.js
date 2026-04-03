@@ -33,6 +33,7 @@ export default class menuScreen extends Phaser.Scene {
     this.load.image('fourthnight', "/images/menu/nights/fourthnight.png");
     this.load.image('fifthnight', "/images/menu/nights/fifthnight.png");
     this.load.audio('blip', '/audio/blip.mp3');
+    this.load.audio('menumusic', '/audio/menutheme.mp3');
     for (let i = 1; i <= 6; i++) {
             this.load.image(`static${i}`, `/images/cameras/static/${i}.png`);
             this.load.image(`staticSwitch${i}`, `/images/cameras/staticswitch/${i}.png`);
@@ -91,6 +92,8 @@ export default class menuScreen extends Phaser.Scene {
 
         this.logo = this.add.image(1024 / 2 - 300, 768 / 2 - 260, "logo");
         this.blip = this.sound.add('blip');
+        this.menuMusic = this.sound.add('menumusic');
+        this.menuMusic.play();
         this.nightOpenTimer = new timer(3000);
         this.nightOpenTimer.finishCallback = () => { // start night
             // if (game.blip.State == SoundState.Playing) game.blip.Stop();
@@ -114,7 +117,7 @@ export default class menuScreen extends Phaser.Scene {
                     }
                     break;
                     case 3:
-                    if (this.gameScreen.animatronics[i].Name != "Gustavo") this.gameScreen.animatronics[i].Activate();
+                    if (this.gameScreen.animatronics[i].Name != 'Gustavo') this.gameScreen.animatronics[i].Activate();
                     break;
                     default:
                     this.gameScreen.animatronics[i].Activate();
@@ -157,6 +160,7 @@ export default class menuScreen extends Phaser.Scene {
                         this.buttonCooldown = null;
                         this.nightSelection = false;
                         this.gameScreen.nightnum = this.nightSelected;
+                        if (this.menuMusic.isPlaying == true) this.menuMusic.stop();
                         // this.Mouse.SetPosition( (int) (((game.width / 2)) * game.gameScreen.widthStretch), (int) (((game.height / 2)) * game.gameScreen.heightStretch));
                         // menuMusic.Stop();
                         if (this.blip.isPlaying == false) this.blip.play();

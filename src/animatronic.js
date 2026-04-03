@@ -287,6 +287,10 @@ export default class Animatronic {
                         if (this.Name == 'Nasir') this.AInum = 7;
                         break;
                     case 5:
+                        if (this.Name == 'Ramiro' || this.Name == 'Juan'  || this.Name == 'Misa') this.AInum = 2;
+                        if (this.Name == 'Gustavo') this.AInum = 10;
+                        if (this.Name == 'Carlos' || this.Name == 'Marlon' || this.Name == 'Darien' || this.Name == 'Sergio') this.AInum = 5;
+                        if (this.Name == 'Nasir') this.AInum = 7;
                         break;
                     case 6:
                         break;
@@ -324,10 +328,6 @@ export default class Animatronic {
                         }
                     }
                 }
-            }
-
-            if (this.Name == "Sergio" && this.sergioFlashState == 2) {
-                this.sergioFlashTimer.Update(delta);
             }
 
             if (this.attacking == 2) // attacking code
@@ -698,6 +698,7 @@ export default class Animatronic {
                                 if (this.gameScreen.maskbuttonactive == 0 || this.gameScreen.maskbuttonactive == 3) {
                                     if (this.gameScreen.jumpscareID == 0) { // 0 means haven't jumpscared yet
                                     this.gameScreen.stare = false;
+                                    this.gameScreen.sergio.setVisible(false);
                                     this.gameScreen.jumpscareID = this.ID;
                                     this.gameScreen.switchScreenState(2); // force jumpscare if leaving cameras
                                     }
@@ -711,6 +712,7 @@ export default class Animatronic {
                             {
                                 if (this.gameScreen.maskbuttonactive == 1 || this.gameScreen.maskbuttonactive == 2) {
                                     this.gameScreen.stare = false;
+                                    this.gameScreen.sergio.setVisible(false);
                                     //this.gameScreen.stare.Stop();
                                     this.camTimer.Stop();
                                     this.camTimer = null; 

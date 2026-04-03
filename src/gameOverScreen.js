@@ -27,12 +27,16 @@ export default class gameOverScreen extends Phaser.Scene {
           ],
           repeat: -1     // -1 makes it loop infinitely
         });
+    this.gameoverMusic = this.sound.add('feralangelwaltz');
         this.static.anims.play("static");
     // It will initialize our scene, like the positions of the sprites
   }
   update(time, delta) {
     // This method is called 60 times per second after create() 
     // It will handle all the game's logic, like movements
+    if (this.gameoverMusic.isPlaying == false) {
+      this.gameoverMusic.play();
+    }
     this.changeTimer.Update(delta);
   }
 }
