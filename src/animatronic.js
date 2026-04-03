@@ -139,10 +139,16 @@ export default class Animatronic {
                 if (this.Name == "Nasir") this.AInum = 2;
                 break;
             case 4:
-                if (this.Name == "Misa" || this.Name == "Juan" || this.Name == "Ramiro") this.AInum = 0;
+                if (this.Name == 'Misa' || this.Name == 'Ramiro' || this.Name == 'Marlon' || this.Name == 'Juan' || this.Name == 'Darien') this.AInum = 0;
+                if (this.Name == 'Sergio') this.AInum = 1;
+                if (this.Name == 'Carlos') this.AInum = 3;
+                if (this.Name == 'Gustavo') this.AInum = 5;
+                if (this.Name == 'Nasir') this.AInum = 7;
                 break;
             case 5:
-                if (this.Name == "Misa" || this.Name == "Juan") this.AInum = 2;
+                if (this.Name == "Misa" || this.Name == "Juan" || this.Name == 'Marlon' || this.Name == 'Darien' || this.Name == 'Sergio') this.AInum = 2;
+                if (this.Name == 'Carlos' || this.Name == 'Nasir') this.AInum = 5;
+                if (this.Name == 'Gustavo') this.AInum = 1;
                 if (this.Name == "Ramiro") this.AInum = 5;
                 break;
             case 6:
@@ -267,6 +273,18 @@ export default class Animatronic {
                         if (this.Name == "Nasir" && this.gameScreen.hournum >= 1) this.AInum = 3;
                         break;
                     case 4:
+                        if (this.Name == "Misa" || this.Name == "Juan" || this.Name == "Ramiro") {
+                            this.AInum = 2;
+                        }
+                        if (this.Name == "Carlos" || this.Name == "Marlon")
+                        {
+                            this.AInum = 3;
+                        }
+                        if (this.Name == "Darien" || this.Name == "Sergio") {
+                            this.AInum = 4;
+                        }
+                        if (this.Name == "Gustavo") this.AInum = 5;
+                        if (this.Name == 'Nasir') this.AInum = 7;
                         break;
                     case 5:
                         break;
