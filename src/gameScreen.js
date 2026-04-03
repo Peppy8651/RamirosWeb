@@ -101,7 +101,8 @@ export default class gameScreen extends Phaser.Scene {
             "buzzlight", "fansound", "clockchime", "yay", "open", 
             "close", "wind", "windup", "jackinthebox", 
             "jumpscare", "stare", "garble", "carlos1", "carlos2", "carlos3",
-            "maskon", "ventwalk", "metalwalk", "maskoff", 'cameras'
+            "maskon", "ventwalk", "metalwalk", "maskoff", 'cameras', 'darienlaugh', 'darienlaugh2',
+            'sergioflash'
         ];
         sounds.forEach(s => this.load.audio(s, `audio/${s}.mp3`));
 
@@ -120,7 +121,7 @@ export default class gameScreen extends Phaser.Scene {
 
         for (let i = 1; i <= 4; i++) this.load.image(`table${i}`, `/images/table/${i}.png`);
         for (let i = 1; i <= 4; i++) this.load.image(`vents${i}`, `/images/ventlights/${i}.png`);
-        for (let i = 1; i <6; i++) this.load.image(`battery${i}`, `/images/battery/${i}.png`);
+        for (let i = 1; i < 6; i++) this.load.image(`battery${i}`, `/images/battery/${i}.png`);
         for (let i = 1; i < 10; i++) this.load.image(`freddymask${i}`, `/images/freddymask/${i}.png`);
         for (let i = 0; i <= 9; i++) this.load.image(`num${i}`, `/images/clock/numbers/${i}.png`);
         for (let i = 1; i <= 9; i++) this.load.image(`monitor${i}`, `/images/monitoropen/${i}.png`);
@@ -173,10 +174,13 @@ export default class gameScreen extends Phaser.Scene {
         this.load.image("stagejuanramiro", "/images/cameras/locations/stagejuanramiro.png");
         this.load.image("mainhalljuan", "/images/cameras/locations/mainhalljuan.png");
         this.load.image("mainhalljuanflash", "/images/cameras/locations/flashlight/mainhalljuan.png");
+        this.load.image("mainhallsergioflash", "/images/cameras/locations/flashlight/mainhallsergio.png");
         this.load.image('mainhallmarlonflash', "/images/cameras/locations/flashlight/mainhallmarlon.png");
         this.load.image("officeflashjuan", "/images/officeflashjuan.png");
         this.load.image("officeflashram", "/images/officeflashram.png");
         this.load.image("officeflashnas", "/images/officeflashnas.png");
+        this.load.image("officeflashsergio", "/images/officeflashsergio.png");
+        this.load.image("officeflashnassergio", "/images/officeflashnassergio.png");
         this.load.image("officeflashmarlon", '/images/officeflashmarlon.png');
         this.load.image("officeflashmarlondoor", '/images/officeflashmarlondoor.png');
         this.load.image("officeflashnasgooch", "/images/officeflashnasgooch.png");
@@ -184,9 +188,15 @@ export default class gameScreen extends Phaser.Scene {
         this.load.image("partsflashnas", "/images/cameras/locations/flashlight/partsnas.png");
         this.load.image('partsflashdarien', "/images/cameras/locations/flashlight/partsdarien.png");
         this.load.image('partsflashdarienmarlon', "/images/cameras/locations/flashlight/partsdarienmarlon.png");
+        this.load.image('partsflashdariensergio', "/images/cameras/locations/flashlight/partsdariensergio.png");
+        this.load.image('partsflashdarienmarlonsergio', "/images/cameras/locations/flashlight/partsdarienmarlonsergio.png");
+        this.load.image('partsflashmarlonsergio', "/images/cameras/locations/flashlight/partsmarlonsergio.png");
         this.load.image('partsflashmarlon', "/images/cameras/locations/flashlight/partsmarlon.png");
+        this.load.image('partsflashsergio', "/images/cameras/locations/flashlight/partssergio.png");
         this.load.image("partyroom1juan", "/images/cameras/locations/flashlight/partyroom1juan.png");
+        this.load.image("partyroom1sergio", "/images/cameras/locations/flashlight/partyroom1sergio.png");
         this.load.image("leftventjuan", "/images/cameras/locations/flashlight/leftventjuan.png");
+        this.load.image("leftventsergio", "/images/cameras/locations/flashlight/leftventsergio.png");
         this.load.image("leftventcarlos", "/images/cameras/locations/flashlight/leftventcarlos.png");
         this.load.image("officeleftjuan", "/images/officeleftjuan.png");
         this.load.image("gamescornerram", "/images/cameras/locations/flashlight/gamescornerram.png");
@@ -319,6 +329,8 @@ export default class gameScreen extends Phaser.Scene {
     this.carlos1 = this.sound.add('carlos1');
     this.carlos2 = this.sound.add('carlos2');
     this.carlos3 = this.sound.add('carlos3');
+    this.darienlaugh2 = this.sound.add('darienlaugh2');
+    this.sergioflash = this.sound.add('sergioflash');
 
     // phone guy
     this.phoneguy1 = this.sound.add('misael');
@@ -328,6 +340,9 @@ export default class gameScreen extends Phaser.Scene {
     this.keyShift = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SHIFT);
     this.keyPlus = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.PLUS);
     this.cursorKeys = this.input.keyboard.createCursorKeys(); // Helper for arrow keys, space, and shift
+    this.whiteRectangle = this.add.graphics({ fillStyle: { color: 0xFFFFFF } });
+    this.whiteRectangle.setAlpha(0); // Start fully transparent
+    this.whiteRectangle.fillRectShape(coverScreen);
      // for fade out
     this.blackRectangle = this.add.graphics({ fillStyle: { color: 0x000000 } });
     this.blackRectangle.setAlpha(0); // Start fully transparent
@@ -372,6 +387,12 @@ export default class gameScreen extends Phaser.Scene {
             // sounds
             if (this.fanSound.isPlaying == false) {
                 this.fanSound.play();
+            }
+            if (this.animatronics[8].sergioFlashState == 2) {
+                if (this.whiteRectangle.alpha < 1) this.whiteRectangle.setAlpha(this.whiteRectangle.alpha + 0.05);
+            }
+            else {
+                if (this.whiteRectangle.alpha > 0) this.whiteRectangle.setAlpha(this.whiteRectangle.alpha - 0.25);
             }
 
             if (this.screenState == 2) {
@@ -931,13 +952,15 @@ export default class gameScreen extends Phaser.Scene {
             {
                 if (this.animatronics[i].location == 15) // right vent with misa
                 {
-                    if (this.animatronics[i].Name == "Nasir" || this.animatronics[i].Name == "Gustavo") animatronicsIDcount += this.animatronics[i].ID;
+                    if (this.animatronics[i].Name == "Nasir" || this.animatronics[i].Name == "Gustavo" || this.animatronics[i].Name == "Sergio") animatronicsIDcount += this.animatronics[i].ID;
                     animatronicscount++;
                     if (this.animatronics[i].Name == "Juan") this.office.setTexture('officeflashjuan');
                     if (this.animatronics[i].Name == "Ramiro") this.office.setTexture('officeflashram');
                     if (this.animatronics[i].Name == "Gustavo") this.office.setTexture('officeflashgooch');
                     if (this.animatronics[i].Name == "Nasir") this.office.setTexture('officeflashnas'); // ALWAYS MAKE SURE HE GOES LAST
                     if (animatronicscount > 2 && animatronicsIDcount == 11) this.office.setTexture('officeflashnasgooch'); // unless they're both in the office lol
+                    if (this.animatronics[i].Name == "Sergio") this.office.setTexture('officeflashsergio'); // ALWAYS MAKE SURE HE GOES LAST
+                    if (animatronicscount > 2 && animatronicsIDcount >= 15) this.office.setTexture('officeflashnassergio'); // unless they're both in the office lol
                     if (this.animatronics[i].Name == "Marlon") this.office.setTexture('officeflashmarlon');
                 }
                 if (this.animatronics[i].location == 16)
@@ -1223,6 +1246,7 @@ export default class gameScreen extends Phaser.Scene {
         this.freddymask.setVisible(false);
         this.cameraopen.setVisible(false);
         this.blackRectangle.setAlpha(0); // Start fully transparent
+        this.whiteRectangle.setAlpha(0);
         this.sixamnum.setTexture('nightEnd1');
         this.sixamnum.anims.stop();
         this.sixamnum.setAlpha(0);
@@ -1242,6 +1266,7 @@ export default class gameScreen extends Phaser.Scene {
         this.animatronics[5] = new Animatronic(this, "Nasir");
         this.animatronics[6] = new Animatronic(this, "Darien");
         this.animatronics[7] = new Animatronic(this, "Marlon");
+        this.animatronics[8] = new Animatronic(this, "Sergio");
 
         this.maskonPlayed = false;
         this.monitoropenPlayed = false;

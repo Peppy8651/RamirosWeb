@@ -168,6 +168,7 @@ export default class cameraScreen extends Phaser.Scene {
     this.musicsound = this.sound.add("wind");
     this.windup = this.sound.add("windup");
     this.garble = this.sound.add("garble");
+    this.darienlaugh = this.sound.add('darienlaugh');
     this.musicboxbuttontexture = this.add.image(this.musicboxbutton.x + 78, this.musicboxbutton.y + 32, 'boxbutton').setVisible(false);
     this.musicboxtext = this.add.image(this.musicboxbutton.x + 78, this.musicboxbutton.y + 25, 'wind').setVisible(false);
     this.border = this.add.image(1024 /2, 768 /2, 'border');
@@ -325,6 +326,7 @@ export default class cameraScreen extends Phaser.Scene {
                 {
                     console.log('darien spooked the cameras');
                     // darienLaugh.Play();
+                    this.darienlaugh.play();
                     this.switchstatic.anims.play('switchstatic', true);
                     this.switchStatic = true;
                     this.darieninterrupt = true;
@@ -544,6 +546,7 @@ export default class cameraScreen extends Phaser.Scene {
                         {
                             case 0:
                             if (this.gameScreen.animatronics[i].Name == "Juan") background = 'partyroom1juan';
+                            if (this.gameScreen.animatronics[i].Name == "Sergio") background = 'partyroom1sergio';
                             break;
                             case 1:
                             if (this.gameScreen.animatronics[i].Name == "Misa") background = 'partyroom2misa';
@@ -560,6 +563,7 @@ export default class cameraScreen extends Phaser.Scene {
                             case 4: 
                             if (this.gameScreen.animatronics[i].Name == "Juan") background = 'leftventjuan';
                             if (this.gameScreen.animatronics[i].Name == "Carlos") background = 'leftventcarlos'; // it kinda doesn't matter in the original game, plus I'm lazy
+                            if (this.gameScreen.animatronics[i].Name == "Sergio") background = 'leftventsergio';
                             break;
                             case 5: 
                             if (this.gameScreen.animatronics[i].Name == "Misa") background = 'rightventmisa';
@@ -569,6 +573,7 @@ export default class cameraScreen extends Phaser.Scene {
                             case 6:
                             if (this.gameScreen.animatronics[i].Name == "Juan") background = 'mainhalljuanflash';
                             if (this.gameScreen.animatronics[i].Name == "Marlon") background = 'mainhallmarlonflash';
+                            if (this.gameScreen.animatronics[i].Name == "Sergio") background = 'mainhallsergioflash';
                             break;
                             case 7:
                             if (this.gameScreen.animatronics[i].Name == "Nasir") {
@@ -578,7 +583,11 @@ export default class cameraScreen extends Phaser.Scene {
                             }
                             if (animatronicsIDcount == 8) background = 'partsflashdarien';
                             if (animatronicsIDcount == 9) background = 'partsflashmarlon';
+                            if (animatronicsIDcount == 10) background = 'partsflashsergio';
                             if (animatronicsIDcount == 17 && animatronicscount == 2) background = 'partsflashdarienmarlon';
+                            if (animatronicsIDcount == 19) background = 'partsflashmarlonsergio';
+                            if (animatronicsIDcount == 18) background = 'partsflashdariensergio';
+                            if (animatronicsIDcount == 27) background = 'partsflashdarienmarlonsergio';
                             break;
                             case 8: 
                             if (animatronicsIDcount == 1) background = 'stagemisa';
