@@ -2,7 +2,13 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [ "main" ] # Change this if your branch is 'master'
+    branches: [ "main" ]
+  workflow_dispatch:
+
+# This kills any stuck/duplicate runs
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
 
 permissions:
   contents: read
@@ -20,19 +26,16 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm'
 
-      - name: Install dependencies
-        run: npm install
+      - name: Install and Build
+        run: |
+          npm install
+          npm run build
 
-      - name: Build
-        run: npm run build
-
-      - name: Upload artifact
+      - name: Upload
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./dist
 
-      - name: Deploy to GitHub Pages
-        id: deployment
+      - name: Deploy
         uses: actions/deploy-pages@v4
