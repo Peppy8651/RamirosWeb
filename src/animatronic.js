@@ -208,7 +208,7 @@ export default class Animatronic {
                             {
                                 if (this.Name == "Nasir" && this.gameScreen.nightnum < 3 && this.AInum == 0) // in Night 2, Nas can't move until 1 am
                                 {
-                                    console.log("Nasir movement failed, night 2 rule");
+                                    if (this.gameScreen.debug) console.log("Nasir movement failed, night 2 rule");
                                     if (this.nasirValue3 > 12) this.nasirValue3 = 0;
                                     if (this.nasirValue3 > 0) this.nasirValue3++;
                                     this.movementActive = false;
@@ -299,7 +299,6 @@ export default class Animatronic {
                 if (this.Name == "Carlos" && this.location == 14)
                 {
                     if (this.gameScreen.carlos3.isPlaying == false) {
-                        console.log('carlos is laughing lol');
                         this.gameScreen.carlos3.play();
                     } 
                 }
@@ -325,7 +324,6 @@ export default class Animatronic {
                         if (this.sergioFlashState == 1) {
                             this.sergioFlashState = 2;
                             if (this.gameScreen.sergioflash.isPlaying == false) this.gameScreen.sergioflash.play();
-                            console.log("Sergio flash activated");
                         }
                     }
                 }
@@ -361,13 +359,12 @@ export default class Animatronic {
                             // game.stare.Stop();
                             this.AInum = 0;
                             this.gameScreen.danger = 0;
-                            console.log("Misa attack evaded");
+                            if (this.gameScreen.debug) console.log("Misa attack evaded");
                         }      
                     }
                     else
                     {
                         if (this.gameScreen.jumpscareID == 0) { // 0 means haven't jumpscared yet
-                        console.log('misa pizza')
                         this.gameScreen.jumpscareID = 1;
                         this.gameScreen.misa.setVisible(false);
                         //game.stare.Stop();
@@ -556,7 +553,7 @@ export default class Animatronic {
                                     this.movementActive = false;
                                     this.AInum = 0;
                                     this.gameScreen.danger = 0;
-                                    console.log("Ramiro attack evaded");
+                                    if (this.gameScreen.debug) console.log("Ramiro attack evaded");
                                 };
                             };  
                             this.camTimer.Start();
@@ -609,7 +606,7 @@ export default class Animatronic {
                                     this.movementActive = false;
                                     this.AInum = 0;
                                     this.gameScreen.danger = 0;
-                                    console.log("Darien attack evaded");
+                                    if (this.gameScreen.debug) console.log("Darien attack evaded");
                                 }
                             };  
                             this.officeJumpscareTimer.Start();
@@ -677,7 +674,7 @@ export default class Animatronic {
                                     this.AInum = 0;
                                     this.gameScreen.marlon.setVisible(false);
                                     this.gameScreen.danger = 0;
-                                    console.log("Marlon attack evaded");
+                                    if (this.gameScreen.debug) console.log("Marlon attack evaded");
                                 }
                             };  
                             this.officeJumpscareTimer.Start();
@@ -728,7 +725,7 @@ export default class Animatronic {
                                     this.sergioFlashState = 0;
                                     this.AInum = 0;
                                     this.gameScreen.danger = 0;
-                                    console.log("Sergio attack evaded");
+                                    if (this.gameScreen.debug) console.log("Sergio attack evaded");
                                 }
                             };  
                             this.officeJumpscareTimer.Start();
@@ -772,15 +769,15 @@ movementOpportunity()
         {
             if (this.gameScreen.screenState == 1 && this.cameraScreen.cameraspot == this.location && this.cameraScreen.darieninterrupt == false)
             {
-                console.log(this.Name + " movement failed, on camera");
+                if (this.gameScreen.debug) console.log(this.Name + " movement failed, on camera");
             }
             else if (this.gameScreen.flashlightstate == 3 && this.location == 12)
             {
-                console.log(this.Name + " movement failed, flashlight on vent");
+                if (this.gameScreen.debug) console.log(this.Name + " movement failed, flashlight on vent");
             }
             else if (this.gameScreen.flashlightstate == 2 && this.location == 13)
             {
-                console.log(this.Name + " movement failed, flashlight on vent");
+                if (this.gameScreen.debug) console.log(this.Name + " movement failed, flashlight on vent");
             }
             else
             {
@@ -805,7 +802,7 @@ movementOpportunity()
                                 this.AInum = 0;
                                 this.gameScreen.danger = 0;
                                 if (this.gameScreen.screenState == 0) this.gameScreen.drawChange = true;
-                                console.log("Juan attack evaded");
+                                if (this.gameScreen.debug) console.log("Juan attack evaded");
                             };
                             this.maskTimer.Start();
                         }
@@ -821,7 +818,7 @@ movementOpportunity()
                                 this.AInum = 0;
                                 this.gameScreen.danger = 0;
                                 if (this.gameScreen.screenState == 0) this.gameScreen.drawChange = true;
-                                console.log("Carlos attack evaded");
+                                if (this.gameScreen.debug) console.log("Carlos attack evaded");
                             };
                             this.maskTimer.Start();
                         }
@@ -837,11 +834,11 @@ movementOpportunity()
                                 this.AInum = 0;
                                 this.gameScreen.danger = 0;
                                 if (this.gameScreen.screenState == 0) this.gameScreen.drawChange = true;
-                                console.log("Gustavo attack evaded");
+                                if (this.gameScreen.debug) console.log("Gustavo attack evaded");
                             };
                             this.maskTimer.Start();
                         }
-                        console.log(this.Name + " is attacking!");
+                        if (this.gameScreen.debug) console.log(this.Name + " is attacking!");
                     }
 
                     let index = this.movementPath.indexOf(this.location);
@@ -882,7 +879,7 @@ movementOpportunity()
                                 this.gameScreen.metalwalk.play();
                             }
                             this.moved = true;
-                            console.log(this.Name + " movement successful");
+                            if (this.gameScreen.debug) console.log(this.Name + " movement successful");
                             if (this.gameScreen.screenState == 0) this.gameScreen.drawChange = true;
                             this.movedTimer = new timer(500);
                             this.movedTimer.finishCallback = () => { this.moved = false; this.cameraScreen.animatronicForceOff = false; };
@@ -892,7 +889,7 @@ movementOpportunity()
                         {
                             this.location = this.movementPath[index + 1];
                             this.moved = true;
-                            console.log(this.Name + " movement successful");
+                            if (this.gameScreen.debug) console.log(this.Name + " movement successful");
                             if (this.gameScreen.screenState == 0) this.gameScreen.drawChange = true;
                             if (this.location == 4 || this.location == 5)
                             {
@@ -913,7 +910,6 @@ movementOpportunity()
                         {
                             if (this.attacking == 0) {
                                 this.attacking = 1;
-                                console.log("mask 0 to 1");
                             }
                             this.movementOpportunityTime = 500;
                             this.AInum = 10; // 50 percent chance
@@ -922,7 +918,7 @@ movementOpportunity()
                 }
                 else
                 {
-                    if (this.attacking != 2) console.log(this.Name + " movement failed");
+                    if (this.attacking != 2 && this.gameScreen.debug) console.log(this.Name + " movement failed");
                 }
                 
             }
@@ -948,19 +944,19 @@ movementOpportunity()
                     if (this.location == 7) this.location = 15;
                     this.moved = true;
                     if (this.gameScreen.screenState == 0) this.gameScreen.drawChange = true;
-                    console.log(this.Name + " movement successful");
+                    if (this.gameScreen.debug) console.log(this.Name + " movement successful");
                     this.movedTimer = new timer(500);
                     this.movedTimer.finishCallback = () => { this.moved = false; this.cameraScreen.animatronicForceOff = false; };
                     this.movedTimer.Start(); // so cameras disable for a second after moving
                 } 
                 else
                 {
-                    console.log(this.Name + " movement failed");
+                    if (this.gameScreen.debug) console.log(this.Name + " movement failed");
                 }
             }
             else
             {
-                console.log(this.Name + " movement failed");
+                if (this.gameScreen.debug) console.log(this.Name + " movement failed");
             }
             if (this.nasirValue3 > 12) this.nasirValue3 = 0;
             if (this.nasirValue3 > 0) this.nasirValue3++;

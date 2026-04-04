@@ -10,7 +10,7 @@ export default class gameScreen extends Phaser.Scene {
   constructor() {
     super({key: 'gameScreen'});
     this.debug = true; // CHANGE HERE
-    this.web = false; // always change this for web builds
+    this.web = true; // always change this for web builds
     this.maskonPlayed = false;
     this.monitoropenPlayed = false;
     this.batterymilliseconds = 500000;
@@ -29,6 +29,7 @@ export default class gameScreen extends Phaser.Scene {
     this.cameraY = 0;
     this.oldcameraX = 0;
     this.oldcameraY = 0;
+    this.lastFPS = -1;
     this.updateframe = 0;
     this.tableframe = 0;
     this.freddymaskframe = 0;
@@ -381,7 +382,11 @@ export default class gameScreen extends Phaser.Scene {
 
   }
   update(time, delta) {
-        this.fpsText.innerHTML = 'FPS: ' + Math.floor(this.game.loop.actualFps);
+        const currentFPS = Math.floor(this.game.loop.actualFps);
+        if (currentFPS !== this.lastFPS) {
+            this.fpsText.innerHTML = 'FPS: ' + currentFPS;
+            this.lastFPS = currentFPS;
+        }
         var mouse = this.input.activePointer;
         this.drawChange = false;
         if (this.keyPlus.isDown) {
@@ -468,20 +473,17 @@ export default class gameScreen extends Phaser.Scene {
             if (this.danger > 0)
                     {
                         if (this.dangerSound.isPlaying == false) {
-                            console.log('danger played');
                             this.dangerSound.play();
                         }
                     }
                     else
                     {
                         if (this.dangerSound.isPlaying) {
-                            console.log('danger stopped');
                             this.dangerSound.stop();
                         }
                     }
             if (this.phoneHasPlayed == false) {
                 this.phoneHasPlayed = true;
-                console.log('phone played');
                 switch (this.nightnum) {
                     case 1:
                         this.phoneguy1.play();
@@ -534,7 +536,6 @@ export default class gameScreen extends Phaser.Scene {
                         this.monitoropenPlayed = false;
                         if (this.animatronics[3].location == 14) // gustavo 5% jumpscare code
                         {
-                            console.log("5% jumpscare");
                             const random = Math.random() * 20;
                             if (random <= 1)
                             {
@@ -562,7 +563,6 @@ export default class gameScreen extends Phaser.Scene {
                         if (this.stareRectangle.alpha >= 1) this.stareRectangle.alpha -= 1;
                         this.stareRectangle.alpha += delta * 0.008;
                         if (this.stareSound.isPlaying == false) {
-                            console.log('stare played');
                              this.stareSound.play();
                         }
                     }
@@ -698,7 +698,6 @@ export default class gameScreen extends Phaser.Scene {
                                 const cameraSwitch = new timer(500);
                                 cameraSwitch.finishCallback = () =>
                                 {
-                                    console.log('switch to cameras');
                                     this.switchScreenState(1);
                                     cameraSwitch.Stop();
                                 };
@@ -740,6 +739,7 @@ export default class gameScreen extends Phaser.Scene {
              for (let i = 0; i < this.timers.length; i++) {
                      this.timers[i].Update(delta);
                  }
+                 this.cleanupTimers();
             for (let i = 0; i < this.animatronics.length; i++)
                     {
                         this.animatronics[i].update(delta);
@@ -879,6 +879,7 @@ export default class gameScreen extends Phaser.Scene {
                         t.Update(delta);
                     }
                 });
+                this.cleanupTimers();
             }
 
         if (this.musicTimer.IsFinished())
@@ -913,7 +914,10 @@ export default class gameScreen extends Phaser.Scene {
                 this.timers.push(jackTimer);
                 }
             }
-        if (this.drawChange) this.updateDraw();
+        if (this.drawChange && this.screenState == 0) this.updateDraw();
+       }
+       cleanupTimers() {
+           this.timers = this.timers.filter(t => t._isRunning);
        }
        updateDraw() {
 
@@ -959,58 +963,70 @@ export default class gameScreen extends Phaser.Scene {
         }
         switch (this.flashlightstate) {
             case 0:
-            this.rightventtex.setTexture('vents3');
-            this.leftventtex.setTexture('vents1');
-            this.office.setTexture('office');
+            if (this.rightventtex.texture.key != 'vents3') this.rightventtex.setTexture('vents3');
+            if (this.leftventtex.texture.key != 'vents1') this.leftventtex.setTexture('vents1');
+            if (this.office.texture.key != 'office') this.office.setTexture('office');
             break;
             case 1:
-            let animatronicsIDcount = 0;
-            let animatronicscount = 0;
-            this.office.setTexture('officeflash');
-            for (let i = 0; i < this.animatronics.length; i++)
             {
-                if (this.animatronics[i].location == 15) // right vent with misa
+                let officeTexture = 'officeflash';
+                let animatronicsIDcount = 0;
+                let animatronicscount = 0;
+                for (let i = 0; i < this.animatronics.length; i++)
                 {
-                    if (this.animatronics[i].Name == "Nasir" || this.animatronics[i].Name == "Gustavo" || this.animatronics[i].Name == "Sergio") animatronicsIDcount += this.animatronics[i].ID;
-                    animatronicscount++;
-                    if (this.animatronics[i].Name == "Juan") this.office.setTexture('officeflashjuan');
-                    if (this.animatronics[i].Name == "Ramiro") this.office.setTexture('officeflashram');
-                    if (this.animatronics[i].Name == "Gustavo") this.office.setTexture('officeflashgooch');
-                    if (this.animatronics[i].Name == "Nasir") this.office.setTexture('officeflashnas'); // ALWAYS MAKE SURE HE GOES LAST
-                    if (animatronicscount > 2 && animatronicsIDcount == 11) this.office.setTexture('officeflashnasgooch'); // unless they're both in the office lol
-                    if (this.animatronics[i].Name == "Sergio") this.office.setTexture('officeflashsergio'); // ALWAYS MAKE SURE HE GOES LAST
-                    if (animatronicscount > 2 && animatronicsIDcount >= 15) this.office.setTexture('officeflashnassergio'); // unless they're both in the office lol
-                    if (this.animatronics[i].Name == "Marlon") this.office.setTexture('officeflashmarlon');
+                    const anim = this.animatronics[i];
+                    if (anim.location == 15) // right vent with misa
+                    {
+                        if (anim.Name == "Nasir" || anim.Name == "Gustavo" || anim.Name == "Sergio") animatronicsIDcount += anim.ID;
+                        animatronicscount++;
+                        if (anim.Name == "Juan") officeTexture = 'officeflashjuan';
+                        if (anim.Name == "Ramiro") officeTexture = 'officeflashram';
+                        if (anim.Name == "Gustavo") officeTexture = 'officeflashgooch';
+                        if (anim.Name == "Nasir") officeTexture = 'officeflashnas'; // ALWAYS MAKE SURE HE GOES LAST
+                        if (anim.Name == "Sergio") officeTexture = 'officeflashsergio'; // ALWAYS MAKE SURE HE GOES LAST
+                        if (anim.Name == "Marlon") officeTexture = 'officeflashmarlon';
+                        if (animatronicscount > 2 && animatronicsIDcount == 11) officeTexture = 'officeflashnasgooch'; // unless they're both in the office lol
+                        if (animatronicscount > 2 && animatronicsIDcount >= 15) officeTexture = 'officeflashnassergio'; // unless they're both in the office lol
+                    }
+                    if (anim.location == 16)
+                    {
+                        if (anim.Name == "Ramiro") officeTexture = 'officeflashramdoor';
+                        if (anim.Name == "Marlon") officeTexture = 'officeflashmarlondoor';
+                    }
                 }
-                if (this.animatronics[i].location == 16)
-                {
-                    if (this.animatronics[i].Name == "Ramiro") this.office.setTexture('officeflashramdoor');
-                    if (this.animatronics[i].Name == "Marlon") this.office.setTexture('officeflashmarlondoor');
-                }
+                if (this.office.texture.key !== officeTexture) this.office.setTexture(officeTexture);
             }
             break;
             case 2:
-            this.office.setTexture('officeleft');
+            {
+            let officeTexture = 'officeleft';
             this.leftventtex.setTexture('vents2');
             for (let i = 0; i < this.animatronics.length; i++)
             {
-                if (this.animatronics[i].location == 13) // right vent with misa
+                const anim = this.animatronics[i];
+                if (anim.location == 13)
                 {
-                    if (this.animatronics[i].Name == "Juan") this.office.setTexture('officeleftjuan');
-                    if (this.animatronics[i].Name == "Carlos") this.office.setTexture('officeleftcarlos');
+                    if (anim.Name == "Juan") officeTexture = 'officeleftjuan';
+                    if (anim.Name == "Carlos") officeTexture = 'officeleftcarlos';
                 }
+            }
+            if (this.office.texture.key !== officeTexture) this.office.setTexture(officeTexture);
             }
             break;
             case 3:
+            {
+            let officeTexture = 'officeright';
             this.rightventtex.setTexture('vents4');
-            this.office.setTexture('officeright');
             for (let i = 0; i < this.animatronics.length; i++)
             {
-                if (this.animatronics[i].location == 12) // right vent with misa
+                const anim = this.animatronics[i];
+                if (anim.location == 12)
                 {
-                    if (this.animatronics[i].Name == "Misa") this.office.setTexture('officerightmisa');
-                    if (this.animatronics[i].Name == "Gustavo") this.office.setTexture('officerightgooch');
+                    if (anim.Name == "Misa") officeTexture = 'officerightmisa';
+                    if (anim.Name == "Gustavo") officeTexture = 'officerightgooch';
                 }
+            }
+            if (this.office.texture.key !== officeTexture) this.office.setTexture(officeTexture);
             }
             break;
         }
@@ -1056,7 +1072,6 @@ export default class gameScreen extends Phaser.Scene {
             if (cameraScreen.musicsound != null && cameraScreen.musicsound.isPlaying) cameraScreen.musicsound.stop();
             if (cameraScreen.cameraambience != null && cameraScreen.cameraambience.isPlaying) cameraScreen.cameraambience.stop();
             if (cameraScreen.garble != null && cameraScreen.garble.isPlaying) cameraScreen.garble.stop();
-            console.log('switch to gamescreen');
             if (this.screenState == 3) this.screens[0].scene.switch('gameScreen');
             if (this.screenState == 1) this.scene.sleep('cameraScreen');
             break;
@@ -1178,6 +1193,11 @@ export default class gameScreen extends Phaser.Scene {
                     this.switchScreenState(3);
                 }; 
             gameOverScreen.changeTimer.Start();
+             if (this.jackinthebox != null && this.jackinthebox.isPlaying) this.jackinthebox.stop();
+            if (this.dangerSound != null && this.dangerSound.isPlaying) this.dangerSound.stop();
+            if (this.deepbreaths != null && this.deepbreaths.isPlaying) this.deepbreaths.stop();
+            if (this.fanSound != null && this.fanSound.isPlaying) this.fanSound.stop();
+            if (this.stareSound != null && this.stareSound.isPlaying) this.stareSound.stop();
             this.scene.switch('gameOverScreen');
             break;
             case 5:

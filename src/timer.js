@@ -39,6 +39,10 @@ export default class Timer {
                 if (this.finishCallback != null && this.IsFinished())
                 {
                     this.finishCallback();
+                    if (this._isRunning)
+                    {
+                        this.Stop();
+                    }
                 }
             }
         }

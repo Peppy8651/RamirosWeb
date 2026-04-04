@@ -65,7 +65,6 @@ export default class cameraScreen extends Phaser.Scene {
         this.waitTimer.Start();
   }
   create() {
-    console.log('cameraScreen created');
     this.gameScreen = this.scene.get('gameScreen');
     this.maplocationbuttons = [
             // map is located this.gameScreen.camerarect.x + 50
@@ -191,7 +190,6 @@ export default class cameraScreen extends Phaser.Scene {
       this.switchstatic.visible = true;
     }
     if (this.cameraambience.isPlaying == false) {
-        console.log('camera ambience played');
                 this.cameraambience.play();
     }
     // getBackground();
@@ -324,7 +322,6 @@ export default class cameraScreen extends Phaser.Scene {
                 this.darienInterruptTimer = new timer(6000);
                 this.darienInterruptTimer.finishCallback = () =>
                 {
-                    console.log('darien spooked the cameras');
                     // darienLaugh.Play();
                     this.darienlaugh.play();
                     this.switchstatic.anims.play('switchstatic', true);
@@ -342,7 +339,6 @@ export default class cameraScreen extends Phaser.Scene {
         }
         if (this.darieninterrupt) {
             if (this.darienstatic.visible == false) {
-                console.log('switch to darien static');
                 this.darienSoftJump.setVisible(true);
                 this.darienstatic.setVisible(true);
                 this.static.setVisible(false);
@@ -352,7 +348,6 @@ export default class cameraScreen extends Phaser.Scene {
         }
         else {
             if (this.static.visible == false) {
-                console.log('back to normal');
                 this.static.setVisible(true);
                 this.darienSoftJump.setVisible(false);
                 this.darienstatic.setVisible(false);
@@ -424,7 +419,6 @@ export default class cameraScreen extends Phaser.Scene {
         
             if (this.gameScreen.screenState == 1 && this.gameScreen.animatronics[3].location == this.cameraspot) {
                 if (this.garble.isPlaying == false) {
-                    console.log('gooch garble playing');
                     this.garble.play();
                 } 
             }
@@ -436,7 +430,8 @@ export default class cameraScreen extends Phaser.Scene {
   drawUpdate() {
     if (this.cameraspot > 5) this.background.setPosition(-this.gameScreen.cameraX + this.gameScreen.width/2, -this.gameScreen.cameraY +  this.gameScreen.height/2);
     if (this.cameraspot <= 5) this.background.setPosition(1024/2, 768/2);
-    this.background.setTexture(this.getBackground());
+    const background = this.getBackground();
+    if (this.background.texture.key != background) this.background.setTexture(background);
     if (this.cameraspot == 8 && this.camFlashOn){
       this.stageFlash.setVisible(true);
       this.stageFlash.setPosition(-this.gameScreen.cameraX +500, -this.gameScreen.cameraY + 500);
