@@ -178,7 +178,7 @@ export default class Animatronic {
                     if (this.gameScreen.flashlightstate == 1 && this.location == 15)
                     {
                         this.nasirValue1 = 0;
-                        this.nasirValue2 += 0.04 * delta;
+                        this.nasirValue2 += 0.075 * delta;
                         if (this.nasirValue2 > 100 * this.gameScreen.nightnum)
                         {
                             if (this.gameScreen.screenState == 0) this.gameScreen.drawChange = true;
