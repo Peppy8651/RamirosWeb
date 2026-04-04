@@ -8,7 +8,7 @@ import winScreen from './winScreen.js';
 const screens = [new menuScreen(), new cameraScreen(), new gameScreen(), new gameOverScreen(), new winScreen()];
 for (const screen of screens) {
     screen.screens = screens;
-}
+} 
 new Phaser.Game({
   width: 1024, // Width of the game in pixels
   height: 768, // Height of the game in pixels
