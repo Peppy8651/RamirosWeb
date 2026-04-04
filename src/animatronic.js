@@ -183,6 +183,7 @@ export default class Animatronic {
                         {
                             if (this.gameScreen.screenState == 0) this.gameScreen.drawChange = true;
                             this.location = 7;
+                            this.gameScreen.danger = 0;
                             this.nasirValue1 = 0;
                             this.nasirValue2 = 0;
                             this.nasirValue3++; // basically makes him stop moving for 12 or 13 opportunities
