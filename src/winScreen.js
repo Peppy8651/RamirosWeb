@@ -10,6 +10,7 @@ export default class winScreen extends Phaser.Scene {
   preload() {
     // This method is called once at the beginning
     // It will load all the assets, like sprites and sounds 
+    this.load.baseURL = '/RamirosWeb/';
     this.load.image('win', '/images/menu/win.png');
     this.load.audio('partyrock', '/audio/partyrock.mp3');
     

@@ -87,6 +87,7 @@ export default class Animatronic {
             case 'Sergio':
                 this.ID = 10;
                 this.movementPath = [7, 6, 15, 0, 4, 18, 14]; // 18 is left vent queue
+                this.movementPath = [18, 14]; // 18 is left vent queue
                 this.sergioFlashCounter = 0;
                 this.sergioFlashState = 1; // 0 is not available, 1 is flash can be activated, 2 is flash actviated, 3 is flash ended
                 this.sergioFlashTimer = new timer(3000);
@@ -328,6 +329,10 @@ export default class Animatronic {
                         }
                     }
                 }
+            }
+
+            if (this.Name == "Sergio" && this.sergioFlashState == 2) {
+                this.sergioFlashTimer.Update(delta);
             }
 
             if (this.attacking == 2) // attacking code

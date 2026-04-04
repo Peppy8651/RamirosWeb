@@ -8,6 +8,7 @@ export default class gameOverScreen extends Phaser.Scene {
   preload() {
     // This method is called once at the beginning
     // It will load all the assets, like sprites and sounds  
+    this.load.baseURL = '/RamirosWeb/';
     this.load.image('gameover', '/images/menu/gameover.png');
   }
   create() {
