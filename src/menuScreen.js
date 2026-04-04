@@ -21,6 +21,7 @@ export default class menuScreen extends Phaser.Scene {
   preload() {
     // This method is called once at the beginning
     // It will load all the assets, like sprites and sounds  
+    this.load.baseURL = '/RamirosWeb/';
     this.load.image("logo", '/images/logo.png');
     this.load.image("newgame", '/images/newgame.png');
     // this.load.image("options", '/images/options.png');
