@@ -735,18 +735,18 @@ export default class Animatronic {
                         }
                     }
                 }
-
-                if (this.camTimer != null && this.camTimer._isRunning) {
-                    this.camTimer.Update(delta);
-                    if (this.officeJumpscareTimer != null && this.officeJumpscareTimer._isRunning) this.officeJumpscareTimer.Update(delta);
-                    if (this.Name == "Darien" && (this.gameScreen.maskbuttonactive == 3)) {
-                        // this.gameScreen.stare.Stop();
-                        if (this.gameScreen.jumpscareID == 0) { // 0 means haven't jumpscared yet
-                        this.gameScreen.jumpscareID = this.ID;
-                        this.gameScreen.stare = false;
-                        this.gameScreen.switchScreenState(2); // force jumpscare if leaving cameras
+                if (this.officeJumpscareTimer != null && this.officeJumpscareTimer._isRunning) {
+                    this.officeJumpscareTimer.Update(delta);
+                    if ((this.Name == "Darien" || this.Name == 'Marlon' || this.Name == 'Sergio') && (this.gameScreen.maskbuttonactive == 3)) {
+                            if (this.gameScreen.jumpscareID == 0) { // 0 means haven't jumpscared yet
+                            this.gameScreen.jumpscareID = this.ID;
+                            this.gameScreen.stare = false;
+                            this.gameScreen.switchScreenState(2); // force jumpscare if leaving cameras
                         }
                     }
+                }
+                if (this.camTimer != null && this.camTimer._isRunning) {
+                    this.camTimer.Update(delta);
                 }
                 if (this.location == 14 || this.location == 13 || this.location == 12 || this.location == 17 || this.location == 18)
                 {
