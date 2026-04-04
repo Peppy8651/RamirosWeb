@@ -9,7 +9,7 @@ export default class gameScreen extends Phaser.Scene {
   // The three methods currently empty
   constructor() {
     super({key: 'gameScreen'});
-    this.debug = true; // CHANGE HERE
+    this.debug = false; // CHANGE HERE
     this.web = true; // always change this for web builds
     this.maskonPlayed = false;
     this.monitoropenPlayed = false;
