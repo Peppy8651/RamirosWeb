@@ -89,7 +89,7 @@ export default class gameScreen extends Phaser.Scene {
         this.musicTimer.Start();
         this.timers.push(this.musicTimer);
 
-        this.load.setBaseURL('');
+        this.load.setBaseURL('/RamirosWeb/');
         this.load.setPath('');
         this.load.image("office", "/images/office.png");
         this.load.image("officeflash", "/images/officeflash.png");
