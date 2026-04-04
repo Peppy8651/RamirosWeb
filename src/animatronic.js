@@ -119,7 +119,26 @@ export default class Animatronic {
             }
         };
         this.cameraLookingTimer.Start();
-
+        this.movementTimer = new timer(this.movementOpportunityTime);
+        this.movementTimer.finishCallback =
+        () => {
+            if (this.gameScreen.pause == false)
+            {
+                if (this.Name == "Nasir" && this.gameScreen.nightnum < 3 && this.AInum == 0) // in Night 2, Nas can't move until 1 am
+                {
+                    if (this.gameScreen.debug) console.log("Nasir movement failed, night 2 rule");
+                    if (this.nasirValue3 > 12) this.nasirValue3 = 0;
+                    if (this.nasirValue3 > 0) this.nasirValue3++;
+                    this.movementActive = false;
+                }
+                else
+                {
+                    this.movementOpportunity();
+                }
+            }
+        }
+        this.movedTimer = new timer(500);
+        this.movedTimer.finishCallback = () => { this.moved = false; this.cameraScreen.animatronicForceOff = false;};
     }
     Activate() {
         this.active = true;
@@ -201,24 +220,8 @@ export default class Animatronic {
             }
             if (this.movementActive == false && this.gameScreen.pause == false)
             {
-                this.movementTimer = new timer(this.movementOpportunityTime);
-                this.movementTimer.finishCallback =
-                        () => {
-                            if (this.gameScreen.pause == false)
-                            {
-                                if (this.Name == "Nasir" && this.gameScreen.nightnum < 3 && this.AInum == 0) // in Night 2, Nas can't move until 1 am
-                                {
-                                    if (this.gameScreen.debug) console.log("Nasir movement failed, night 2 rule");
-                                    if (this.nasirValue3 > 12) this.nasirValue3 = 0;
-                                    if (this.nasirValue3 > 0) this.nasirValue3++;
-                                    this.movementActive = false;
-                                }
-                                else
-                                {
-                                    this.movementOpportunity();
-                                }
-                            }
-                        }
+                this.movementTimer.SetTargetTime(this.movementOpportunityTime);
+                this.movementTimer.Reset();
                 this.movementTimer.Start();
                 this.movementActive = true;
             }
@@ -881,8 +884,7 @@ movementOpportunity()
                             this.moved = true;
                             if (this.gameScreen.debug) console.log(this.Name + " movement successful");
                             if (this.gameScreen.screenState == 0) this.gameScreen.drawChange = true;
-                            this.movedTimer = new timer(500);
-                            this.movedTimer.finishCallback = () => { this.moved = false; this.cameraScreen.animatronicForceOff = false; };
+                            this.movedTimer.Reset();
                             this.movedTimer.Start(); // so cameras disable for a second after moving
                         }
                         else if (this.Name != "Misa" && this.Name != "Juan" && this.Name != "Carlos" && this.Name != "Gustavo")
@@ -899,8 +901,7 @@ movementOpportunity()
                             {
                                 this.gameScreen.metalwalk.play();
                             }
-                            this.movedTimer = new timer(500);
-                            this.movedTimer.finishCallback = () => { this.moved = false; this.cameraScreen.animatronicForceOff = false; };
+                            this.movedTimer.Reset();
                             this.movedTimer.Start(); // so cameras disable for a second after movin
                             if (this.Name == "Sergio" && this.location == 15 && this.sergioFlashState == 0) {
                                 this.sergioFlashState = 1;
@@ -945,8 +946,7 @@ movementOpportunity()
                     this.moved = true;
                     if (this.gameScreen.screenState == 0) this.gameScreen.drawChange = true;
                     if (this.gameScreen.debug) console.log(this.Name + " movement successful");
-                    this.movedTimer = new timer(500);
-                    this.movedTimer.finishCallback = () => { this.moved = false; this.cameraScreen.animatronicForceOff = false; };
+                    this.movedTimer.Reset();
                     this.movedTimer.Start(); // so cameras disable for a second after moving
                 } 
                 else
