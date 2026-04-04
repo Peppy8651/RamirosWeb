@@ -178,7 +178,7 @@ export default class Animatronic {
                     if (this.gameScreen.flashlightstate == 1 && this.location == 15)
                     {
                         this.nasirValue1 = 0;
-                        this.nasirValue2 += 0.075 * delta;
+                        this.nasirValue2 += 0.06 * delta;
                         if (this.nasirValue2 > 100 * this.gameScreen.nightnum)
                         {
                             if (this.gameScreen.screenState == 0) this.gameScreen.drawChange = true;
@@ -893,6 +893,14 @@ movementOpportunity()
                             this.moved = true;
                             console.log(this.Name + " movement successful");
                             if (this.gameScreen.screenState == 0) this.gameScreen.drawChange = true;
+                            if (this.location == 4 || this.location == 5)
+                            {
+                                this.gameScreen.ventwalk.play();
+                            }
+                            if (this.location == 12 || this.location == 13) // vent locations
+                            {
+                                this.gameScreen.metalwalk.play();
+                            }
                             this.movedTimer = new timer(500);
                             this.movedTimer.finishCallback = () => { this.moved = false; this.cameraScreen.animatronicForceOff = false; };
                             this.movedTimer.Start(); // so cameras disable for a second after movin
