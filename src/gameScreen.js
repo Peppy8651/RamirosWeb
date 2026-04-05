@@ -379,7 +379,6 @@ export default class gameScreen extends Phaser.Scene {
     this.yellowtriangle.setAlpha(0);
     this.jumpscaretex = this.add.image(0, 0, 'ryan').setVisible(false);
     this.fpsText = document.getElementById("fps");
-
   }
   update(time, delta) {
         const currentFPS = Math.floor(this.game.loop.actualFps);
