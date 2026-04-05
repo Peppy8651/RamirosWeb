@@ -78,7 +78,6 @@ export default class Animatronic {
             case "Darien":
                 this.ID = 8;
                 this.movementPath = [7, 10, 3, 1, 5, 17, 14]; // 17 is right vent queue. If Darien is in 17, he's not in the right vent cam, and will immediately appear in office once cameras are lowered
-                this.movementPath = [17, 14]; // 17 is right vent queue. If Darien is in 17, he's not in the right vent cam, and will immediately appear in office once cameras are lowered
                 break;
             case "Marlon":
                 this.ID = 9;
