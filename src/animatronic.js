@@ -78,6 +78,7 @@ export default class Animatronic {
             case "Darien":
                 this.ID = 8;
                 this.movementPath = [7, 10, 3, 1, 5, 17, 14]; // 17 is right vent queue. If Darien is in 17, he's not in the right vent cam, and will immediately appear in office once cameras are lowered
+                this.movementPath = [17, 14]; // 17 is right vent queue. If Darien is in 17, he's not in the right vent cam, and will immediately appear in office once cameras are lowered
                 break;
             case "Marlon":
                 this.ID = 9;
@@ -331,6 +332,28 @@ export default class Animatronic {
                     }
                 }
             }
+            if (this.officeJumpscareTimer != null) {
+                if (this.officeJumpscareTimer._isRunning) {
+                        this.officeJumpscareTimer.Update(delta);
+                        if (this.gameScreen.stare == false) this.gameScreen.stare = true;
+                        if ((this.Name == "Darien" || this.Name == 'Marlon' || this.Name == 'Sergio') && (this.gameScreen.maskbuttonactive == 3)) {
+                                if (this.gameScreen.jumpscareID == 0) { // 0 means haven't jumpscared yet
+                                this.gameScreen.jumpscareID = this.ID;
+                                this.gameScreen.stare = false;
+                                this.gameScreen.switchScreenState(2); // force jumpscare if leaving cameras
+                            }
+                        }
+                }
+            }
+            else {
+                if (this.gameScreen.animatronics[1].attacking != 2 && this.gameScreen.stare && this.gameScreen.animatronicsInOffice <= 0) {
+                    this.gameScreen.stare = false;
+                    if (this.gameScreen.animatronicsInOffice < 0) this.gameScreen.animatronicsInOffice = 0;
+                }
+            }
+            if (this.camTimer != null && this.camTimer._isRunning) {
+                this.camTimer.Update(delta);
+            }
 
             if (this.Name == "Sergio" && this.sergioFlashState == 2) {
                 this.sergioFlashTimer.Update(delta);
@@ -342,7 +365,9 @@ export default class Animatronic {
                     case "Misa":
                     if (this.gameScreen.maskbuttonactive > 0 && this.gameScreen.maskbuttonactive < 3)
                     {
-                        if (this.gameScreen.stare == false) this.gameScreen.stare = true;
+                        if (this.gameScreen.stare == false) {
+                            this.gameScreen.stare = true;
+                        }
                         this.gameScreen.drawChange = true;
                         this.x -= (delta * this.scrollspeed);
                         // if (this.gameScree.stare.State != SoundState.Playing)
@@ -530,6 +555,7 @@ export default class Animatronic {
                         this.movementActive = true;
                         this.location = 14; // he's about to jumpscare
                         this.gameScreen.stare = true;
+                        this.gameScreen.animatronicsInOffice++;
                         this.camTimer = new timer(1000);
                         if (this.camTimer._isRunning == false)
                         {
@@ -551,6 +577,7 @@ export default class Animatronic {
                                     this.camTimer.Stop();
                                     this.gameScreen.ramiro.setVisible(false);
                                     this.gameScreen.stare = false;
+                                    this.gameScreen.animatronicsInOffice -= 1;
                                     this.camTimer = null;
                                     this.location = 8;
                                     this.movementActive = false;
@@ -570,6 +597,7 @@ export default class Animatronic {
                         this.officeAnimatronicsRNGAttemptMade = true;
                         //this.gameScreen.stare.play();
                         this.gameScreen.darienlaugh2.play();
+                        this.gameScreen.animatronicsInOffice++;
                         this.movementActive = true;
                         this.gameScreen.stare = true;
                         this.location = 14; // he's about to jumpscare
@@ -602,6 +630,7 @@ export default class Animatronic {
                                     //this.gameScreen.stare.Stop();
                                     this.camTimer.Stop();
                                     this.camTimer = null;
+                                    this.gameScreen.animatronicsInOffice -= 1;
                                     this.officeJumpscareTimer.Stop();
                                     this.gameScreen.darien.setVisible(false);
                                     this.officeJumpscareTimer = null;
@@ -631,6 +660,7 @@ export default class Animatronic {
                     {
                         //this.gameScreen.stare.play();
                         this.movementActive = true;
+                        this.gameScreen.animatronicsInOffice++;
                         this.location = 14; // he's about to jumpscare
                         let jumpscareInterval = Math.random() < 0.5 ? 4000 : 9000;
                         this.gameScreen.stare = true;
@@ -662,6 +692,7 @@ export default class Animatronic {
                                     // this.gameScreen.stare.Stop();
                                     this.camTimer.Stop();
                                     this.gameScreen.stare = false;
+                                    this.gameScreen.animatronicsInOffice -= 1;
                                     this.camTimer = null;
                                     this.officeJumpscareTimer.Stop();
                                     this.officeJumpscareTimer = null;
@@ -691,6 +722,7 @@ export default class Animatronic {
                     {
                         this.officeAnimatronicsRNGAttemptMade = true;
                         this.movementActive = true;
+                        this.gameScreen.animatronicsInOffice++;
                         this.gameScreen.stare = true;
                         this.location = 14; // he's about to jumpscare
                         let jumpscareInterval = Math.random() < 0.5 ? 5000 : 7000;
@@ -718,6 +750,7 @@ export default class Animatronic {
                                 if (this.gameScreen.maskbuttonactive == 1 || this.gameScreen.maskbuttonactive == 2) {
                                     this.gameScreen.stare = false;
                                     this.gameScreen.sergio.setVisible(false);
+                                    this.gameScreen.animatronicsInOffice -= 1;
                                     //this.gameScreen.stare.Stop();
                                     this.camTimer.Stop();
                                     this.camTimer = null; 
@@ -734,20 +767,6 @@ export default class Animatronic {
                             this.officeJumpscareTimer.Start();
                         }
                     }
-                }
-                if (this.officeJumpscareTimer != null && this.officeJumpscareTimer._isRunning) {
-                    this.officeJumpscareTimer.Update(delta);
-                    if (this.gameScreen.stare == false) this.gameScreen.stare = true;
-                    if ((this.Name == "Darien" || this.Name == 'Marlon' || this.Name == 'Sergio') && (this.gameScreen.maskbuttonactive == 3)) {
-                            if (this.gameScreen.jumpscareID == 0) { // 0 means haven't jumpscared yet
-                            this.gameScreen.jumpscareID = this.ID;
-                            this.gameScreen.stare = false;
-                            this.gameScreen.switchScreenState(2); // force jumpscare if leaving cameras
-                        }
-                    }
-                }
-                if (this.camTimer != null && this.camTimer._isRunning) {
-                    this.camTimer.Update(delta);
                 }
                 if (this.location == 14 || this.location == 13 || this.location == 12 || this.location == 17 || this.location == 18)
                 {

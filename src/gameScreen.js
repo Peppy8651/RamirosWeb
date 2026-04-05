@@ -68,6 +68,7 @@ export default class gameScreen extends Phaser.Scene {
     this.dangerSoundPlayed = false;
     this.clockChimePlayed = false;
     this.yayPlayed = false;
+    this.animatronicsInOffice = 0;
     this.jackPlayed = false;
     this.stare = false;
     this.dangerSoundTimer;
@@ -1304,6 +1305,7 @@ export default class gameScreen extends Phaser.Scene {
         this.oldcameraX = 0;
         this.oldcameraY = 0;
         this.tableframe = 0;
+        this.animatronicsInOffice = 0;
         this.freddymaskframe = 0;
         this.maskbuttonactive = 0;
         this.stare = false;
