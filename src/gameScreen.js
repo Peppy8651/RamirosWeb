@@ -237,6 +237,7 @@ export default class gameScreen extends Phaser.Scene {
         this.load.audio("deepbreaths", "/audio/deepbreaths.mp3");
         this.load.audio("misael", "/audio/misael.mp3");
         this.load.audio("misael2", "/audio/misael2.mp3");
+        this.load.audio("misael3", "/audio/misael3.mp3");
         this.load.audio('feralangelwaltz', '/audio/feralangelwaltz.mp3');
         // deepbreaths.Volume = 0.25f;
         // deepbreaths.IsLooped = false;
@@ -342,6 +343,7 @@ export default class gameScreen extends Phaser.Scene {
     // phone guy
     this.phoneguy1 = this.sound.add('misael');
     this.phoneguy2 = this.sound.add('misael2');
+    this.phoneguy3 = this.sound.add('misael3');
     this.mutecall = this.add.image(this.muteCallButton.x + 45, this.muteCallButton.y + 10, "mutecall");
 
     this.keyShift = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SHIFT);
@@ -491,6 +493,9 @@ export default class gameScreen extends Phaser.Scene {
                     case 2:
                         this.phoneguy2.play();
                     break;
+                    case 3:
+                        this.phoneguy3.play();
+                    break;
                 }
             }
             else {
@@ -501,6 +506,9 @@ export default class gameScreen extends Phaser.Scene {
                         break;
                         case 2:
                             if (this.phoneguy2.isPlaying) this.phoneguy2.stop();
+                        break;
+                        case 3:
+                            if (this.phoneguy3.isPlaying) this.phoneguy3.stop();
                         break;
                     }
 
@@ -1068,7 +1076,7 @@ export default class gameScreen extends Phaser.Scene {
             if (this.hourNumShow.texture.key != 'num' + (1)) this.hourNumShow.setTexture('num' + (1));
             if (this.hourNumShow2.texture.key != 'num' + (2)) this.hourNumShow2.setTexture('num' + (2));
         }
-       if (this.phoneguy1.isPlaying || this.phoneguy2.isPlaying) {
+       if (this.phoneguy1.isPlaying || this.phoneguy2.isPlaying || this.phoneguy3.isPlaying) {
          if (this.mutecall.visible == false) this.mutecall.setVisible(true);
        }
        else {
@@ -1115,6 +1123,9 @@ export default class gameScreen extends Phaser.Scene {
                 break;
                 case 2:
                     if (this.phoneguy2.isPlaying) this.phoneguy2.stop();
+                break;
+                case 3:
+                    if (this.phoneguy3.isPlaying) this.phoneguy3.stop();
                 break;
             }
             let newtimer = new timer(2000);
