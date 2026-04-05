@@ -977,16 +977,18 @@ export default class gameScreen extends Phaser.Scene {
                     const anim = this.animatronics[i];
                     if (anim.location == 15) // right vent with misa
                     {
-                        if (anim.Name == "Nasir" || anim.Name == "Gustavo" || anim.Name == "Sergio") animatronicsIDcount += anim.ID;
-                        animatronicscount++;
+                        if (anim.Name == "Nasir" || anim.Name == "Gustavo" || anim.Name == "Sergio") {
+                            animatronicsIDcount += anim.ID;
+                            animatronicscount++;
+                        }
                         if (anim.Name == "Juan") officeTexture = 'officeflashjuan';
                         if (anim.Name == "Ramiro") officeTexture = 'officeflashram';
                         if (anim.Name == "Gustavo") officeTexture = 'officeflashgooch';
                         if (anim.Name == "Nasir") officeTexture = 'officeflashnas'; // ALWAYS MAKE SURE HE GOES LAST
                         if (anim.Name == "Sergio") officeTexture = 'officeflashsergio'; // ALWAYS MAKE SURE HE GOES LAST
                         if (anim.Name == "Marlon") officeTexture = 'officeflashmarlon';
-                        if (animatronicscount > 2 && animatronicsIDcount == 11) officeTexture = 'officeflashnasgooch'; // unless they're both in the office lol
-                        if (animatronicscount > 2 && animatronicsIDcount >= 15) officeTexture = 'officeflashnassergio'; // unless they're both in the office lol
+                        if (animatronicscount >= 2 && animatronicsIDcount == 11) officeTexture = 'officeflashnasgooch'; // unless they're both in the office lol
+                        if (animatronicscount >= 2 && animatronicsIDcount >= 15 && animatronicsIDcount != 16) officeTexture = 'officeflashnassergio'; // unless they're both in the office lol
                     }
                     if (anim.location == 16)
                     {
