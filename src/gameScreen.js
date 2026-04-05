@@ -792,7 +792,10 @@ export default class gameScreen extends Phaser.Scene {
                 this.pause = true;
                 if (this.clockChimePlayed == false)
                 {
-                    if (this.screenState == 1) this.scene.bringToTop();
+                    if (this.screenState == 1) { 
+                        this.scene.sleep('cameraScreen');
+                        this.scene.bringToTop();
+                    }
                     this.sixamnum.setAlpha(0);
                     this.sixamnum.setVisible(true);
                     this.sixamletters.setAlpha(0);
@@ -800,6 +803,17 @@ export default class gameScreen extends Phaser.Scene {
                     this.sixamnum.anims.play('sixam');
                     this.clockchime.play();
                     this.clockChimePlayed = true;
+                    if (this.jackinthebox != null && this.jackinthebox.isPlaying) this.jackinthebox.stop();
+                    if (this.dangerSound != null && this.dangerSound.isPlaying) this.dangerSound.stop();
+                    if (this.deepbreaths != null && this.deepbreaths.isPlaying) this.deepbreaths.stop();
+                    if (this.fanSound != null && this.fanSound.isPlaying) this.fanSound.stop();
+                    if (this.stareSound != null && this.stareSound.isPlaying) this.stareSound.stop();
+                    if (this.screenState == 1) {
+                        let cameraScreen2 = this.scene.get('cameraScreen');
+                        if (cameraScreen2.musicsound != null && cameraScreen2.musicsound.isPlaying) cameraScreen2.musicsound.stop();
+                        if (cameraScreen2.cameraambience != null && cameraScreen2.cameraambience.isPlaying) cameraScreen2.cameraambience.stop();
+                        if (cameraScreen2.garble != null && cameraScreen2.garble.isPlaying) cameraScreen2.garble.stop();
+                    } 
                     if (this.yayPlayed == false)
                     {
                         this.yayPlayed = true;
@@ -1174,7 +1188,7 @@ export default class gameScreen extends Phaser.Scene {
                         case (this.nightnum == 4):
                         this.batterymilliseconds = 68000;
                         break;
-                        case (this.gameScreen.nightnum >= 5):
+                        case (this.nightnum >= 5):
                         this.batterymilliseconds = 51000;
                         break;
                 }
@@ -1184,7 +1198,7 @@ export default class gameScreen extends Phaser.Scene {
             this.setUpGame();
             if (this.screenState == 5) this.screens[4].scene.switch('menuScreen');
             if (this.screenState == 4) this.screens[3].scene.switch('menuScreen');
-            if (this.screenState == 0) this.scene.switch('menuScreen');
+            if (this.screenState == 0 || this.screenState == 1) this.scene.switch('menuScreen');
             break;
             case 4:
             // PlaySound(menuScreen.menuMusic, false);
@@ -1222,7 +1236,6 @@ export default class gameScreen extends Phaser.Scene {
                 if (cameraScreen2.musicsound != null && cameraScreen2.musicsound.isPlaying) cameraScreen2.musicsound.stop();
                 if (cameraScreen2.cameraambience != null && cameraScreen2.cameraambience.isPlaying) cameraScreen2.cameraambience.stop();
                 if (cameraScreen2.garble != null && cameraScreen2.garble.isPlaying) cameraScreen2.garble.stop();
-                this.scene.sleep('cameraScreen');
             } 
             this.scene.switch('winScreen');
             break;

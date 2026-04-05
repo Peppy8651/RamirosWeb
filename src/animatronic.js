@@ -35,6 +35,7 @@ export default class Animatronic {
         this.Name = name;
         this.movementActive = false;
         this.gameScreen = gameScreen;
+      this.sergioFlashState = 0;
       this.sergioFlashCounter;
         switch (name)
         {
@@ -277,23 +278,24 @@ export default class Animatronic {
                         if (this.Name == "Nasir" && this.gameScreen.hournum >= 1) this.AInum = 3;
                         break;
                     case 4:
-                        if (this.Name == "Misa" || this.Name == "Juan" || this.Name == "Ramiro") {
-                            this.AInum = 2;
-                        }
-                        if (this.Name == "Carlos" || this.Name == "Marlon")
-                        {
+                        if (this.Name == "Juan" || this.Name == "Ramiro") {
                             this.AInum = 3;
                         }
-                        if (this.Name == "Darien" || this.Name == "Sergio") {
+                        if (this.Name == "Misa" || this.Name == "Carlos" || this.Name == "Marlon")
+                        {
                             this.AInum = 4;
+                        }
+                        if (this.Name == "Darien" || this.Name == "Sergio") {
+                            this.AInum = 5;
                         }
                         if (this.Name == "Gustavo") this.AInum = 5;
                         if (this.Name == 'Nasir') this.AInum = 7;
                         break;
                     case 5:
-                        if (this.Name == 'Ramiro' || this.Name == 'Juan'  || this.Name == 'Misa') this.AInum = 2;
+                        if (this.Name == 'Ramiro' || this.Name == 'Juan') this.AInum = 3;
+                        if (this.Name == 'Misa') this.AInum = 4;
                         if (this.Name == 'Gustavo') this.AInum = 10;
-                        if (this.Name == 'Carlos' || this.Name == 'Marlon' || this.Name == 'Darien' || this.Name == 'Sergio') this.AInum = 5;
+                        if (this.Name == 'Carlos' || this.Name == 'Marlon' || this.Name == 'Darien' || this.Name == 'Sergio') this.AInum = 6;
                         if (this.Name == 'Nasir') this.AInum = 7;
                         break;
                     case 6:
@@ -320,8 +322,6 @@ export default class Animatronic {
                 this.movementActive = false;
             }
             else if (this.gameScreen.flashlightstate == 1 && this.location == 15) {
-                this.movementOpportunityTime = 6670;
-                this.movementActive = false;
                 if (this.Name == "Sergio") {
                     if (this.sergioFlashCounter < this.gameScreen.nightnum) {  
                         if (this.sergioFlashState == 1) {
@@ -330,6 +330,10 @@ export default class Animatronic {
                             if (this.gameScreen.sergioflash.isPlaying == false) this.gameScreen.sergioflash.play();
                         }
                     }
+                }
+                if (this.gameScreen.animatronics[8].sergioFlashState != 2) {
+                    this.movementOpportunityTime = 6670;
+                    this.movementActive = false;
                 }
             }
             if (this.officeJumpscareTimer != null) {
@@ -526,6 +530,7 @@ export default class Animatronic {
                                 {
                                     this.camTimer.Stop();
                                     this.gameScreen.stare = false;
+                                    if (this.gameScreen.garble.isPlaying) this.gameScreen.garble.stop();
                                     this.camTimer = null;
                                 }
                             }
