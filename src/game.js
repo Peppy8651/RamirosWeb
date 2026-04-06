@@ -16,5 +16,8 @@ new Phaser.Game({
   scene: screens, // The name of the scene we created
   physics: { default: 'arcade' }, // The physics engine to use
   parent: 'game', // Create the game inside the <div id="game"> 
-  type: Phaser.AUTO
+  type: Phaser.AUTO,
+  smoothStep: true,
+  pixelArt: true,
+  roundPixels: false
 });
