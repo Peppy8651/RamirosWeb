@@ -21,6 +21,7 @@ export default class menuScreen extends Phaser.Scene {
   preload() {
     // This method is called once at the beginning
     // It will load all the assets, like sprites and sounds  
+    this.loadingScreen = this.scene.get('loadingScreen');
     this.load.baseURL = '/RamirosWeb/';
     this.load.image("logo", '/images/logo.png');
     this.load.image("newgame", '/images/newgame.png');
@@ -145,7 +146,7 @@ export default class menuScreen extends Phaser.Scene {
                     this.gameScreen.batterymilliseconds = 51000;
                     break;
             }
-            this.gameScreen.switchScreenState(0);
+            this.gameScreen.switchScreenState(6);
           }
   }
   update(time, delta) {
