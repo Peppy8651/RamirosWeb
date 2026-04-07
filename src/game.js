@@ -4,8 +4,10 @@ import menuScreen from './menuScreen.js';
 import gameOverScreen from './gameOverScreen.js';
 import cameraScreen from './cameraScreen.js';
 import winScreen from './winScreen.js';
+import newspaperScreen from './newspaperScreen.js';
+import loadingScreen from './loadingScreen.js';
 
-const screens = [new menuScreen(), new cameraScreen(), new gameScreen(), new gameOverScreen(), new winScreen()];
+const screens = [new menuScreen(), new cameraScreen(), new gameScreen(), new gameOverScreen(), new winScreen(), new newspaperScreen(), new loadingScreen()];
 for (const screen of screens) {
     screen.screens = screens;
 } 
