@@ -9,7 +9,7 @@ export default class gameScreen extends Phaser.Scene {
   // The three methods currently empty
   constructor() {
     super({key: 'gameScreen'});
-    this.debug = false; // CHANGE HERE
+    this.debug = true; // CHANGE HERE
     this.web = true; // always change this for web builds
     this.maskonPlayed = false;
     this.monitoropenPlayed = false;
@@ -314,7 +314,6 @@ export default class gameScreen extends Phaser.Scene {
                     this.jumpscaretex.setDisplaySize(this.jumpscaretex.width * this.jumpscareScale, this.jumpscaretex.height * this.jumpscareScale);
                     break;
                 }
-                
             }
             
             if (this.screens[1].darienInterruptWait != null && this.screens[1].darienInterruptWait.IsFinished() == false) {
@@ -684,7 +683,7 @@ export default class gameScreen extends Phaser.Scene {
                             changeTimer.playWhenPaused = true;
                             changeTimer.finishCallback = async () => {
                                 this.phoneHasPlayed = false;
-                                if (this.nightnum == 5) {
+                                if (this.nightnum >= 5) {
                                     this.switchScreenState(5); // win screen
                                 }
                                 else {
@@ -1027,8 +1026,14 @@ export default class gameScreen extends Phaser.Scene {
                         case 3:
                         if (this.animatronics[i].Name != "Gustavo") this.animatronics[i].Activate();
                         break;
+                        case 4:
+                        if (this.gameScreen.animatronics[i].Name != 'Eric') this.gameScreen.animatronics[i].Activate();
+                        break;
+                        case 5:
+                        if (this.gameScreen.animatronics[i].Name != 'Eric') this.gameScreen.animatronics[i].Activate();
+                        break;
                         default:
-                        this.animatronics[i].Activate();
+                        this.gameScreen.animatronics[i].Activate();
                         break;
                     }
                 }
@@ -1086,6 +1091,7 @@ export default class gameScreen extends Phaser.Scene {
             case 5:
 
             let winScreen = this.scene.get('winScreen');
+            if (this.nightnum <= 7 && this.nightnum >= 5) this.winScreen.version = this.nightnum - 5; // 5 - 5 = 0, 6-5 = 1, 7-5 = 2
             winScreen.changeTimer = new timer(11500);
             winScreen.changeTimer.finishCallback = async () => {
                     winScreen.partyrock.stop();

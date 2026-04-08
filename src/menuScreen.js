@@ -16,7 +16,6 @@ export default class menuScreen extends Phaser.Scene {
     this.nightSelection = false;
     this.nightSelected = 1;
     this.optionSelected = 1;
-    this.fullScreenSelection;
   }
   preload() {
     // This method is called once at the beginning
@@ -34,6 +33,7 @@ export default class menuScreen extends Phaser.Scene {
     this.load.image('thirdnight', "/images/menu/nights/thirdnight.png");
     this.load.image('fourthnight', "/images/menu/nights/fourthnight.png");
     this.load.image('fifthnight', "/images/menu/nights/fifthnight.png");
+    this.load.image('sixthnight', '/images/menu/nights/sixthnight.png');
     this.load.audio('blip', '/audio/blip.mp3');
     this.load.audio('menumusic', '/audio/menutheme.mp3');
     for (let i = 1; i <= 6; i++) {
@@ -91,7 +91,7 @@ export default class menuScreen extends Phaser.Scene {
         this.thirdnight = this.add.image(1024/2 - 275, 768 / 2 + 50 + 42 + 42, 'thirdnight').setVisible(false);
         this.fourthnight = this.add.image(1024/2 - 275, 768 / 2 + 50 + 42 + 42 + 42, 'fourthnight').setVisible(false);
         this.fifthnight = this.add.image(1024/2 - 275, 768 / 2 + 50 + 42 + 42 + 42 + 42, 'fifthnight').setVisible(false);
-
+        this.sixthnight = this.add.image(1024/2 - 275, 768 / 2 + 50 + 42 + 42 + 42 + 42 + 42, 'sixthnight').setVisible(false);
         this.logo = this.add.image(1024 / 2 - 300, 768 / 2 - 260, "logo");
         this.blip = this.sound.add('blip');
         this.menuMusic = this.sound.add('menumusic');
@@ -119,7 +119,13 @@ export default class menuScreen extends Phaser.Scene {
                     }
                     break;
                     case 3:
-                    if (this.gameScreen.animatronics[i].Name != 'Gustavo') this.gameScreen.animatronics[i].Activate();
+                    if (this.gameScreen.animatronics[i].Name != 'Gustavo' && this.gameScreen.animatronics[i].Name != 'Eric') this.gameScreen.animatronics[i].Activate();
+                    break;
+                    case 4:
+                    if (this.gameScreen.animatronics[i].Name != 'Eric') this.gameScreen.animatronics[i].Activate();
+                    break;
+                    case 5:
+                    if (this.gameScreen.animatronics[i].Name != 'Eric') this.gameScreen.animatronics[i].Activate();
                     break;
                     default:
                     this.gameScreen.animatronics[i].Activate();
@@ -146,7 +152,7 @@ export default class menuScreen extends Phaser.Scene {
                     this.gameScreen.batterymilliseconds = 51000;
                     break;
             }
-            this.gameScreen.switchScreenState(6);
+            this.gameScreen.switchScreenState(6); // loading screen when first used
           }
   }
   update(time, delta) {
@@ -186,13 +192,15 @@ export default class menuScreen extends Phaser.Scene {
                 else
                 {
                     this.drawChange = true;
-                    this.nightSelection = true;
+                    
                     this.switchstatic.play('switchstatic');
-                    // if (optionSelected == 2)
-                    // {
-                    //     fullScreenSelection = true;
-                    //     optionSelected = 1;
-                    // }
+                    if (this.optionSelected == 2)
+                    {
+                        this.scene.switch('customNightScreen');
+                    }
+                    else {
+                        this.nightSelection = true;
+                    }
                     // switchStatic = 16;
                     if (this.blip.isPlaying == false) this.blip.play();
                     this.buttonCooldown = new timer(400);
@@ -231,6 +239,7 @@ export default class menuScreen extends Phaser.Scene {
                 {
                     if (this.selectionCooldown == null)
                     {
+                        if (this.nightSelected == 5) this.nightSelected = 6; // ALWAYS MAKE SURE TO PUT IT IN REVERSE ORDER
                         if (this.nightSelected == 4) this.nightSelected = 5; // ALWAYS MAKE SURE TO PUT IT IN REVERSE ORDER
                         if (this.nightSelected == 3) this.nightSelected = 4; // ALWAYS MAKE SURE TO PUT IT IN REVERSE ORDER
                         if (this.nightSelected == 2) this.nightSelected = 3; // ALWAYS MAKE SURE TO PUT IT IN REVERSE ORDER
@@ -240,6 +249,7 @@ export default class menuScreen extends Phaser.Scene {
                     }
                     if (this.selectionCooldown.IsFinished())
                     {
+                        if (this.nightSelected == 5) this.nightSelected = 6; // ALWAYS MAKE SURE TO PUT IT IN REVERSE ORDER
                         if (this.nightSelected == 4) this.nightSelected = 5; // ALWAYS MAKE SURE TO PUT IT IN REVERSE ORDER
                         if (this.nightSelected == 3) this.nightSelected = 4; // ALWAYS MAKE SURE TO PUT IT IN REVERSE ORDER
                         if (this.nightSelected == 2) this.nightSelected = 3; // ALWAYS MAKE SURE TO PUT IT IN REVERSE ORDER
@@ -253,12 +263,12 @@ export default class menuScreen extends Phaser.Scene {
                     if (this.selectionCooldown == null)
                     {
                         this.selectionCooldown = new timer(180);
-                        // if (this.optionSelected == 1) this.optionSelected = 2; // no options for web yet
+                        if (this.optionSelected == 1) this.optionSelected = 2; // no options for web yet
                         this.selectionCooldown.Start();
                     }
                     if (this.selectionCooldown.IsFinished())
                     {
-                        // if (optionSelected == 1 && game.web == false) optionSelected = 2; // no options for web yet
+                        if (this.optionSelected == 1) this.optionSelected = 2; // no options for web yet
                         this.selectionCooldown.Reset();
                     }
                 }  
@@ -274,6 +284,7 @@ export default class menuScreen extends Phaser.Scene {
                         if (this.nightSelected == 3) this.nightSelected = 2; // this is fine though
                         if (this.nightSelected == 4) this.nightSelected = 3
                         if (this.nightSelected == 5) this.nightSelected = 4; // this is fine though
+                        if (this.nightSelected == 6) this.nightSelected = 5; // this is fine though
                         this.selectionCooldown = new timer(180);
                         this.selectionCooldown.Start();
                     }
@@ -284,6 +295,7 @@ export default class menuScreen extends Phaser.Scene {
                         if (this.nightSelected == 3) this.nightSelected = 2; // this is fine though
                         if (this.nightSelected == 4) this.nightSelected = 3
                         if (this.nightSelected == 5) this.nightSelected = 4; // this is fine though
+                        if (this.nightSelected == 6) this.nightSelected = 5; // this is fine though
                         this.selectionCooldown.Reset();
                     }
                 }
@@ -314,26 +326,32 @@ export default class menuScreen extends Phaser.Scene {
   }
   drawUpdate() {
     if (this.nightOpen == false) {
-      if (this.nightSelected == 5) this.arrow.setPosition(1024 / 2 - 450, 768/2 + 50 + 84 + 84);
-      if (this.nightSelected == 4) this.arrow.setPosition(1024 / 2 - 450, 768/2 + 50 + 84 + 42);
-      if (this.nightSelected == 3) this.arrow.setPosition(1024 / 2 - 450, 768/2 + 50 + 84);
-      if (this.nightSelected == 2) this.arrow.setPosition(1024 / 2 - 450, 768/2 + 50 + 42);
-      if (this.nightSelected == 1) this.arrow.setPosition(1024 / 2 - 450, 768/2 + 50);
+      
       if (this.nightSelection == true) {
+        if (this.nightSelected == 6) this.arrow.setPosition(1024 / 2 - 450, 768/2 + 50 + 84 + 84 + 42);
+        if (this.nightSelected == 5) this.arrow.setPosition(1024 / 2 - 450, 768/2 + 50 + 84 + 84);
+        if (this.nightSelected == 4) this.arrow.setPosition(1024 / 2 - 450, 768/2 + 50 + 84 + 42);
+        if (this.nightSelected == 3) this.arrow.setPosition(1024 / 2 - 450, 768/2 + 50 + 84);
+        if (this.nightSelected == 2) this.arrow.setPosition(1024 / 2 - 450, 768/2 + 50 + 42);
+        if (this.nightSelected == 1) this.arrow.setPosition(1024 / 2 - 450, 768/2 + 50);
         if (this.firstnight.visible == false) this.firstnight.setVisible(true);
         if (this.secondnight.visible == false) this.secondnight.setVisible(true);
         if (this.thirdnight.visible == false) this.thirdnight.setVisible(true);
         if (this.fourthnight.visible == false) this.fourthnight.setVisible(true);
         if (this.fifthnight.visible == false) this.fifthnight.setVisible(true);
+        if (this.sixthnight.visible == false) this.sixthnight.setVisible(true);
         if (this.newgame.visible == true) this.newgame.setVisible(false);
       }
       else {
+        if (this.optionSelected == 2) this.arrow.setPosition(1024 / 2 - 450, 768/2 + 50 + 42);
+        if (this.optionSelected == 1) this.arrow.setPosition(1024 / 2 - 450, 768/2 + 50);
         if (this.newgame.visible == false) this.newgame.setVisible(true);
         if (this.firstnight.visible == true)this.firstnight.setVisible(false);
         if (this.secondnight.visible == true) this.secondnight.setVisible(false);
         if (this.thirdnight.visible == true) this.thirdnight.setVisible(false);
         if (this.fourthnight.visible == true) this.fourthnight.setVisible(false);
         if (this.fifthnight.visible == true) this.fifthnight.setVisible(false);
+        if (this.sixthnight.visible == true) this.fifthnight.setVisible(false);
       }
     }
     else {
@@ -343,6 +361,7 @@ export default class menuScreen extends Phaser.Scene {
       this.thirdnight.setVisible(false);
       this.fourthnight.setVisible(false);
       this.fifthnight.setVisible(false);
+      this.sixthnight.setVisible(false);
       this.newgame.setVisible(false);
       this.titlepic.setVisible(false);
       this.static.setVisible(false);

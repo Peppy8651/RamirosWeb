@@ -5,7 +5,7 @@ export default class winScreen extends Phaser.Scene {
   // The three methods currently empty
   constructor() {
     super({key: 'winScreen'});
-    
+    this.version = 0; // 0 is for night 5, 1 is for night 6, 2 is for night 7
   }
   preload() {
     // This method is called once at the beginning
@@ -13,11 +13,20 @@ export default class winScreen extends Phaser.Scene {
     this.load.baseURL = '/RamirosWeb/';
     this.load.image('win', '/images/menu/win.png');
     this.load.audio('partyrock', '/audio/partyrock.mp3');
-    
   }
   create() {
     // This method is called once, just after preload()
     this.wintex = this.add.image(1024/2, 768/2, 'win');
+    if (this.version != 0) {
+      switch (this.version) {
+        case 1:
+        this.wintex.setTexture('') // night 6
+        break;
+        case 2:
+        this.wintex.setTexture('') // night 7
+        break;
+      }
+    } 
     this.partyrock = this.sound.add('partyrock'); 
     this.partyrock.play();
     this.blackRectangle = this.add.graphics({ fillStyle: { color: 0x000000 } });

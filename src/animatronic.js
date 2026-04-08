@@ -97,7 +97,11 @@ export default class Animatronic {
                     this.sergioFlashTimer.Reset();
                 };
                 this.sergioFlashTimer.Start();
-                break;
+            break;
+            case 'Eric':
+                this.ID = 11;
+                this.movementPath = [19, 16, 14]; // 19 is just a random spot it doesn't really matter
+            break;
         }
         this.location = this.movementPath[0];
         this.camTimer = new timer(750);
@@ -173,6 +177,10 @@ export default class Animatronic {
                 break;
             case 6:
                 if (this.Name == "Misa" || this.Name == "Juan" || this.Name == "Ramiro") this.AInum = 0;
+                if (this.Name == 'Gustavo') this.AInum = 3;
+                if (this.Name == 'Carlos' || this.Name == 'Marlon' || this.Name == 'Darien' || this.Name == 'Sergio') this.AInum = 5;
+                if (this.Name == 'Nasir') this.AInum = 10;
+                if (this.Name == 'Eric') this.AInum = 2;
                 break;
         }
     }
@@ -299,6 +307,10 @@ export default class Animatronic {
                         if (this.Name == 'Nasir') this.AInum = 7;
                         break;
                     case 6:
+                        if (this.Name == 'Ramiro' || this.Name == 'Misa' || this.Name == 'Juan' || this.Name == 'Eric') this.AInum = 5;
+                        if (this.Name == 'Gustavo' || this.Name == 'Marlon' || this.Name == 'Darien' || this.Name == 'Sergio') this.AInum = 10;
+                        if (this.Name == 'Carlos') this.AInum = 9;
+                        if (this.Name == 'Nasir') this.AInum = 15;
                         break;
                 }
                 if (this.Name == "Carlos" && this.location == 14)
