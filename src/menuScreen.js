@@ -5,6 +5,9 @@ import winScreen from './winScreen.js';
 import Animatronic from './animatronic.js';
 import timer from './timer.js';
 
+const { Rectangle } = Phaser.Geom; 
+
+
 export default class menuScreen extends Phaser.Scene {
   // The three methods currently empty
   constructor() {
@@ -24,6 +27,7 @@ export default class menuScreen extends Phaser.Scene {
     this.load.baseURL = '/RamirosWeb/';
     this.load.image("logo", '/images/logo.png');
     this.load.image("newgame", '/images/newgame.png');
+    this.load.image("customnight", '/images/customnight.png');
     // this.load.image("options", '/images/options.png');
     this.load.image("arrow", '/images/arrow.png');
     this.load.image("titlepic", '/images/titlepic.png');
@@ -44,7 +48,9 @@ export default class menuScreen extends Phaser.Scene {
         {
             this.load.image('night' + (i+1), "/images/menu/nights/" + (i+1) + ".png");
         }
-
+    // mobile
+    this.load.image('arrowup', '/images/mobile/arrowup.png');
+    this.load.image('arrowdown', '/images/mobile/arrowdown.png');
   }
   create() {
         this.gameScreen = this.scene.get('gameScreen');
@@ -83,7 +89,30 @@ export default class menuScreen extends Phaser.Scene {
             ],
         });
         this.switchstatic.anims.play('switchstatic');
+        //mobile
+        this.arrowup = this.add.image(875, 110, 'arrowup').setVisible(false);
+        this.arrowup.setScale(2, 2);
+        this.arrowup.setAlpha(0.3);
+        this.arrowdown = this.add.image(875, 650, 'arrowdown').setVisible(false);
+        this.arrowdown.setScale(2, 2);
+        this.arrowup.setScale(2, 2);
+        this.arrowdown.setAlpha(0.3);
+
+        this.arrowupbounds = new Rectangle(825, 10, 925, 210);
+        this.arrowdownbounds = new Rectangle(825, 550, 925, 750);
+        if (this.sys.game.device.input.touch) {
+            let info = document.getElementById("extra-info");
+            info.remove();
+            this.arrowup.setVisible(true);
+            this.arrowdown.setVisible(true);
+        }
+        else {
+            this.scale.scaleMode = Phaser.Scale.NONE;
+            this.scale.refresh();
+        }
+
         this.newgame = this.add.image(1024 / 2 - 275, 768 / 2 + 50, 'newgame');
+        this.customnight = this.add.image(1024 / 2 - 225, 768 / 2 + 50 + 46, 'customnight');
     // this.load.image("options", '/images/options.png');
         this.arrow = this.add.image(1024 / 2 - 450, 768/2 + 50, "arrow");
         this.firstnight = this.add.image(1024/2 - 275, 768 / 2 + 50, 'firstnight').setVisible(false);
@@ -154,58 +183,67 @@ export default class menuScreen extends Phaser.Scene {
             }
             this.gameScreen.switchScreenState(6); // loading screen when first used
           }
+
   }
   update(time, delta) {
     this.drawChange = false;
+    var mouse = this.input.activePointer;
     if (this.nightOpen == false)
         {
-            if (this.keyEnter.isDown)
+            if (this.keyEnter.isDown || (mouse.wasTouch && mouse.isDown))
             {
-                if (this.nightSelection == true)
-                {
-                    if (this.buttonCooldown.IsFinished())
-                    {
-                        this.buttonCooldown = null;
-                        this.nightSelection = false;
-                        this.gameScreen.nightnum = this.nightSelected;
-                        if (this.menuMusic.isPlaying == true) this.menuMusic.stop();
-                        // this.Mouse.SetPosition( (int) (((game.width / 2)) * game.gameScreen.widthStretch), (int) (((game.height / 2)) * game.gameScreen.heightStretch));
-                        // menuMusic.Stop();
-                        if (this.blip.isPlaying == false) this.blip.play();
-                        this.nightOpen = true;
-                        this.drawChange = true;
-                        this.switchstatic.play('switchstatic');
-                        this.nightOpenTimer.Start();
-                    }
+                let touchCondition;
+                if (mouse.wasTouch) {
+                    touchCondition = (!this.arrowupbounds.contains(mouse.x, mouse.y) && !this.arrowdownbounds.contains(mouse.x, mouse.y)) ? true: false;
                 }
-                // else if (fullScreenSelection == true)
-                // {
-                //     if (buttonCooldown.IsFinished())
-                //     {
-                //         game.toggleFullScreen(optionSelected - 1); // technically the logic starts with 0, so we gotta remove 1 from optionSelected
-                //         switchStatic = 16;
-                //         game.blip.Play();
-                //         buttonCooldown = new Timer(TimeSpan.FromMilliseconds(400));
-                //         buttonCooldown.Start();
-                //     }
-                // }
-                else
-                {
-                    this.drawChange = true;
-                    
-                    this.switchstatic.play('switchstatic');
-                    if (this.optionSelected == 2)
+                if (touchCondition == null || touchCondition == true) {
+                    if (this.nightSelection == true)
                     {
-                        this.scene.switch('customNightScreen');
+                        if (this.buttonCooldown.IsFinished())
+                        {
+                            this.buttonCooldown = null;
+                            this.nightSelection = false;
+                            this.gameScreen.nightnum = this.nightSelected;
+                            if (this.menuMusic.isPlaying == true) this.menuMusic.stop();
+                            // this.Mouse.SetPosition( (int) (((game.width / 2)) * game.gameScreen.widthStretch), (int) (((game.height / 2)) * game.gameScreen.heightStretch));
+                            // menuMusic.Stop();
+                            if (this.blip.isPlaying == false) this.blip.play();
+                            this.nightOpen = true;
+                            this.drawChange = true;
+                            this.switchstatic.play('switchstatic');
+                            this.nightOpenTimer.Start();
+                        }
                     }
-                    else {
-                        this.nightSelection = true;
-                    }
-                    // switchStatic = 16;
-                    if (this.blip.isPlaying == false) this.blip.play();
-                    this.buttonCooldown = new timer(400);
-                    this.buttonCooldown.Start();
-                } 
+                    // else if (fullScreenSelection == true)
+                    // {
+                    //     if (buttonCooldown.IsFinished())
+                    //     {
+                    //         game.toggleFullScreen(optionSelected - 1); // technically the logic starts with 0, so we gotta remove 1 from optionSelected
+                    //         switchStatic = 16;
+                    //         game.blip.Play();
+                    //         buttonCooldown = new Timer(TimeSpan.FromMilliseconds(400));
+                    //         buttonCooldown.Start();
+                    //     }
+                    // }
+                    else
+                    {
+                        this.drawChange = true;
+                        
+                        this.switchstatic.play('switchstatic');
+                        if (this.optionSelected == 2)
+                        {
+                            this.scene.switch('customNightScreen');
+                        }
+                        else {
+                            this.nightSelection = true;
+                        }
+                        // switchStatic = 16;
+                        if (this.blip.isPlaying == false) this.blip.play();
+                        this.buttonCooldown = new timer(400);
+                        this.buttonCooldown.Start();
+                    } 
+                }
+                
             }
             // if (Keyboard.GetState().IsKeyDown(Keys.Back) || Keyboard.GetState().IsKeyDown(Keys.Escape))
             // {
@@ -232,7 +270,7 @@ export default class menuScreen extends Phaser.Scene {
             {
                 this.selectionCooldown.Update(delta);
             }
-            if (this.keyDown.isDown|| this.keyS.isDown)
+            if (this.keyDown.isDown|| this.keyS.isDown || (mouse.wasTouch && mouse.isDown && this.arrowdownbounds.contains(mouse.x,mouse.y)))
             {
                 this.drawChange = true;
                 if (this.nightSelection == true)
@@ -273,7 +311,7 @@ export default class menuScreen extends Phaser.Scene {
                     }
                 }  
             }
-            if (this.keyUp.isDown|| this.keyW.isDown)
+            if (this.keyUp.isDown|| this.keyW.isDown || (mouse.wasTouch && mouse.isDown && this.arrowupbounds.contains(mouse.x,mouse.y)))
             {
                 if (this.nightSelection == true)
                 {
@@ -341,11 +379,13 @@ export default class menuScreen extends Phaser.Scene {
         if (this.fifthnight.visible == false) this.fifthnight.setVisible(true);
         if (this.sixthnight.visible == false) this.sixthnight.setVisible(true);
         if (this.newgame.visible == true) this.newgame.setVisible(false);
+        if (this.customnight.visible == true) this.customnight.setVisible(false);
       }
       else {
         if (this.optionSelected == 2) this.arrow.setPosition(1024 / 2 - 450, 768/2 + 50 + 42);
         if (this.optionSelected == 1) this.arrow.setPosition(1024 / 2 - 450, 768/2 + 50);
         if (this.newgame.visible == false) this.newgame.setVisible(true);
+        if (this.customnight.visible == false) this.customnight.setVisible(true);
         if (this.firstnight.visible == true)this.firstnight.setVisible(false);
         if (this.secondnight.visible == true) this.secondnight.setVisible(false);
         if (this.thirdnight.visible == true) this.thirdnight.setVisible(false);
@@ -363,9 +403,12 @@ export default class menuScreen extends Phaser.Scene {
       this.fifthnight.setVisible(false);
       this.sixthnight.setVisible(false);
       this.newgame.setVisible(false);
+      this.customnight.setVisible(false);
       this.titlepic.setVisible(false);
       this.static.setVisible(false);
       this.arrow.setVisible(false);
+      this.arrowdown.setVisible(false);
+      this.arrowup.setVisible(false);
       if (this.nightPreview == null) {
         this.nightPreview = this.add.image(1024/2, 768/2, 'night' + (this.gameScreen.nightnum));
       }

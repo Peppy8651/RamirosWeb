@@ -233,7 +233,7 @@ export default class gameScreen extends Phaser.Scene {
   }
   update(time, delta) {
         const currentFPS = Math.floor(this.game.loop.actualFps);
-        if (currentFPS !== this.lastFPS) {
+        if (currentFPS !== this.lastFPS && this.sys.game.device.input.touch == false) {
             this.fpsText.innerHTML = 'FPS: ' + currentFPS;
             this.lastFPS = currentFPS;
         }

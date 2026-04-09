@@ -22,5 +22,9 @@ new Phaser.Game({
   type: Phaser.AUTO,
   smoothStep: true,
   pixelArt: true,
-  roundPixels: false
+  roundPixels: false,
+  scale: {
+    mode: Phaser.Scale.FIT,
+    autoCenter: Phaser.Scale.CENTER_BOTH
+  }
 });
