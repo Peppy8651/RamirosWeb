@@ -55,6 +55,8 @@ export default class menuScreen extends Phaser.Scene {
   create() {
         this.gameScreen = this.scene.get('gameScreen');
         this.keyEnter = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
+        this.keyBackspace = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.BACKSPACE);
+        this.keyEscape = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
         this.keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
         this.keyDown = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
         this.keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
@@ -245,23 +247,23 @@ export default class menuScreen extends Phaser.Scene {
                 }
                 
             }
-            // if (Keyboard.GetState().IsKeyDown(Keys.Back) || Keyboard.GetState().IsKeyDown(Keys.Escape))
-            // {
-            //     if (buttonCooldown != null && buttonCooldown.IsFinished())
-            //     {
-            //         if (nightSelection|| fullScreenSelection)
-            //         {
-            //             if (fullScreenSelection == true) fullScreenSelection = false;
-            //             if (nightSelection == true) nightSelection = false;
-            //             optionSelected = 1;
-            //             nightSelected = 1;
-            //             switchStatic = 16;
-            //             game.blip.Play();
-            //             buttonCooldown = new Timer(TimeSpan.FromMilliseconds(300));
-            //             buttonCooldown.Start();
-            //         }
-            //     } 
-            // }
+            if (this.keyBackspace.isDown || this.keyEscape.isDown)
+            {
+                if (this.buttonCooldown != null && this.buttonCooldown.IsFinished())
+                {
+                    if (this.nightSelection)
+                    {
+                        if (this.nightSelection == true) this.nightSelection = false;
+                        this.optionSelected = 1;
+                        this.nightSelected = 1;
+                        this.blip.play();
+                        this.switchstatic.play('switchstatic');
+                        this.buttonCooldown = new timer(300);
+                        this.buttonCooldown.Start();
+                        this.drawChange = true;
+                    }
+                } 
+            }
             if (this.buttonCooldown != null)
             {
                 this.buttonCooldown.Update(delta);
@@ -391,7 +393,7 @@ export default class menuScreen extends Phaser.Scene {
         if (this.thirdnight.visible == true) this.thirdnight.setVisible(false);
         if (this.fourthnight.visible == true) this.fourthnight.setVisible(false);
         if (this.fifthnight.visible == true) this.fifthnight.setVisible(false);
-        if (this.sixthnight.visible == true) this.fifthnight.setVisible(false);
+        if (this.sixthnight.visible == true) this.sixthnight.setVisible(false);
       }
     }
     else {
