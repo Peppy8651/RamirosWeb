@@ -1092,7 +1092,7 @@ export default class gameScreen extends Phaser.Scene {
             case 5:
 
             let winScreen = this.scene.get('winScreen');
-            if (this.nightnum <= 7 && this.nightnum >= 5) this.winScreen.version = this.nightnum - 5; // 5 - 5 = 0, 6-5 = 1, 7-5 = 2
+            if (this.nightnum <= 7 && this.nightnum >= 5) winScreen.version = this.nightnum - 5; // 5 - 5 = 0, 6-5 = 1, 7-5 = 2
             winScreen.changeTimer = new timer(11500);
             winScreen.changeTimer.finishCallback = async () => {
                     winScreen.partyrock.stop();

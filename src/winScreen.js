@@ -12,6 +12,7 @@ export default class winScreen extends Phaser.Scene {
     // It will load all the assets, like sprites and sounds 
     this.load.baseURL = '/RamirosWeb/';
     this.load.image('win', '/images/menu/win.png');
+    this.load.image('winnight6', '/images/menu/winnight6.png');
     this.load.audio('partyrock', '/audio/partyrock.mp3');
   }
   create() {
@@ -20,7 +21,7 @@ export default class winScreen extends Phaser.Scene {
     if (this.version != 0) {
       switch (this.version) {
         case 1:
-        this.wintex.setTexture('') // night 6
+        this.wintex.setTexture('winnight6') // night 6
         break;
         case 2:
         this.wintex.setTexture('') // night 7
