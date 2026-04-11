@@ -187,6 +187,7 @@ export default class Animatronic {
                 this.customNightAInum = this.AInum;
                 break;
         }
+        if (this.gameScreen.doubleMovementSpeed) this.movementOpportunityTime = 2500;
     }
     update(delta) {
     if (this.active)
@@ -330,6 +331,7 @@ export default class Animatronic {
             if (this.cameraScreen.camFlashOn && this.location == this.cameraScreen.cameraspot) // reset timer and stuff by flashing
             {
                 this.movementOpportunityTime = 6670;
+                if (this.gameScreen.doubleMovementSpeed) this.movementOpportunityTime = 3335;
                 this.movementActive = false;
             }
             if (this.gameScreen.flashlightstate == 3 && this.location == 12)
@@ -352,6 +354,7 @@ export default class Animatronic {
                 }
                 if (this.gameScreen.animatronics[8].sergioFlashState != 2) {
                     this.movementOpportunityTime = 6670;
+                    if (this.gameScreen.doubleMovementSpeed) this.movementOpportunityTime = 3335;
                     this.movementActive = false;
                 }
             }
@@ -405,6 +408,7 @@ export default class Animatronic {
                             this.location = 2;
                             this.x = 0 + 600;
                             this.movementOpportunityTime = 5000;
+                            if (this.gameScreen.doubleMovementSpeed) this.movementOpportunityTime = 2500;
                             this.movementActive = false;
                             this.gameScreen.ventwalk.play();
                             // game.stare.Stop();
@@ -967,7 +971,10 @@ movementOpportunity()
                 }
                 
             }
-            if (this.attacking == 0) this.movementOpportunityTime = 5000;
+            if (this.attacking == 0) {
+                this.movementOpportunityTime = 5000;
+                if (this.gameScreen.doubleMovementSpeed) this.movementOpportunityTime = 2500;
+            }
             if (this.attacking > 0) this.movementOpportunityTime = 500;
             this.movementActive = false;
         }

@@ -23,6 +23,8 @@ export default class customNightScreen extends Phaser.Scene {
         this.load.image('customnightmarlon','/images/customnight/marlon.png');
         this.load.image('customnightsergio','/images/customnight/sergio.png');
         this.load.image('customnighteric','/images/customnight/eric.png');
+        this.load.image('check', '/images/customnight/check.png');
+        this.load.image('doublemovementspeed', '/images/customnight/doublemovementspeed.png');
     }
     create() {
         this.AInums = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; // misa, juan, ram, carlos, gooch, nas, darien, marlon, sergio, eric
@@ -120,6 +122,10 @@ export default class customNightScreen extends Phaser.Scene {
         this.buttonCooldown.Start(); // i'm lazy so just start it early
         this.keyEnter = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
 
+        this.whiteRectangle = this.add.rectangle(1024/2 - 150, 50, 40, 40, 0xFFFFFF);
+        this.whiteRectangleBounds = new Rectangle(1024/2 - 150 - 20, 50 - 20, 40, 40);
+        this.doubleMovementSpeedCheck = this.add.image(1024/2 - 150, 50, 'check').setVisible(false);
+        this.doubleMovementSpeedText = this.add.image(1024/2 + 40, 52, 'doublemovementspeed');
         this.gameoverMusic = this.sound.add('feralangelwaltz');
         this.gameoverMusic.play();
     }
@@ -194,5 +200,23 @@ export default class customNightScreen extends Phaser.Scene {
             this.menuScreen.nightOpenTimer.Start();
             this.scene.switch('menuScreen');
         } 
+        if (this.whiteRectangleBounds.contains(mouse.x, mouse.y) && mouse.leftButtonDown()) {
+            if (this.doubleMovementSpeedCheck.visible == true) {
+                if (this.buttonCooldown.IsFinished()) {
+                    this.doubleMovementSpeedCheck.setVisible(false);
+                    this.gameScreen.doubleMovementSpeed = false;
+                    this.buttonCooldown.Reset();
+                    this.buttonCooldown.Start();
+                }
+            }
+            else {
+                if (this.buttonCooldown.IsFinished()) {
+                    this.doubleMovementSpeedCheck.setVisible(true);
+                    this.gameScreen.doubleMovementSpeed = true;
+                    this.buttonCooldown.Reset();
+                    this.buttonCooldown.Start();
+                }
+            }
+        }
     }
 }

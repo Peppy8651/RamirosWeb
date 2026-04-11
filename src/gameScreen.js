@@ -71,6 +71,7 @@ export default class gameScreen extends Phaser.Scene {
     this.animatronicsInOffice = 0;
     this.jackPlayed = false;
     this.stare = false;
+    this.doubleMovementSpeed = false; // animatronics move twice as fast
     this.dangerSoundTimer;
     this.animatronics[0] = new Animatronic(this, "Misa"); // Misa animatronic
     this.animatronics[1] = new Animatronic(this, "Juan"); // Juan animatronic
@@ -1219,6 +1220,7 @@ export default class gameScreen extends Phaser.Scene {
         this.jumpscareID = 0;
         this.musicMilliseconds = 60000;
         this.clockchimefade = 0;
+        this.doubleMovementSpeed = false; // animatronics move twice as fast
         this.nightendframe = 0;
         this.nightendframesplayed = false;
         this.jumpscareScale = 0;
@@ -1242,6 +1244,9 @@ export default class gameScreen extends Phaser.Scene {
         menuScreen.nightSelected = 1;
         menuScreen.optionSelected = 1;
         
+        // custom night screen
+        let customNightScreen = this.scene.get('customNightScreen');
+        customNightScreen.doubleMovementSpeedCheck.setVisible(false);
         // camera screen
         let cameraScreen = this.scene.get('cameraScreen');
         cameraScreen.drawChange = true;

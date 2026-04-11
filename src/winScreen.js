@@ -13,21 +13,12 @@ export default class winScreen extends Phaser.Scene {
     this.load.baseURL = '/RamirosWeb/';
     this.load.image('win', '/images/menu/win.png');
     this.load.image('winnight6', '/images/menu/winnight6.png');
+    this.load.image('winnight7', '/images/menu/winnight7.png');
     this.load.audio('partyrock', '/audio/partyrock.mp3');
   }
   create() {
     // This method is called once, just after preload()
     this.wintex = this.add.image(1024/2, 768/2, 'win');
-    if (this.version != 0) {
-      switch (this.version) {
-        case 1:
-        this.wintex.setTexture('winnight6') // night 6
-        break;
-        case 2:
-        this.wintex.setTexture('') // night 7
-        break;
-      }
-    } 
     this.partyrock = this.sound.add('partyrock'); 
     this.partyrock.play();
     this.blackRectangle = this.add.graphics({ fillStyle: { color: 0x000000 } });
@@ -43,6 +34,23 @@ export default class winScreen extends Phaser.Scene {
     if (this.partyrock.isPlaying == false) {
       this.partyrock.play();
     }
+      switch (this.version) {
+        case 0:
+        if (this.wintex.texture.key != 'win') {
+          this.wintex.setTexture('win'); // night 5
+        }
+        break;
+        case 1:
+        if (this.wintex.texture.key != 'winnight6') {
+          this.wintex.setTexture('winnight6'); // night 6
+        }
+        break;
+        case 2:
+        if (this.wintex.texture.key != 'winnight7') {
+          this.wintex.setTexture('winnight7'); // night 7
+        }
+        break;
+      }
     if (this.blackRectangle.alpha > 0) this.blackRectangle.alpha -= 0.001 * delta;
     this.changeTimer.Update(delta);
   }
