@@ -1,3 +1,5 @@
+import timer from "./timer.js";
+
 const { Rectangle } = Phaser.Geom; 
 
 
@@ -10,7 +12,6 @@ export default class customNightScreen extends Phaser.Scene {
         // 154 / 2 = 77
         // 200 /2 = 100 obv
         this.load.baseURL = '/RamirosWeb/';
-        this.load.image('customnightbackground', '/images/customnight/background.png');
         this.load.image('customnightpressenter','/images/customnight/pressenter.png');
         this.load.image('customnightmisa','/images/customnight/misa.png');
         this.load.image('customnightjuan','/images/customnight/juan.png');
@@ -27,6 +28,8 @@ export default class customNightScreen extends Phaser.Scene {
         this.AInums = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; // misa, juan, ram, carlos, gooch, nas, darien, marlon, sergio, eric
         this.arrowsLeft = [];
         this.arrowsRight = [];
+        this.menuScreen = this.scene.get('menuScreen');
+        this.gameScreen = this.scene.get('gameScreen');
         this.background = this.add.image(1024/2, 768/2, 'customnightbackground');
         this.misa = this.add.image(53 +77, 95 + 100, 'customnightmisa');
         this.juan = this.add.image(240 +77, 95 + 100, 'customnightjuan');
@@ -112,6 +115,13 @@ export default class customNightScreen extends Phaser.Scene {
         this.AInumTexts[7] = this.add.text(431 +77, 668, this.AInums[7], { font: '20px Arial', fill: '#ffffff' }).setOrigin(0.5);
         this.AInumTexts[8] = this.add.text(624 +77, 668, this.AInums[8], { font: '20px Arial', fill: '#ffffff' }).setOrigin(0.5);
         this.AInumTexts[9] = this.add.text(817 +77, 668, this.AInums[9], { font: '20px Arial', fill: '#ffffff' }).setOrigin(0.5);
+
+        this.buttonCooldown = new timer(100);
+        this.buttonCooldown.Start(); // i'm lazy so just start it early
+        this.keyEnter = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
+
+        this.gameoverMusic = this.sound.add('feralangelwaltz');
+        this.gameoverMusic.play();
     }
     update(time, delta) {
         let mouse = this.input.activePointer;
@@ -131,24 +141,58 @@ export default class customNightScreen extends Phaser.Scene {
             for (let i = 0; i < this.arrowsLeft.length; i++) {
                 if (this.arrowsLeft[i].contains(mouse.x, mouse.y)) {
                     // lowkey just add a single button cooldown that works across all arrows
-                    if (this.AInums[i] > 0) {
-                        this.AInums[i] -= delta * 0.009; // idk why this is required
-                        if (this.AInums[i] < 0) this.AInums[i] = 0;
-                        this.AInumTexts[i].setText(Math.floor(this.AInums[i]));
+                    if (this.buttonCooldown.IsFinished()) {
+                        if (this.AInums[i] > 0) {
+                            this.AInums[i]--; // idk why this is required
+                            this.AInumTexts[i].setText(this.AInums[i]);
+                            this.buttonCooldown.Reset();
+                            this.buttonCooldown.Start();
+                        }
                     }
-                    break;
+
                 }
                 for (let i = 0; i < this.arrowsRight.length; i++) {
                 if (this.arrowsRight[i].contains(mouse.x, mouse.y)) {
-                    if (this.AInums[i] < 20) {
-                        this.AInums[i] += delta * 0.001;
-                        if (this.AInums[i] > 20) this.AInums[i] = 20;
-                        this.AInumTexts[i].setText(Math.floor(this.AInums[i]));
+                    if (this.buttonCooldown.IsFinished()) {
+                        if (this.AInums[i] < 20) {
+                            this.AInums[i]++;
+                            this.AInumTexts[i].setText(this.AInums[i]);
+                            this.buttonCooldown.Reset();
+                            this.buttonCooldown.Start();
+                        }
                     }
-                    break;
                 }
             }
             }
         }
+        if (this.buttonCooldown._isRunning) {
+            this.buttonCooldown.Update(delta);
+        }
+        if (this.keyEnter.isDown && this.buttonCooldown.IsFinished()) {
+            this.menuScreen.buttonCooldown = null;
+            this.menuScreen.nightSelection = false;
+            this.gameScreen.nightnum = 7;
+            if (this.menuScreen.menuMusic.isPlaying == true) this.menuScreen.menuMusic.stop();
+            if (this.gameoverMusic.isPlaying) this.gameoverMusic.stop();
+            if (this.menuScreen.blip.isPlaying == false) this.menuScreen.blip.play();
+            this.menuScreen.nightOpen = true;
+            this.menuScreen.drawChange = true;
+            this.menuScreen.switchstatic.play('switchstatic');
+            // again not automating because I'm an idiot
+            // misa, juan, ram, carlos, gooch, nas, darien, marlon, sergio, eric
+            this.gameScreen.animatronics[0].AInum = this.AInums[0];
+            this.gameScreen.animatronics[1].AInum = this.AInums[1];
+            this.gameScreen.animatronics[2].AInum = this.AInums[2];
+            this.gameScreen.animatronics[3].AInum = this.AInums[4];
+            this.gameScreen.animatronics[4].AInum = this.AInums[3];
+            this.gameScreen.animatronics[5].AInum = this.AInums[5];
+            this.gameScreen.animatronics[6].AInum = this.AInums[6];
+            this.gameScreen.animatronics[7].AInum = this.AInums[7];
+            this.gameScreen.animatronics[8].AInum = this.AInums[8];
+            this.gameScreen.animatronics[8].AInum = this.AInums[8];
+            this.gameScreen.animatronics[9].AInum = this.AInums[9];
+            this.menuScreen.nightOpenTimer.Start();
+            this.scene.switch('menuScreen');
+        } 
     }
 }

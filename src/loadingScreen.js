@@ -161,7 +161,6 @@ export default class loadingScreen extends Phaser.Scene {
             this.load.audio("misael", "/audio/misael.mp3");
             this.load.audio("misael2", "/audio/misael2.mp3");
             this.load.audio("misael3", "/audio/misael3.mp3");
-            this.load.audio('feralangelwaltz', '/audio/feralangelwaltz.mp3');
             // deepbreaths.Volume = 0.25f;
     // deepbreaths.IsLooped = false;
     this.load.image("mutecall", "/images/mutecall.png");

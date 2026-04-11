@@ -7,6 +7,7 @@ export default class Animatronic {
       this.location;
       this.movementPath;
       this.AInum;
+      this.customNightAInum = 0;
       this.scrollspeed = 0.20;
       this.ID;
       this.alphaoverlay = 0.5;
@@ -182,6 +183,9 @@ export default class Animatronic {
                 if (this.Name == 'Nasir') this.AInum = 10;
                 if (this.Name == 'Eric') this.AInum = 2;
                 break;
+            case 7:
+                this.customNightAInum = this.AInum;
+                break;
         }
     }
     update(delta) {
@@ -312,6 +316,9 @@ export default class Animatronic {
                         if (this.Name == 'Carlos') this.AInum = 9;
                         if (this.Name == 'Nasir') this.AInum = 15;
                         break;
+                    case 7:
+                    if (this.AInum != this.customNightAInum) this.AInum = this.customNightAInum;
+                    break;
                 }
                 if (this.Name == "Carlos" && this.location == 14)
                 {

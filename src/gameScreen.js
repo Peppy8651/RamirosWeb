@@ -81,6 +81,7 @@ export default class gameScreen extends Phaser.Scene {
     this.animatronics[6] = new Animatronic(this, "Darien");
     this.animatronics[7] = new Animatronic(this, "Marlon");
     this.animatronics[8] = new Animatronic(this, "Sergio");
+    this.animatronics[9] = new Animatronic(this, 'Eric');
   }
   preload() {
         this.leftvent = new Rectangle(-this.cameraX + 75, -this.cameraY + 385, 60, 90);
@@ -1024,16 +1025,16 @@ export default class gameScreen extends Phaser.Scene {
                         }
                         break;
                         case 3:
-                        if (this.animatronics[i].Name != "Gustavo") this.animatronics[i].Activate();
+                        if (this.animatronics[i].Name != "Gustavo" && this.animatronics[i].Name != 'Eric') this.animatronics[i].Activate();
                         break;
                         case 4:
-                        if (this.gameScreen.animatronics[i].Name != 'Eric') this.gameScreen.animatronics[i].Activate();
+                        if (this.animatronics[i].Name != 'Eric') this.animatronics[i].Activate();
                         break;
                         case 5:
-                        if (this.gameScreen.animatronics[i].Name != 'Eric') this.gameScreen.animatronics[i].Activate();
+                        if (this.animatronics[i].Name != 'Eric') this.animatronics[i].Activate();
                         break;
                         default:
-                        this.gameScreen.animatronics[i].Activate();
+                        this.animatronics[i].Activate();
                         break;
                     }
                 }
@@ -1195,6 +1196,7 @@ export default class gameScreen extends Phaser.Scene {
         this.animatronics[6] = new Animatronic(this, "Darien");
         this.animatronics[7] = new Animatronic(this, "Marlon");
         this.animatronics[8] = new Animatronic(this, "Sergio");
+        this.animatronics[9] = new Animatronic(this, 'Eric');
 
         this.maskonPlayed = false;
         this.monitoropenPlayed = false;
@@ -1228,6 +1230,7 @@ export default class gameScreen extends Phaser.Scene {
         menuScreen.firstnight.setVisible(false);
         menuScreen.secondnight.setVisible(false);
         menuScreen.newgame.setVisible(true);
+        menuScreen.customnight.setVisible(true);
         menuScreen.titlepic.setVisible(true);
         menuScreen.static.setVisible(true);
         menuScreen.arrow.setVisible(true);

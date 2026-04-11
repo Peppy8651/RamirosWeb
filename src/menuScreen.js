@@ -24,6 +24,7 @@ export default class menuScreen extends Phaser.Scene {
     // This method is called once at the beginning
     // It will load all the assets, like sprites and sounds  
     this.loadingScreen = this.scene.get('loadingScreen');
+    this.customNightScreen = this.scene.get('customNightScreen');
     this.load.baseURL = '/RamirosWeb/';
     this.load.image("logo", '/images/logo.png');
     this.load.image("newgame", '/images/newgame.png');
@@ -38,8 +39,14 @@ export default class menuScreen extends Phaser.Scene {
     this.load.image('fourthnight', "/images/menu/nights/fourthnight.png");
     this.load.image('fifthnight', "/images/menu/nights/fifthnight.png");
     this.load.image('sixthnight', '/images/menu/nights/sixthnight.png');
+
+    // for custom night so it loads a little faster
+    this.load.image('customnightbackground', '/images/customnight/background.png');
+    this.load.audio('feralangelwaltz', '/audio/feralangelwaltz.mp3');
+
     this.load.audio('blip', '/audio/blip.mp3');
     this.load.audio('menumusic', '/audio/menutheme.mp3');
+
     for (let i = 1; i <= 6; i++) {
             this.load.image(`static${i}`, `/images/cameras/static/${i}.png`);
             this.load.image(`staticSwitch${i}`, `/images/cameras/staticswitch/${i}.png`);
@@ -188,7 +195,6 @@ export default class menuScreen extends Phaser.Scene {
 
   }
   update(time, delta) {
-    this.drawChange = false;
     var mouse = this.input.activePointer;
     if (this.nightOpen == false)
         {
@@ -234,6 +240,9 @@ export default class menuScreen extends Phaser.Scene {
                         this.switchstatic.play('switchstatic');
                         if (this.optionSelected == 2)
                         {
+                            if (this.customNightScreen.switchstatic != null) this.customNightScreen.switchstatic.anims.play('switchstatic');
+                            if (this.menuMusic.isPlaying) this.menuMusic.stop();
+                            if (this.customNightScreen.gameoverMusic != null) this.customNightScreen.gameoverMusic.play();
                             this.scene.switch('customNightScreen');
                         }
                         else {
@@ -363,6 +372,7 @@ export default class menuScreen extends Phaser.Scene {
             this.nightOpenTimer.Update(delta);
         }
     if (this.drawChange == true) this.drawUpdate();
+    this.drawChange = false;
   }
   drawUpdate() {
     if (this.nightOpen == false) {
