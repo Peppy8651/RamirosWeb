@@ -23,6 +23,7 @@ export default class cameraScreen extends Phaser.Scene {
     this.camDir = 1; // 0: wait // 1: left // 2: right
     this.camFlashOn = false;
     this.animatronicForceOff = false;
+    this.mobileSelectingCam = false; // so you don't turn on the flashlight when selecting anything else on mobile
     this.musicboxbutton;
     this.winding = false;
     this.garbleTimer; // cancel after like 30 seconds or if cameras are closed
@@ -145,6 +146,7 @@ export default class cameraScreen extends Phaser.Scene {
     this.hourNumShow = this.add.image(this.gameScreen.width - 120, 90, "num" + 1);
     this.hourNumShow2 = this.add.image(this.gameScreen.width - 100, 90, "num" + 2);
     this.camerause = this.add.image(760, this.gameScreen.height - this.gameScreen.camerarect.height, "camerause");
+
     // This method is called once, just after preload()
     // It will initialize our scene, like the positions of the sprites
     this.map = this.add.image(this.gameScreen.camerarect.x + 225, this.gameScreen.height - this.gameScreen.camerarect.height - 220, 'map');
@@ -159,7 +161,7 @@ export default class cameraScreen extends Phaser.Scene {
           this.maplocationtextures[i] = this.add.image(this.maplocationbuttons[i].x + 5, this.maplocationbuttons[i].y, 'locationbox');
       }
         this.camNameTextures[i] = this.add.image(this.maplocationbuttons[i].x, this.maplocationbuttons[i].y, `cam${i+1}`);
-        this.locationNameTextures[i] = this.add.image(this.gameScreen.camerarect.x + 55, this.gameScreen.height - this.gameScreen.camerarect.height - 390, `camName${i+1}`);
+        this.locationNameTextures[i] = this.add.image(this.gameScreen.camerarect.x + 50, this.gameScreen.height - this.gameScreen.camerarect.height - 400, `camName${i+1}`);
         this.locationNameTextures[i].setVisible(false);
     }
     this.blip = this.sound.add("blip");
@@ -176,7 +178,35 @@ export default class cameraScreen extends Phaser.Scene {
     this.yellowtriangle = this.add.image(1024- 105, 768 - 110, "yellowtriangle");
     this.yellowtriangle.setAlpha(0);
     this.yellowtriangle.setVisible(false);
-    
+
+    // mobile
+    this.mobileFlashlightRect = new Rectangle(300, 100, 340, 500);
+    if (this.sys.game.device.input.touch) {
+        this.camerause.setScale(1, 2.5); 
+        this.camerause.setPosition(760, this.gameScreen.height - this.gameScreen.camerarect.height /2);
+        this.yellowtriangle.setPosition(1024 - 105, 768 - 140);
+        this.musicboxbuttontexture.setPosition(this.musicboxbuttontexture.x - 130, this.musicboxbuttontexture.y - 35);
+        this.musicboxbutton.x -= 150;
+        this.musicboxbutton.width += 50;
+        this.musicboxbutton.height += 50;
+        this.musicboxbutton.y -= 75; 
+
+        this.musicboxtext.setPosition(this.musicboxtext.x - 129, this.musicboxtext.y - 30);
+        this.boxTimeLeft.setPosition(this.boxTimeLeft.x - 135, this.boxTimeLeft.y- 75);
+        this.map.setPosition(this.map.x - 40, this.map.y - 35);
+        for (let i = 0; i < this.maplocationbuttons.length; i++) {
+            this.locationNameTextures[i].setPosition(this.locationNameTextures[i].x - 40, this.locationNameTextures[i].y - 35);
+            this.camNameTextures[i].setScale(1.5, 1.5);
+            this.camNameTextures[i].setPosition(this.camNameTextures[i].x - 41, this.camNameTextures[i].y - 22.5);
+            this.maplocationtextures[i].setScale(1.5, 1.5);
+            this.maplocationtextures[i].setPosition(this.maplocationtextures[i].x - 40, this.maplocationtextures[i].y - 22.5);
+            this.maplocationbuttons[i].x -= 30;
+            this.maplocationbuttons[i].y -= 25;
+            this.maplocationbuttons[i].width += 15;
+            this.maplocationbuttons[i].height += 15; // not too much
+        }
+
+    } 
   }
   update(time, delta) {
     var mouse = this.input.activePointer;
@@ -252,28 +282,34 @@ export default class cameraScreen extends Phaser.Scene {
                 break;
             }
         }
-
-        // flashlight in cams
-        if (this.gameScreen.keyShift.isDown && this.gameScreen.batterymilliseconds > 0)
-        {
-            // main hallway
-            this.camFlashOn = true; 
-            this.drawChange = true;
-        }
-        else
-        {
-            this.camFlashOn = false;
-            this.drawChange = true;
-        }
-
-        if (this.camFlashOn)
-        {
-            this.gameScreen.batterymilliseconds -= delta;
-        }        
-
         // exit cameras
 
-         if (this.gameScreen.camerarect.contains(mouse.x, mouse.y))
+        if (mouse.wasTouch) {
+            if (this.gameScreen.camerarect.contains(mouse.x, mouse.y) && mouse.isDown)
+            {
+                if (this.gameScreen.camerabuttonactive == 2)
+                {
+                        this.gameScreen.monitorclosed.play();
+                        this.gameScreen.camerabuttonactive = 3;
+                        if (this.musicsound.isPlaying) this.musicsound.stop();
+                        if (this.cameraambience.isPlaying) this.cameraambience.stop();
+                        if (this.garble.isPlaying) this.garble.stop();
+                }
+                if (this.gameScreen.camerabuttonactive == 3)
+                {
+                    this.gameScreen.switchScreenState(0);
+                }
+            }
+            else
+            {
+                if (this.gameScreen.camerabuttonactive <= 1)
+                {
+                    this.gameScreen.camerabuttonactive = 2;
+                }
+            }
+        }
+        else {
+            if (this.gameScreen.camerarect.contains(mouse.x, mouse.y))
             {
                 if (this.gameScreen.camerabuttonactive == 2)
                 {
@@ -296,6 +332,7 @@ export default class cameraScreen extends Phaser.Scene {
                 }
 
             }
+        }
     //     //click on camera
           if (mouse.leftButtonDown())
           {
@@ -311,10 +348,15 @@ export default class cameraScreen extends Phaser.Scene {
                           this.switchStatic = true;
                           this.switchstatic.anims.play('switchstatic', true);
                           this.drawChange = true;
+                          this.mobileSelectingCam = true;
                       }
                   }
               }
           }
+          else {
+            if (this.mobileSelectingCam) this.mobileSelectingCam = false;
+          }    
+
         if (this.gameScreen.animatronics[6].location == this.cameraspot) 
         {
             if (this.darienInterruptTimer == null)
@@ -364,6 +406,7 @@ export default class cameraScreen extends Phaser.Scene {
                 if (this.musicboxbutton.contains(mouse.x, mouse.y))
                 {
                     this.winding = true;
+                    this.mobileSelectingCam = true;
                     if (this.gameScreen.musicTimer._elapsedTime > 200) {
                         this.gameScreen.musicTimer.RemoveTime(delta * 5.9);
                         this.drawChange = true;
@@ -373,6 +416,9 @@ export default class cameraScreen extends Phaser.Scene {
                         // if (this.musicsound.isPlaying) this.musicsound.stop();
                     }
                     // i know it says remove time, but it adds time to the music box timer
+                }
+                else {
+                    if (this.mobileSelectingCam == true) this.mobileSelectingCam = false;
                 }
             }
             else
@@ -389,6 +435,28 @@ export default class cameraScreen extends Phaser.Scene {
             if (this.musicsound.isPlaying) this.musicsound.pause();
             this.winding = false;
         }
+
+        
+          
+            // flashlight in cams
+            if ((this.gameScreen.keyShift.isDown || (mouse.wasTouch && mouse.isDown && this.mobileSelectingCam == false)) && this.gameScreen.batterymilliseconds > 0)
+            {
+                // main hallway
+                this.camFlashOn = true; 
+                this.drawChange = true;
+            }
+            else
+            {
+                this.camFlashOn = false;
+                this.drawChange = true;
+            }
+
+            if (this.camFlashOn)
+            {
+                this.gameScreen.batterymilliseconds -= delta;
+            }    
+
+            // this is last for mobile BOO
         if (this.gameScreen.musicTimer.IsFinished())
         {
             this.gameScreen.musicTimer.Stop();

@@ -232,6 +232,28 @@ export default class gameScreen extends Phaser.Scene {
     this.yellowtriangle.setAlpha(0);
     this.jumpscaretex = this.add.image(0, 0, 'ryan').setVisible(false);
     this.fpsText = document.getElementById("fps");
+    
+    // mobile 
+    this.mobileFlashlightRect = new Rectangle(350, 100, 350, 500);
+    if (this.sys.game.device.input.touch) {
+        this.maskuse.setScale(1, 2.5);
+        this.maskrect.height = 100;
+        this.maskuse.setPosition(260, this.height - this.maskrect.height /2);
+        this.maskrect.y -= 50;
+        this.camerause.setScale(1, 2.5); 
+        this.camerarect.height = 100;
+        this.camerause.setPosition(760, this.height - this.camerarect.height /2);
+        this.camerarect.y -= 50;
+        this.leftvent.x -= 10;
+        this.leftvent.y -= 30;
+        this.rightvent.x -= 10;
+        this.rightvent.y -= 30;
+        this.leftvent.width += 30;
+        this.leftvent.height += 50;
+        this.rightvent.width += 40;
+        this.rightvent.height += 45;
+        this.yellowtriangle.setPosition(1024 - 75, 768 - 140);
+    }
   }
   update(time, delta) {
         const currentFPS = Math.floor(this.game.loop.actualFps);
@@ -380,9 +402,17 @@ export default class gameScreen extends Phaser.Scene {
                         this.freddymask.setVisible(false);
                 }
                    // cam
-                if (this.camCooldown != null && this.camerarect.contains(mouse.x,mouse.y) == false)
-                {
+                if (mouse.wasTouch) {
+                    if (this.camCooldown != null)
+                    {
                         this.camCooldown.Update(delta);
+                    }
+                }
+                else {
+                    if (this.camCooldown != null && this.camerarect.contains(mouse.x,mouse.y) == false)
+                    {
+                            this.camCooldown.Update(delta);
+                    }
                 }
                     
                 if (this.camCooldown != null && this.camCooldown.IsFinished())
@@ -402,20 +432,45 @@ export default class gameScreen extends Phaser.Scene {
                         }
                 }
                     //Move left or right
-                    if (mouse.x > this.width - this.width/3)
-                    {
-                        if (this.cameraX < 20 + this.width/4 && this.maskbuttonactive == 0) {
-                            this.cameraX += delta * 0.70;
-                            this.drawChange = true;
+                    if (mouse.wasTouch) {
+                        if (mouse.isDown) {
+                            if (mouse.x > this.width - this.width/3)
+                            {
+                                if (this.cameraX < 20 + this.width/4 && this.maskbuttonactive == 0) {
+                                    this.cameraX += delta * 0.70;
+                                    this.drawChange = true;
+                                }
+                            }
+                            if (mouse.x < this.width/3)
+                            {
+                                if (this.cameraX > 0 - this.width/4 && this.maskbuttonactive == 0) {
+                                    this.cameraX -= delta * 0.70;
+                                    this.drawChange = true;
+                                }
+                            }
+                            // mobile flashlight controls
+                            if (this.mobileFlashlightRect.contains(mouse.x, mouse.y) && this.maskbuttonactive == 0 && this.camerabuttonactive == 0 && this.batterymilliseconds > 0) {
+                                this.flashlightstate = 1;
+                                this.drawChange = true;
+                            }
+                        }
+                    } else {
+                        if (mouse.x > this.width - this.width/3)
+                        {
+                            if (this.cameraX < 20 + this.width/4 && this.maskbuttonactive == 0) {
+                                this.cameraX += delta * 0.70;
+                                this.drawChange = true;
+                            }
+                        }
+                        if (mouse.x < this.width/3)
+                        {
+                            if (this.cameraX > 0 - this.width/4 && this.maskbuttonactive == 0) {
+                                this.cameraX -= delta * 0.70;
+                                this.drawChange = true;
+                            }
                         }
                     }
-                    if (mouse.x < this.width/3)
-                    {
-                        if (this.cameraX > 0 - this.width/4 && this.maskbuttonactive == 0) {
-                            this.cameraX -= delta * 0.70;
-                            this.drawChange = true;
-                        }
-                    }
+    
                     if (this.stare) {
                         if (this.stareRectangle.alpha >= 1) this.stareRectangle.alpha -= 1;
                         this.stareRectangle.alpha += delta * 0.008;
@@ -489,86 +544,174 @@ export default class gameScreen extends Phaser.Scene {
                     if (this.camerabuttonactive == 0 || this.camerabuttonactive == 3 )
                     {
                         if (this.maskOnCooldown != null) this.maskOnCooldown.Update(delta);
-                        if (this.maskrect.contains(mouse.x, mouse.y))
-                        {
-                            if (this.maskbuttonactive == 0) {
-                                this.maskbuttonactive = 1; // initial hover
-                                this.freddymask.setVisible(true);
-                            }
-                            if (this.maskbuttonactive == 1)
+                        if (mouse.wasTouch) { // I can't lie this is the same code with or without, it's just that on mobile it has to check if it's being touched
+                            if (this.maskrect.contains(mouse.x, mouse.y) && mouse.isDown)
                             {
-                                if (this.maskonPlayed == false)
+                                if (this.maskbuttonactive == 0) {
+                                    this.maskbuttonactive = 1; // initial hover
+                                    this.freddymask.setVisible(true);
+                                }
+                                if (this.maskbuttonactive == 1)
                                 {
-                                    this.maskonPlayed = true;
-                                    this.maskon.play();
-                                    this.freddymask.anims.play("freddymaskactive", true);
-                                    this.maskOnCooldown = new timer(400);
-                                    this.maskOnCooldown.Start();
+                                    if (this.maskonPlayed == false)
+                                    {
+                                        this.maskonPlayed = true;
+                                        this.maskon.play();
+                                        this.freddymask.anims.play("freddymaskactive", true);
+                                        this.maskOnCooldown = new timer(400);
+                                        this.maskOnCooldown.Start();
+                                    }
+                                }
+                                else if (this.maskbuttonactive == 2)
+                                {
+                                    if (this.maskOffPlayed == false) {
+                                        this.maskOffPlayed = true;
+                                        this.maskoff.play();
+                                        this.freddymask.anims.playReverse("freddymaskactive", true);
+                                    }
+                                    this.deepbreaths.stop();
+                                    this.maskbuttonactive = 3;
                                 }
                             }
-                            else if (this.maskbuttonactive == 2)
+                            else
                             {
-                                if (this.maskOffPlayed == false) {
-                                    this.maskOffPlayed = true;
-                                    this.maskoff.play();
-                                    this.freddymask.anims.playReverse("freddymaskactive", true);
+                                if (this.maskbuttonactive == 1)
+                                {   
+                                    if (this.maskOnCooldown.IsFinished())
+                                    {
+                                        this.maskbuttonactive = 2;
+                                        this.maskOnCooldown.Reset();
+                                    }
+                                    this.deepbreaths.play();
                                 }
-                                this.deepbreaths.stop();
-                                this.maskbuttonactive = 3;
+                                if (this.maskbuttonactive == 3)
+                                {
+                                    if (this.maskCooldown == null)
+                                    {
+                                        this.maskCooldown = new timer(250);
+                                        this.maskCooldown.Start();
+                                    }
+                                }
                             }
                         }
-                        else
-                        {
-                            if (this.maskbuttonactive == 1)
-                            {   
-                                if (this.maskOnCooldown.IsFinished())
-                                {
-                                    this.maskbuttonactive = 2;
-                                    this.maskOnCooldown.Reset();
-                                }
-                                this.deepbreaths.play();
-                            }
-                            if (this.maskbuttonactive == 3)
+                        else {
+                            if (this.maskrect.contains(mouse.x, mouse.y))
                             {
-                                if (this.maskCooldown == null)
+                                if (this.maskbuttonactive == 0) {
+                                    this.maskbuttonactive = 1; // initial hover
+                                    this.freddymask.setVisible(true);
+                                }
+                                if (this.maskbuttonactive == 1)
                                 {
-                                    this.maskCooldown = new timer(250);
-                                    this.maskCooldown.Start();
+                                    if (this.maskonPlayed == false)
+                                    {
+                                        this.maskonPlayed = true;
+                                        this.maskon.play();
+                                        this.freddymask.anims.play("freddymaskactive", true);
+                                        this.maskOnCooldown = new timer(400);
+                                        this.maskOnCooldown.Start();
+                                    }
+                                }
+                                else if (this.maskbuttonactive == 2)
+                                {
+                                    if (this.maskOffPlayed == false) {
+                                        this.maskOffPlayed = true;
+                                        this.maskoff.play();
+                                        this.freddymask.anims.playReverse("freddymaskactive", true);
+                                    }
+                                    this.deepbreaths.stop();
+                                    this.maskbuttonactive = 3;
+                                }
+                            }
+                            else
+                            {
+                                if (this.maskbuttonactive == 1)
+                                {   
+                                    if (this.maskOnCooldown.IsFinished())
+                                    {
+                                        this.maskbuttonactive = 2;
+                                        this.maskOnCooldown.Reset();
+                                    }
+                                    this.deepbreaths.play();
+                                }
+                                if (this.maskbuttonactive == 3)
+                                {
+                                    if (this.maskCooldown == null)
+                                    {
+                                        this.maskCooldown = new timer(250);
+                                        this.maskCooldown.Start();
+                                    }
                                 }
                             }
                         }
+                        
                     }
 
                     if (this.maskbuttonactive == 0)
                     {
-                            if (this.camerarect.contains(mouse.x, mouse.y))
-                            {
-                            if (this.camerabuttonactive == 0) {
-                                this.camerabuttonactive = 1;
-                                this.cameraopen.setVisible(true);
-                                this.cameraopen.anims.play('camerabuttonactive', true);
-                                this.monitoropen.play();
-                                if (this.screens[1].darienInterruptWait != null && this.screens[1].darienInterruptWait.IsFinished()) this.screens[1].darieninterrupt = false;
-                                if (this.screens[1].darienInterruptTimer != null && this.screens[1].darienInterruptTimer.IsFinished()) {
-                                    this.screens[1].darienInterruptTimer = null;
-                                }
-                                const cameraSwitch = new timer(500);
-                                cameraSwitch.finishCallback = () =>
+                        if (mouse.wasTouch) { // same code for camera button on mobile vs pc, just checks if it's being touched first
+                            if (this.camerarect.contains(mouse.x, mouse.y) && mouse.isDown)
                                 {
-                                    this.switchScreenState(1);
-                                    cameraSwitch.Stop();
-                                };
-                                cameraSwitch.Start(); // in case the animation fucks up
-                                this.timers.push(cameraSwitch);
-                            } // initial hover
-                            if (this.camerabuttonactive == 1)
-                            {
-                                if (this.monitoropenPlayed == false)
-                                {
-                                    if (this.maskOnCooldown != null) this.maskOnCooldown.Stop();
-                                    if (this.maskCooldown != null) this.maskCooldown = null;
+                                if (this.camerabuttonactive == 0) {
+                                    this.camerabuttonactive = 1;
+                                    this.cameraopen.setVisible(true);
+                                    this.cameraopen.anims.play('camerabuttonactive', true);
                                     this.monitoropen.play();
-                                    this.monitoropenPlayed = true;
+                                    if (this.screens[1].darienInterruptWait != null && this.screens[1].darienInterruptWait.IsFinished()) this.screens[1].darieninterrupt = false;
+                                    if (this.screens[1].darienInterruptTimer != null && this.screens[1].darienInterruptTimer.IsFinished()) {
+                                        this.screens[1].darienInterruptTimer = null;
+                                    }
+                                    const cameraSwitch = new timer(500);
+                                    cameraSwitch.finishCallback = () =>
+                                    {
+                                        this.switchScreenState(1);
+                                        cameraSwitch.Stop();
+                                    };
+                                    cameraSwitch.Start(); // in case the animation fucks up
+                                    this.timers.push(cameraSwitch);
+                                } // initial hover
+                                if (this.camerabuttonactive == 1)
+                                {
+                                    if (this.monitoropenPlayed == false)
+                                    {
+                                        if (this.maskOnCooldown != null) this.maskOnCooldown.Stop();
+                                        if (this.maskCooldown != null) this.maskCooldown = null;
+                                        this.monitoropen.play();
+                                        this.monitoropenPlayed = true;
+                                    }
+                                }
+                            }
+                        }
+                        else {
+                            if (this.camerarect.contains(mouse.x, mouse.y))
+                                {
+                                if (this.camerabuttonactive == 0) {
+                                    this.camerabuttonactive = 1;
+                                    this.cameraopen.setVisible(true);
+                                    this.cameraopen.anims.play('camerabuttonactive', true);
+                                    this.monitoropen.play();
+                                    if (this.screens[1].darienInterruptWait != null && this.screens[1].darienInterruptWait.IsFinished()) this.screens[1].darieninterrupt = false;
+                                    if (this.screens[1].darienInterruptTimer != null && this.screens[1].darienInterruptTimer.IsFinished()) {
+                                        this.screens[1].darienInterruptTimer = null;
+                                    }
+                                    const cameraSwitch = new timer(500);
+                                    cameraSwitch.finishCallback = () =>
+                                    {
+                                        this.switchScreenState(1);
+                                        cameraSwitch.Stop();
+                                    };
+                                    cameraSwitch.Start(); // in case the animation fucks up
+                                    this.timers.push(cameraSwitch);
+                                } // initial hover
+                                if (this.camerabuttonactive == 1)
+                                {
+                                    if (this.monitoropenPlayed == false)
+                                    {
+                                        if (this.maskOnCooldown != null) this.maskOnCooldown.Stop();
+                                        if (this.maskCooldown != null) this.maskCooldown = null;
+                                        this.monitoropen.play();
+                                        this.monitoropenPlayed = true;
+                                    }
                                 }
                             }
                         }
@@ -1237,6 +1380,10 @@ export default class gameScreen extends Phaser.Scene {
         menuScreen.static.setVisible(true);
         menuScreen.arrow.setVisible(true);
         menuScreen.arrow.setPosition(1024 / 2 - 450, 768/2 + 50);
+        if (this.sys.game.device.input.touch) {
+            menuScreen.arrowup.setVisible(true);
+            menuScreen.arrowdown.setVisible(true);
+        }
         menuScreen.nightPreview.setVisible(false);
         menuScreen.nightOpen = false;
         menuScreen.nightSelection = false;
@@ -1246,11 +1393,12 @@ export default class gameScreen extends Phaser.Scene {
         
         // custom night screen
         let customNightScreen = this.scene.get('customNightScreen');
-        customNightScreen.doubleMovementSpeedCheck.setVisible(false);
+        if (customNightScreen.doubleMovementSpeedCheck != null) customNightScreen.doubleMovementSpeedCheck.setVisible(false);
         // camera screen
         let cameraScreen = this.scene.get('cameraScreen');
         cameraScreen.drawChange = true;
         cameraScreen.cameraspot = 8;
+        cameraScreen.mobileSelectingCam = false;
         // cameraScreen.darienstaticanimationframe = 0;
         cameraScreen.darieninterrupt = false;
         cameraScreen.switchStatic = true;
