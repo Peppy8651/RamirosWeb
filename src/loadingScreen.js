@@ -103,6 +103,7 @@ export default class loadingScreen extends Phaser.Scene {
             this.load.image('mainhallmarlonflash', "/images/cameras/locations/flashlight/mainhallmarlon.png");
             this.load.image("officeflashjuan", "/images/officeflashjuan.png");
             this.load.image("officeflashram", "/images/officeflashram.png");
+            this.load.image("officeflasheric", "/images/officeflasheric.png");
             this.load.image("officeflashnas", "/images/officeflashnas.png");
             this.load.image("officeflashsergio", "/images/officeflashsergio.png");
             this.load.image("officeflashnassergio", "/images/officeflashnassergio.png");
@@ -135,6 +136,8 @@ export default class loadingScreen extends Phaser.Scene {
             this.load.image("ramiro", "/images/ramiro.png");
             this.load.image("sergio", "/images/sergio.png");
             this.load.image('sergiojump', '/images/sergiojump.png');
+            this.load.image('eric', '/images/eric.png');
+            this.load.image('ericjump', '/images/ericjump.png');
             this.load.image("marlonoffice", '/images/marlonoffice.png');
             this.load.image("marlonjump", '/images/marlonjump.png');
             this.load.image("darien", '/images/darien.png');

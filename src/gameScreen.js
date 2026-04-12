@@ -100,6 +100,8 @@ export default class gameScreen extends Phaser.Scene {
     this.leftventtex = this.add.image(-this.cameraX - 150, -this.cameraY + 430, "vents1");
     this.rightventtex = this.add.image(-this.cameraX + this.width + 150, -this.cameraY + 430, "vents3");
     this.carlos = this.add.image(-this.cameraX + 100 + 190, -this.cameraY + 225 + 221, 'carlos').setVisible(false);
+    this.eric = this.add.image(-this.cameraX + 100 + 190, -this.cameraY + 225 + 221, 'eric').setVisible(false);
+    this.eric.setScale(0.15);
     this.sergio = this.add.image(-this.cameraX + 400, -this.cameraY + 250, 'sergio').setVisible(false);
     this.sergio.setDisplaySize(this.sergio.width * 0.5, this.sergio.height * 0.5);
     this.marlon = this.add.image(-this.cameraX + 350, -this.cameraY + 250, 'marlonoffice').setVisible(false);
@@ -537,6 +539,18 @@ export default class gameScreen extends Phaser.Scene {
                     else {
                         if (this.carlos.visible) {
                             this.carlos.setVisible(false);
+                            this.drawChange = true;
+                        }
+                    }
+                    if (this.animatronics[9].location == 14) {
+                        if (this.eric.visible == false) {
+                            this.eric.setVisible(true);
+                            this.drawChange = true;
+                        }
+                    }
+                    else {
+                        if (this.eric.visible) {
+                            this.eric.setVisible(false);
                             this.drawChange = true;
                         }
                     }
@@ -1008,6 +1022,7 @@ export default class gameScreen extends Phaser.Scene {
                     {
                         if (anim.Name == "Ramiro") officeTexture = 'officeflashramdoor';
                         if (anim.Name == "Marlon") officeTexture = 'officeflashmarlondoor';
+                        if (anim.Name == "Eric") officeTexture = 'officeflasheric';
                     }
                 }
                 if (this.office.texture.key !== officeTexture) this.office.setTexture(officeTexture);
@@ -1057,6 +1072,7 @@ export default class gameScreen extends Phaser.Scene {
         }
         this.gooch.setPosition(-this.cameraX + 250 + 135, -this.cameraY - 120 + 159);
         this.carlos.setPosition(-this.cameraX + 100 + 190, -this.cameraY + 225 + 221);
+        this.eric.setPosition(-this.cameraX + 100 + 150, -this.cameraY + 225 + 400);
         if (this.battery.texture.key != 'battery' + (this.batterynum+1)) this.battery.setTexture('battery' + (this.batterynum+1));
         if (this.nightNumShow.texture.key != 'num' + (this.nightnum)) this.nightNumShow.setTexture('num' + (this.nightnum));
         if (this.hournum != 0) {
@@ -1308,6 +1324,8 @@ export default class gameScreen extends Phaser.Scene {
         this.freddymask.setTexture("freddymask1");
         this.freddymask.anims.stop();
         this.gooch.setVisible(false);
+        this.carlos.setVisible(false);
+        this.eric.setVisible(false);
         this.ramiro.setVisible(false);
         this.darien.setVisible(false);
         this.darienaura.setVisible(false);

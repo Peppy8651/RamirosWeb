@@ -372,7 +372,7 @@ export default class Animatronic {
                 }
             }
             else {
-                if (this.gameScreen.animatronics[1].attacking != 2 && this.gameScreen.stare && this.gameScreen.animatronicsInOffice <= 0) {
+                if (this.gameScreen.animatronics[1].attacking != 2 && this.gameScreen.animatronics[0].attacking != 2 && this.gameScreen.stare && this.gameScreen.animatronicsInOffice <= 0) {
                     this.gameScreen.stare = false;
                     if (this.gameScreen.animatronicsInOffice < 0) this.gameScreen.animatronicsInOffice = 0;
                 }
@@ -391,9 +391,8 @@ export default class Animatronic {
                     case "Misa":
                     if (this.gameScreen.maskbuttonactive > 0 && this.gameScreen.maskbuttonactive < 3)
                     {
-                        if (this.gameScreen.stare == false) {
-                            this.gameScreen.stare = true;
-                        }
+                        if (this.gameScreen.stare == false) this.gameScreen.stare = true;
+
                         this.gameScreen.drawChange = true;
                         this.x -= (delta * this.scrollspeed);
                         // if (this.gameScree.stare.State != SoundState.Playing)
