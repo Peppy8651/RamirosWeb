@@ -25,6 +25,8 @@ export default class Animatronic {
       this.nasirValue1;
       this.nasirValue2; // flashlight counter so he goes away
       this.nasirValue3; // basically movement opportunity cooldown, just increases everytime he makes an attempt
+      this.ericFlashlightCounter = 0;
+      this.ericHallwayDisappearTimer = null;
       this.seenInVent;
       this.millisecondsCounter;
       this.flashMillisecondsCounter;
@@ -102,6 +104,14 @@ export default class Animatronic {
             case 'Eric':
                 this.ID = 11;
                 this.movementPath = [19, 16, 14]; // 19 is just a random spot it doesn't really matter
+                this.ericFlashlightCounter = 0;
+                this.ericHallwayDisappearTimer = new timer(7500);
+                this.ericHallwayDisappearTimer.finishCallback = () => {
+                    this.location = 19;
+                    this.ericFlashlightCounter = 0;
+                    this.gameScreen.danger = 0;
+                    if (this.gameScreen.debug) console.log("Eric disappeared from hallway");
+                };
             break;
         }
         this.location = this.movementPath[0];
@@ -230,6 +240,30 @@ export default class Animatronic {
                         if (this.nasirValue1 < 0) this.nasirValue1 = 0;
                     }
                     if (this.nasirJumpscareTimer._isRunning) this.nasirJumpscareTimer.Update(delta);
+                }
+            }
+            if (this.Name == 'Eric') {
+                switch (this.location) {
+                    case 16:
+                    if (this.AInum > 0) {
+                        if (this.ericFlashlightCounter > 100) {
+                            if (this.gameScreen.jumpscareID == 0) { // 0 means haven't jumpscared yet
+                                this.gameScreen.jumpscareID = this.ID;
+                                this.gameScreen.eric.setVisible(false);
+                                if (this.gameScreen.stare) this.gameScreen.stare = false;
+                                this.gameScreen.switchScreenState(2);
+                            }
+                        }
+                        if (this.gameScreen.flashlightstate == 1) {
+                            this.ericFlashlightCounter += delta * 0.055;
+                        }
+                        else {
+                            if (this.ericHallwayDisappearTimer._isRunning) {
+                                this.ericHallwayDisappearTimer.Update(delta);
+                            }
+                        }
+                    }
+                    break;
                 }
             }
             if (this.movementActive == false && this.gameScreen.pause == false)
@@ -936,7 +970,26 @@ movementOpportunity()
                         }
                         else if (this.Name != "Misa" && this.Name != "Juan" && this.Name != "Carlos" && this.Name != "Gustavo")
                         {
-                            this.location = this.movementPath[index + 1];
+                            if (this.Name != 'Eric') {
+                                this.location = this.movementPath[index + 1];
+                            }
+                            else { // either hallway or office
+                               let movementLocation = Math.random() < 0.5 ? 16 : 14;
+                               switch (movementLocation) {
+                                    case 14:
+                                    if (this.gameScreen.camerabuttonactive != 3 && this.gameScreen.camerabuttonactive != 0) {
+                                        this.location = 14;
+                                    } 
+                                    break; 
+                                    case 16:
+                                    if (this.gameScreen.flashlightstate != 1) {
+                                        this.location = 16;
+                                        this.ericHallwayDisappearTimer.Reset();
+                                        this.ericHallwayDisappearTimer.Start();
+                                    } 
+                                    break;
+                               }
+                            }
                             this.moved = true;
                             if (this.gameScreen.debug) console.log(this.Name + " movement successful");
                             if (this.gameScreen.screenState == 0) this.gameScreen.drawChange = true;

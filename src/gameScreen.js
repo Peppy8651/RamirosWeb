@@ -270,6 +270,7 @@ export default class gameScreen extends Phaser.Scene {
         }
 //                 // Unpaused/main game
         if (this.pause == false) {
+            
             // sounds
             if (this.fanSound.isPlaying == false) {
                 this.fanSound.play();
@@ -337,6 +338,12 @@ export default class gameScreen extends Phaser.Scene {
                     if (this.jumpscaretex.texture.key != 'sergiojump') this.jumpscaretex.setTexture('sergiojump');
                     if (this.jumpscareScale < 1.4) this.jumpscareScale += 0.2;
                     this.jumpscaretex.setPosition(100 + (this.jumpscaretex.width/2), -100 + (this.jumpscaretex.height/2));
+                    this.jumpscaretex.setDisplaySize(this.jumpscaretex.width * this.jumpscareScale, this.jumpscaretex.height * this.jumpscareScale);
+                    break;
+                    case 11:
+                    if (this.jumpscaretex.texture.key != 'ericjump') this.jumpscaretex.setTexture('ericjump');
+                    if (this.jumpscareScale < 0.3) this.jumpscareScale += 0.07;
+                    this.jumpscaretex.setPosition(-1000 + (this.jumpscaretex.width/2), -1500 + (this.jumpscaretex.height/2));
                     this.jumpscaretex.setDisplaySize(this.jumpscaretex.width * this.jumpscareScale, this.jumpscaretex.height * this.jumpscareScale);
                     break;
                 }
