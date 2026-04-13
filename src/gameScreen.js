@@ -72,6 +72,7 @@ export default class gameScreen extends Phaser.Scene {
     this.jackPlayed = false;
     this.stare = false;
     this.doubleMovementSpeed = false; // animatronics move twice as fast
+    this.ericFade = false;
     this.dangerSoundTimer;
     this.animatronics[0] = new Animatronic(this, "Misa"); // Misa animatronic
     this.animatronics[1] = new Animatronic(this, "Juan"); // Juan animatronic
@@ -101,7 +102,7 @@ export default class gameScreen extends Phaser.Scene {
     this.rightventtex = this.add.image(-this.cameraX + this.width + 150, -this.cameraY + 430, "vents3");
     this.carlos = this.add.image(-this.cameraX + 100 + 190, -this.cameraY + 225 + 221, 'carlos').setVisible(false);
     this.eric = this.add.image(-this.cameraX + 100 + 190, -this.cameraY + 225 + 221, 'eric').setVisible(false);
-    this.eric.setScale(0.15);
+    this.eric.setScale(0.2);
     this.sergio = this.add.image(-this.cameraX + 400, -this.cameraY + 250, 'sergio').setVisible(false);
     this.sergio.setDisplaySize(this.sergio.width * 0.5, this.sergio.height * 0.5);
     this.marlon = this.add.image(-this.cameraX + 350, -this.cameraY + 250, 'marlonoffice').setVisible(false);
@@ -551,16 +552,20 @@ export default class gameScreen extends Phaser.Scene {
                     }
                     if (this.animatronics[9].location == 14) {
                         if (this.eric.visible == false) {
+                            this.eric.setAlpha(1);
                             this.eric.setVisible(true);
                             this.drawChange = true;
                         }
                     }
-                    else {
-                        if (this.eric.visible) {
-                            this.eric.setVisible(false);
-                            this.drawChange = true;
+                    if (this.ericFade) {
+                            if (this.eric.alpha > 0) {
+                                this.eric.alpha -= delta * 0.01;
+                            }
+                            if (this.eric.alpha <= 0) {
+                                this.eric.setVisible(false);
+                                this.ericFade = false;
+                            }
                         }
-                    }
                     // freddy mask
                     if (this.camerabuttonactive == 0 || this.camerabuttonactive == 3 )
                     {
@@ -1332,6 +1337,7 @@ export default class gameScreen extends Phaser.Scene {
         this.freddymask.anims.stop();
         this.gooch.setVisible(false);
         this.carlos.setVisible(false);
+        this.eric.setAlpha(1);
         this.eric.setVisible(false);
         this.ramiro.setVisible(false);
         this.darien.setVisible(false);
@@ -1372,6 +1378,7 @@ export default class gameScreen extends Phaser.Scene {
         this.clockChimePlayed = false;
         this.jackPlayed = false;
         this.phoneHasPlayed = false;
+        this.ericFade = false;
         this.yayPlayed = false;
         this.batterynum = 4;
         this.flashlightstate = 0;

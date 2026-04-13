@@ -13,6 +13,7 @@ export default class customNightScreen extends Phaser.Scene {
         // 200 /2 = 100 obv
         this.load.baseURL = '/RamirosWeb/';
         this.load.image('customnightpressenter','/images/customnight/pressenter.png');
+        this.load.image('startmobile','/images/customnight/startmobile.png');
         this.load.image('customnightmisa','/images/customnight/misa.png');
         this.load.image('customnightjuan','/images/customnight/juan.png');
         this.load.image('customnightram','/images/customnight/ram.png');
@@ -128,6 +129,11 @@ export default class customNightScreen extends Phaser.Scene {
         this.doubleMovementSpeedText = this.add.image(1024/2 + 40, 52, 'doublemovementspeed');
         this.gameoverMusic = this.sound.add('feralangelwaltz');
         this.gameoverMusic.play();
+        // mobile
+        this.mobileStartRect = new Rectangle(390 - 100 , 714 - 15, 640, 30);
+        if (this.sys.game.input.touch) {
+            this.pressenter.setTexture('startmobile');
+        }
     }
     update(time, delta) {
         let mouse = this.input.activePointer;
@@ -173,6 +179,32 @@ export default class customNightScreen extends Phaser.Scene {
         }
         if (this.buttonCooldown._isRunning) {
             this.buttonCooldown.Update(delta);
+        }
+        if (mouse.wasTouch && mouse.isDown && this.buttonCooldown.IsFinished() && this.mobileStartRect.contains(mouse.x, mouse.y)) {
+            this.menuScreen.buttonCooldown = null;
+            this.menuScreen.nightSelection = false;
+            this.gameScreen.nightnum = 7;
+            if (this.menuScreen.menuMusic.isPlaying == true) this.menuScreen.menuMusic.stop();
+            if (this.gameoverMusic.isPlaying) this.gameoverMusic.stop();
+            if (this.menuScreen.blip.isPlaying == false) this.menuScreen.blip.play();
+            this.menuScreen.nightOpen = true;
+            this.menuScreen.drawChange = true;
+            this.menuScreen.switchstatic.play('switchstatic');
+            // again not automating because I'm an idiot
+            // misa, juan, ram, carlos, gooch, nas, darien, marlon, sergio, eric
+            this.gameScreen.animatronics[0].AInum = this.AInums[0];
+            this.gameScreen.animatronics[1].AInum = this.AInums[1];
+            this.gameScreen.animatronics[2].AInum = this.AInums[2];
+            this.gameScreen.animatronics[3].AInum = this.AInums[4];
+            this.gameScreen.animatronics[4].AInum = this.AInums[3];
+            this.gameScreen.animatronics[5].AInum = this.AInums[5];
+            this.gameScreen.animatronics[6].AInum = this.AInums[6];
+            this.gameScreen.animatronics[7].AInum = this.AInums[7];
+            this.gameScreen.animatronics[8].AInum = this.AInums[8];
+            this.gameScreen.animatronics[8].AInum = this.AInums[8];
+            this.gameScreen.animatronics[9].AInum = this.AInums[9];
+            this.menuScreen.nightOpenTimer.Start();
+            this.scene.switch('menuScreen');
         }
         if (this.keyEnter.isDown && this.buttonCooldown.IsFinished()) {
             this.menuScreen.buttonCooldown = null;

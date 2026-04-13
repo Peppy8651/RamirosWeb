@@ -27,6 +27,8 @@ export default class Animatronic {
       this.nasirValue3; // basically movement opportunity cooldown, just increases everytime he makes an attempt
       this.ericFlashlightCounter = 0;
       this.ericHallwayDisappearTimer = null;
+      this.ericJumpscareTimer = null;
+      this.ericCamDown = false;
       this.seenInVent;
       this.millisecondsCounter;
       this.flashMillisecondsCounter;
@@ -105,6 +107,7 @@ export default class Animatronic {
                 this.ID = 11;
                 this.movementPath = [19, 16, 14]; // 19 is just a random spot it doesn't really matter
                 this.ericFlashlightCounter = 0;
+                this.ericCamDown = false;
                 this.ericHallwayDisappearTimer = new timer(7500);
                 this.ericHallwayDisappearTimer.finishCallback = () => {
                     this.location = 19;
@@ -112,6 +115,18 @@ export default class Animatronic {
                     this.gameScreen.danger = 0;
                     if (this.gameScreen.debug) console.log("Eric disappeared from hallway");
                 };
+                this.ericJumpscareTimer = new timer(5000);
+                this.ericJumpscareTimer.finishCallback = () => {
+                    if (this.gameScreen.maskbuttonactive == 1 || this.gameScreen.maskbuttonactive == 2) {
+                        this.location = 19;
+                        this.ericCamDown = false;
+                        this.gameScreen.ericFade = true;
+                        this.ericFlashlightCounter = 0;
+                        this.gameScreen.danger = 0;
+                        // we need him to fade away first
+                        // this.gameScreen.eric.setVisible(false);
+                    }
+                }
             break;
         }
         this.location = this.movementPath[0];
@@ -249,7 +264,6 @@ export default class Animatronic {
                         if (this.ericFlashlightCounter > 100) {
                             if (this.gameScreen.jumpscareID == 0) { // 0 means haven't jumpscared yet
                                 this.gameScreen.jumpscareID = this.ID;
-                                this.gameScreen.eric.setVisible(false);
                                 if (this.gameScreen.stare) this.gameScreen.stare = false;
                                 this.gameScreen.switchScreenState(2);
                             }
@@ -264,6 +278,40 @@ export default class Animatronic {
                         }
                     }
                     break;
+                    case 14:
+                    if (this.AInum > 0) {
+                        if ((this.gameScreen.camerabuttonactive == 3) && this.ericCamDown == false) {
+                            this.ericCamDown = true;
+                            this.camTimer = new timer(2000);
+                            this.camTimer.finishCallback = () => {
+                                                if (this.gameScreen.maskbuttonactive == 0 || this.gameScreen.maskbuttonactive == 3) {
+                                                    if (this.gameScreen.jumpscareID == 0) { // 0 means haven't jumpscared yet
+                                                        if (this.gameScreen.stare) this.gameScreen.stare = false;
+                                                        this.gameScreen.jumpscareID = this.ID;
+                                                        this.gameScreen.switchScreenState(2); // force jumpscare if leaving cameras
+                                                    }
+                                                }
+                                                else {
+                                                    this.camTimer = null;
+                                                    this.ericJumpscareTimer.Reset();
+                                                    this.ericJumpscareTimer.Start(); // another one
+                                                }
+                                            };  
+                            this.camTimer.Start();
+                        }
+                        if (this.ericJumpscareTimer._isRunning) {
+                            this.ericJumpscareTimer.Update(delta);
+                            if (this.gameScreen.maskbuttonactive == 3) {
+                                if (this.gameScreen.jumpscareID == 0) { // 0 means haven't jumpscared yet
+                                    this.gameScreen.jumpscareID = this.ID;
+                                    if (this.gameScreen.stare) this.gameScreen.stare = false;
+                                    this.gameScreen.switchScreenState(2);
+                                }
+                            }
+                        }
+                    }
+                    break;
+
                 }
             }
             if (this.movementActive == false && this.gameScreen.pause == false)
@@ -979,7 +1027,8 @@ movementOpportunity()
                                     case 14:
                                     if (this.gameScreen.camerabuttonactive != 3 && this.gameScreen.camerabuttonactive != 0) {
                                         this.location = 14;
-                                    } 
+                                        
+                                    }
                                     break; 
                                     case 16:
                                     if (this.gameScreen.flashlightstate != 1) {
