@@ -9,7 +9,9 @@ export default class gameScreen extends Phaser.Scene {
   // The three methods currently empty
   constructor() {
     super({key: 'gameScreen'});
-    this.debug = true; // CHANGE HERE
+    this.debug = false; // CHANGE HERE
+    this.mobileDebug = false;
+    this.wideScreen = false;
     this.web = true; // always change this for web builds
     this.maskonPlayed = false;
     this.monitoropenPlayed = false;
@@ -238,7 +240,7 @@ export default class gameScreen extends Phaser.Scene {
     
     // mobile 
     this.mobileFlashlightRect = new Rectangle(350, 100, 350, 500);
-    if (this.sys.game.device.input.touch) {
+    if (this.sys.game.device.input.touch || this.mobileDebug) {
         this.maskuse.setScale(1, 2.5);
         this.maskrect.height = 100;
         this.maskuse.setPosition(260, this.height - this.maskrect.height /2);
@@ -543,12 +545,18 @@ export default class gameScreen extends Phaser.Scene {
                             this.carlos.setVisible(true);
                             this.drawChange = true;
                         }
+                        if (this.carlos3.isPlaying == false) {
+                            this.carlos3.play();
+                        } 
                     }
                     else {
                         if (this.carlos.visible) {
                             this.carlos.setVisible(false);
                             this.drawChange = true;
                         }
+                        if (this.carlos3.isPlaying == false) {
+                            this.carlos3.stop();
+                        } 
                     }
                     if (this.animatronics[9].location == 14) {
                         if (this.eric.visible == false) {
@@ -1160,9 +1168,11 @@ export default class gameScreen extends Phaser.Scene {
             newtimer.Start();
             this.timers.push(newtimer);
             let cameraScreen2 = this.scene.get('cameraScreen');
+            if (this.carlos3 != null && this.carlos3.isPlaying) this.carlos3.stop();
             if (this.jackinthebox != null && this.jackinthebox.isPlaying) this.jackinthebox.stop();
             if (this.dangerSound != null && this.dangerSound.isPlaying) this.dangerSound.stop();
             if (this.deepbreaths != null && this.deepbreaths.isPlaying) this.deepbreaths.stop();
+            if (this.garble != null && this.garble.isPlaying) this.garble.stop();
             if (this.fanSound != null && this.fanSound.isPlaying) this.fanSound.stop();
             if (cameraScreen2.musicsound != null && cameraScreen2.musicsound.isPlaying) cameraScreen2.musicsound.stop();
             if (cameraScreen2.cameraambience != null && cameraScreen2.cameraambience.isPlaying) cameraScreen2.cameraambience.stop();
@@ -1321,6 +1331,22 @@ export default class gameScreen extends Phaser.Scene {
                         this.batterynum = 3; // 3 bars left
                 }
     }
+    switchWideScreen(widescreen) {
+        console.log('hello');
+        switch(widescreen) {
+            case true:
+            this.scale.displaySize.setAspectRatio(1366 / 768);
+            this.scale.mode = Phaser.Scale.FIT;
+            this.scale.refresh();
+            break;
+            case false:
+            this.scale.displaySize.setAspectRatio(1024 / 768);
+            this.scale.mode = Phaser.Scale.NONE;
+            this.scale.refresh();
+            break;
+        }
+        this.wideScreen = widescreen;
+    }
     setUpGame()
     {
         this.pause = false;
@@ -1408,11 +1434,16 @@ export default class gameScreen extends Phaser.Scene {
         menuScreen.secondnight.setVisible(false);
         menuScreen.newgame.setVisible(true);
         menuScreen.customnight.setVisible(true);
+        menuScreen.widescreenOption.setVisible(true);
+        menuScreen.buttonCooldown = new timer(300);
+        menuScreen.buttonCooldown.Start();
         menuScreen.titlepic.setVisible(true);
         menuScreen.static.setVisible(true);
         menuScreen.arrow.setVisible(true);
         menuScreen.arrow.setPosition(1024 / 2 - 450, 768/2 + 50);
-        if (this.sys.game.device.input.touch) {
+        if (this.sys.game.device.input.touch || this.mobileDebug) {
+            menuScreen.pressthearrows.setVisible(true);
+            menuScreen.backbutton.setVisible(true);
             menuScreen.arrowup.setVisible(true);
             menuScreen.arrowdown.setVisible(true);
         }

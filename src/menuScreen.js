@@ -39,6 +39,10 @@ export default class menuScreen extends Phaser.Scene {
     this.load.image('fourthnight', "/images/menu/nights/fourthnight.png");
     this.load.image('fifthnight', "/images/menu/nights/fifthnight.png");
     this.load.image('sixthnight', '/images/menu/nights/sixthnight.png');
+    this.load.image('widescreenoff', '/images/menu/widescreenoff.png');
+    this.load.image('widescreenon', '/images/menu/widescreenon.png');
+    this.load.image('pressthearrows', '/images/menu/pressthearrows.png');;
+    this.load.image('backbutton', '/images/menu/backbutton.png');
 
     // for custom night so it loads a little faster
     this.load.image('customnightbackground', '/images/customnight/background.png');
@@ -106,22 +110,38 @@ export default class menuScreen extends Phaser.Scene {
         this.arrowdown.setScale(2, 2);
         this.arrowup.setScale(2, 2);
         this.arrowdown.setAlpha(0.3);
+        this.backbutton = this.add.image(875, 380, 'backbutton').setVisible(false);
+        this.backbutton.setScale(1, 1.25);
+        this.backbutton.setAlpha(0.4);
 
-        this.arrowupbounds = new Rectangle(825, 10, 925, 210);
-        this.arrowdownbounds = new Rectangle(825, 550, 925, 750);
-        if (this.sys.game.device.input.touch) {
-            let info = document.getElementById("extra-info");
-            info.remove();
-            this.arrowup.setVisible(true);
-            this.arrowdown.setVisible(true);
-        }
-        else {
-            this.scale.scaleMode = Phaser.Scale.NONE;
-            this.scale.refresh();
-        }
+        this.buttonCooldown = new timer(300);
+        this.buttonCooldown.Start();
+        this.arrowupbounds = new Rectangle(775, 10, 925, 210);
+        this.arrowdownbounds = new Rectangle(775, 550, 925, 750);
+        this.backbuttonbounds = new Rectangle(775, 308, 925, 125);
 
         this.newgame = this.add.image(1024 / 2 - 275, 768 / 2 + 50, 'newgame');
         this.customnight = this.add.image(1024 / 2 - 225, 768 / 2 + 50 + 46, 'customnight');
+        this.widescreenOption = this.add.image(1024 / 2 - 155, 768 / 2 + 50 + 46 + 40, 'widescreenoff');
+
+        this.pressthearrows = this.add.image(0 + 527, 768-15, 'pressthearrows').setScale(0.95, 1);
+        this.pressthearrows.setVisible(false);
+        if (this.sys.game.device.input.touch || this.gameScreen.mobileDebug) {
+            let info = document.getElementById("extra-info");
+            info.remove();
+            this.scale.displaySize.setAspectRatio(1366 / 768);
+            this.gameScreen.wideScreen = true;
+            this.widescreenOption.setTexture('widescreenon');
+            this.scale.refresh();
+            this.pressthearrows.setVisible(true);
+            this.arrowup.setVisible(true);
+            this.arrowdown.setVisible(true);
+            this.backbutton.setVisible(true);
+        }
+        else {
+            this.scale.mode = Phaser.Scale.NONE;
+            this.scale.refresh();
+        }
     // this.load.image("options", '/images/options.png');
         this.arrow = this.add.image(1024 / 2 - 450, 768/2 + 50, "arrow");
         this.firstnight = this.add.image(1024/2 - 275, 768 / 2 + 50, 'firstnight').setVisible(false);
@@ -202,7 +222,7 @@ export default class menuScreen extends Phaser.Scene {
             {
                 let touchCondition;
                 if (mouse.wasTouch) {
-                    touchCondition = (!this.arrowupbounds.contains(mouse.x, mouse.y) && !this.arrowdownbounds.contains(mouse.x, mouse.y)) ? true: false;
+                    touchCondition = (!this.arrowupbounds.contains(mouse.x, mouse.y) && !this.arrowdownbounds.contains(mouse.x, mouse.y) && !this.backbuttonbounds.contains(mouse.x, mouse.y)) ? true: false;
                 }
                 if (touchCondition == null || touchCondition == true) {
                     if (this.nightSelection == true)
@@ -237,26 +257,40 @@ export default class menuScreen extends Phaser.Scene {
                     {
                         this.drawChange = true;
                         
-                        this.switchstatic.play('switchstatic');
                         if (this.optionSelected == 2)
                         {
+                            this.switchstatic.play('switchstatic');
                             if (this.customNightScreen.switchstatic != null) this.customNightScreen.switchstatic.anims.play('switchstatic');
                             if (this.menuMusic.isPlaying) this.menuMusic.stop();
                             if (this.customNightScreen.gameoverMusic != null) this.customNightScreen.gameoverMusic.play();
+                            this.buttonCooldown.Reset();
+                            this.buttonCooldown.Start();
                             this.scene.switch('customNightScreen');
                         }
+                        else if (this.optionSelected == 3) {
+                            if (this.buttonCooldown.IsFinished()) {
+                                this.switchstatic.play('switchstatic');
+                                if (this.gameScreen.wideScreen) {
+                                    this.gameScreen.switchWideScreen(false);
+                                }
+                                else {
+                                    this.gameScreen.switchWideScreen(true);
+                                }
+                            }
+                        }
                         else {
+                            this.switchstatic.play('switchstatic');
                             this.nightSelection = true;
                         }
                         // switchStatic = 16;
                         if (this.blip.isPlaying == false) this.blip.play();
-                        this.buttonCooldown = new timer(400);
+                        this.buttonCooldown.Reset();
                         this.buttonCooldown.Start();
                     } 
                 }
                 
             }
-            if (this.keyBackspace.isDown || this.keyEscape.isDown)
+            if (this.keyBackspace.isDown || this.keyEscape.isDown || (mouse.wasTouch && mouse.isDown && this.backbuttonbounds.contains(mouse.x,mouse.y)))
             {
                 if (this.buttonCooldown != null && this.buttonCooldown.IsFinished())
                 {
@@ -267,7 +301,7 @@ export default class menuScreen extends Phaser.Scene {
                         this.nightSelected = 1;
                         this.blip.play();
                         this.switchstatic.play('switchstatic');
-                        this.buttonCooldown = new timer(300);
+                        this.buttonCooldown.Reset();
                         this.buttonCooldown.Start();
                         this.drawChange = true;
                     }
@@ -312,12 +346,14 @@ export default class menuScreen extends Phaser.Scene {
                     if (this.selectionCooldown == null)
                     {
                         this.selectionCooldown = new timer(180);
-                        if (this.optionSelected == 1) this.optionSelected = 2; // no options for web yet
+                        if (this.optionSelected == 2) this.optionSelected = 3; 
+                        if (this.optionSelected == 1) this.optionSelected = 2;
                         this.selectionCooldown.Start();
                     }
                     if (this.selectionCooldown.IsFinished())
                     {
-                        if (this.optionSelected == 1) this.optionSelected = 2; // no options for web yet
+                        if (this.optionSelected == 2) this.optionSelected = 3; 
+                        if (this.optionSelected == 1) this.optionSelected = 2; 
                         this.selectionCooldown.Reset();
                     }
                 }  
@@ -355,12 +391,14 @@ export default class menuScreen extends Phaser.Scene {
                         this.drawChange = true;
                         this.selectionCooldown = new timer(180);
                         if (this.optionSelected == 2) this.optionSelected = 1;
+                        if (this.optionSelected == 3) this.optionSelected = 2;
                         this.selectionCooldown.Start();
                     }
                     if (this.selectionCooldown.IsFinished())
                     {
                         this.drawChange = true;
                         if (this.optionSelected == 2) this.optionSelected = 1;
+                        if (this.optionSelected == 3) this.optionSelected = 2;
                         this.selectionCooldown.Reset();
                     }
                 }
@@ -392,12 +430,17 @@ export default class menuScreen extends Phaser.Scene {
         if (this.sixthnight.visible == false) this.sixthnight.setVisible(true);
         if (this.newgame.visible == true) this.newgame.setVisible(false);
         if (this.customnight.visible == true) this.customnight.setVisible(false);
+        if (this.widescreenOption.visible == true) this.widescreenOption.setVisible(false);
       }
       else {
+        if (this.optionSelected == 3) this.arrow.setPosition(1024 / 2 - 450, 768/2 + 50 + 84);
         if (this.optionSelected == 2) this.arrow.setPosition(1024 / 2 - 450, 768/2 + 50 + 42);
         if (this.optionSelected == 1) this.arrow.setPosition(1024 / 2 - 450, 768/2 + 50);
         if (this.newgame.visible == false) this.newgame.setVisible(true);
         if (this.customnight.visible == false) this.customnight.setVisible(true);
+        if (this.gameScreen.wideScreen == true) this.widescreenOption.setTexture('widescreenon');
+        if (this.gameScreen.wideScreen == false) this.widescreenOption.setTexture('widescreenoff');
+        if (this.widescreenOption.visible == false) this.widescreenOption.setVisible(true);
         if (this.firstnight.visible == true)this.firstnight.setVisible(false);
         if (this.secondnight.visible == true) this.secondnight.setVisible(false);
         if (this.thirdnight.visible == true) this.thirdnight.setVisible(false);
@@ -416,6 +459,9 @@ export default class menuScreen extends Phaser.Scene {
       this.sixthnight.setVisible(false);
       this.newgame.setVisible(false);
       this.customnight.setVisible(false);
+      this.widescreenOption.setVisible(false);
+      this.pressthearrows.setVisible(false);
+      this.backbutton.setVisible(false);
       this.titlepic.setVisible(false);
       this.static.setVisible(false);
       this.arrow.setVisible(false);

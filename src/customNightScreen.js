@@ -24,6 +24,7 @@ export default class customNightScreen extends Phaser.Scene {
         this.load.image('customnightmarlon','/images/customnight/marlon.png');
         this.load.image('customnightsergio','/images/customnight/sergio.png');
         this.load.image('customnighteric','/images/customnight/eric.png');
+        this.load.image('customnightback', '/images/customnight/backbuttoncustom.png');
         this.load.image('check', '/images/customnight/check.png');
         this.load.image('doublemovementspeed', '/images/customnight/doublemovementspeed.png');
     }
@@ -122,6 +123,8 @@ export default class customNightScreen extends Phaser.Scene {
         this.buttonCooldown = new timer(100);
         this.buttonCooldown.Start(); // i'm lazy so just start it early
         this.keyEnter = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
+        this.keyEscape = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
+        this.keyBackspace = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.BACKSPACE);
 
         this.whiteRectangle = this.add.rectangle(1024/2 - 150, 50, 40, 40, 0xFFFFFF);
         this.whiteRectangleBounds = new Rectangle(1024/2 - 150 - 20, 50 - 20, 40, 40);
@@ -130,9 +133,11 @@ export default class customNightScreen extends Phaser.Scene {
         this.gameoverMusic = this.sound.add('feralangelwaltz');
         this.gameoverMusic.play();
         // mobile
-        this.mobileStartRect = new Rectangle(390 - 100 , 714 - 15, 640, 30);
-        if (this.sys.game.input.touch) {
+        this.mobileStartRect = new Rectangle(390 - 25, 714 - 15, 690, 70);
+        this.mobileBackButton = new Rectangle(1024 - 250, -50, 300, 125);
+        if (this.sys.game.input.touch || this.gameScreen.mobileDebug) {
             this.pressenter.setTexture('startmobile');
+            this.add.image(1024 - 150, 0 + 60, 'customnightback').setScale(0.9, 1);
         }
     }
     update(time, delta) {
@@ -180,31 +185,46 @@ export default class customNightScreen extends Phaser.Scene {
         if (this.buttonCooldown._isRunning) {
             this.buttonCooldown.Update(delta);
         }
-        if (mouse.wasTouch && mouse.isDown && this.buttonCooldown.IsFinished() && this.mobileStartRect.contains(mouse.x, mouse.y)) {
-            this.menuScreen.buttonCooldown = null;
-            this.menuScreen.nightSelection = false;
-            this.gameScreen.nightnum = 7;
-            if (this.menuScreen.menuMusic.isPlaying == true) this.menuScreen.menuMusic.stop();
-            if (this.gameoverMusic.isPlaying) this.gameoverMusic.stop();
-            if (this.menuScreen.blip.isPlaying == false) this.menuScreen.blip.play();
-            this.menuScreen.nightOpen = true;
-            this.menuScreen.drawChange = true;
-            this.menuScreen.switchstatic.play('switchstatic');
-            // again not automating because I'm an idiot
-            // misa, juan, ram, carlos, gooch, nas, darien, marlon, sergio, eric
-            this.gameScreen.animatronics[0].AInum = this.AInums[0];
-            this.gameScreen.animatronics[1].AInum = this.AInums[1];
-            this.gameScreen.animatronics[2].AInum = this.AInums[2];
-            this.gameScreen.animatronics[3].AInum = this.AInums[4];
-            this.gameScreen.animatronics[4].AInum = this.AInums[3];
-            this.gameScreen.animatronics[5].AInum = this.AInums[5];
-            this.gameScreen.animatronics[6].AInum = this.AInums[6];
-            this.gameScreen.animatronics[7].AInum = this.AInums[7];
-            this.gameScreen.animatronics[8].AInum = this.AInums[8];
-            this.gameScreen.animatronics[8].AInum = this.AInums[8];
-            this.gameScreen.animatronics[9].AInum = this.AInums[9];
-            this.menuScreen.nightOpenTimer.Start();
-            this.scene.switch('menuScreen');
+        if (mouse.wasTouch && mouse.isDown && this.buttonCooldown.IsFinished()) {
+            if (this.mobileStartRect.contains(mouse.x, mouse.y)) {
+                this.menuScreen.buttonCooldown = null;
+                this.menuScreen.nightSelection = false;
+                this.gameScreen.nightnum = 7;
+                if (this.menuScreen.menuMusic.isPlaying == true) this.menuScreen.menuMusic.stop();
+                if (this.gameoverMusic.isPlaying) this.gameoverMusic.stop();
+                if (this.menuScreen.blip.isPlaying == false) this.menuScreen.blip.play();
+                this.menuScreen.nightOpen = true;
+                this.menuScreen.drawChange = true;
+                this.menuScreen.switchstatic.play('switchstatic');
+                // again not automating because I'm an idiot
+                // misa, juan, ram, carlos, gooch, nas, darien, marlon, sergio, eric
+                this.gameScreen.animatronics[0].AInum = this.AInums[0];
+                this.gameScreen.animatronics[1].AInum = this.AInums[1];
+                this.gameScreen.animatronics[2].AInum = this.AInums[2];
+                this.gameScreen.animatronics[3].AInum = this.AInums[4];
+                this.gameScreen.animatronics[4].AInum = this.AInums[3];
+                this.gameScreen.animatronics[5].AInum = this.AInums[5];
+                this.gameScreen.animatronics[6].AInum = this.AInums[6];
+                this.gameScreen.animatronics[7].AInum = this.AInums[7];
+                this.gameScreen.animatronics[8].AInum = this.AInums[8];
+                this.gameScreen.animatronics[8].AInum = this.AInums[8];
+                this.gameScreen.animatronics[9].AInum = this.AInums[9];
+                this.menuScreen.nightOpenTimer.Start();
+                this.scene.switch('menuScreen');
+            }
+            else if (this.mobileBackButton.contains(mouse.x, mouse.y)) {
+                this.menuScreen.buttonCooldown.Reset();
+                this.menuScreen.buttonCooldown.Start();
+                this.menuScreen.nightSelection = false;
+                this.menuScreen.optionSelected = 1;
+                if (this.menuScreen.menuMusic.isPlaying == false) this.menuScreen.menuMusic.play();
+                if (this.gameoverMusic.isPlaying) this.gameoverMusic.stop();
+                if (this.menuScreen.blip.isPlaying == false) this.menuScreen.blip.play();
+                this.menuScreen.drawChange = true;
+                this.menuScreen.switchstatic.play('switchstatic');
+                this.scene.switch('menuScreen');
+            }
+            
         }
         if (this.keyEnter.isDown && this.buttonCooldown.IsFinished()) {
             this.menuScreen.buttonCooldown = null;
@@ -232,6 +252,16 @@ export default class customNightScreen extends Phaser.Scene {
             this.menuScreen.nightOpenTimer.Start();
             this.scene.switch('menuScreen');
         } 
+        if ((this.keyEscape.isDown || this.keyBackspace.isDown) && this.buttonCooldown.IsFinished()) {
+            this.menuScreen.nightSelection = false;
+            this.menuScreen.optionSelected = 1;
+            if (this.menuScreen.menuMusic.isPlaying == false) this.menuScreen.menuMusic.play();
+            if (this.gameoverMusic.isPlaying) this.gameoverMusic.stop();
+            if (this.menuScreen.blip.isPlaying == false) this.menuScreen.blip.play();
+            this.menuScreen.drawChange = true;
+            this.menuScreen.switchstatic.play('switchstatic');
+            this.scene.switch('menuScreen');
+        }
         if (this.whiteRectangleBounds.contains(mouse.x, mouse.y) && mouse.leftButtonDown()) {
             if (this.doubleMovementSpeedCheck.visible == true) {
                 if (this.buttonCooldown.IsFinished()) {

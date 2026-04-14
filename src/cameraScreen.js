@@ -181,7 +181,7 @@ export default class cameraScreen extends Phaser.Scene {
 
     // mobile
     this.mobileFlashlightRect = new Rectangle(300, 100, 340, 500);
-    if (this.sys.game.device.input.touch) {
+    if (this.sys.game.device.input.touch || this.gameScreen.mobileDebug) {
         this.camerause.setScale(1, 2.5); 
         this.camerause.setPosition(760, this.gameScreen.height - this.gameScreen.camerarect.height /2);
         this.yellowtriangle.setPosition(1024 - 105, 768 - 140);
@@ -200,10 +200,10 @@ export default class cameraScreen extends Phaser.Scene {
             this.camNameTextures[i].setPosition(this.camNameTextures[i].x - 41, this.camNameTextures[i].y - 22.5);
             this.maplocationtextures[i].setScale(1.5, 1.5);
             this.maplocationtextures[i].setPosition(this.maplocationtextures[i].x - 40, this.maplocationtextures[i].y - 22.5);
-            this.maplocationbuttons[i].x -= 30;
+            this.maplocationbuttons[i].x -= 40;
             this.maplocationbuttons[i].y -= 25;
-            this.maplocationbuttons[i].width += 15;
-            this.maplocationbuttons[i].height += 15; // not too much
+            this.maplocationbuttons[i].width += 25;
+            this.maplocationbuttons[i].height += 17; // not too much
         }
 
     } 
