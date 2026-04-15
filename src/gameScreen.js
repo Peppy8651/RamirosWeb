@@ -194,6 +194,7 @@ export default class gameScreen extends Phaser.Scene {
     this.carlos3 = this.sound.add('carlos3');
     this.darienlaugh2 = this.sound.add('darienlaugh2');
     this.sergioflash = this.sound.add('sergioflash');
+    this.scarylaugh = this.sound.add('scarylaugh');
 
     // phone guy
     this.phoneguy1 = this.sound.add('misael');
@@ -1460,9 +1461,9 @@ export default class gameScreen extends Phaser.Scene {
         menuScreen.titlepic.setVisible(true);
         menuScreen.static.setVisible(true);
         menuScreen.arrow.setVisible(true);
+        menuScreen.pressthearrows.setVisible(true);
         menuScreen.arrow.setPosition(1024 / 2 - 450, 768/2 + 50);
         if (this.sys.game.device.input.touch || this.mobileDebug) {
-            menuScreen.pressthearrows.setVisible(true);
             menuScreen.backbutton.setVisible(true);
             menuScreen.arrowup.setVisible(true);
             menuScreen.arrowdown.setVisible(true);

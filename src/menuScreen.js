@@ -43,6 +43,7 @@ export default class menuScreen extends Phaser.Scene {
     this.load.image('widescreenon', '/images/menu/widescreenon.png');
     this.load.image('pressthearrows', '/images/menu/pressthearrows.png');;
     this.load.image('backbutton', '/images/menu/backbutton.png');
+    this.load.image('pcdirections', '/images/menu/pcdirections.png');
 
     // for custom night so it loads a little faster
     this.load.image('customnightbackground', '/images/customnight/background.png');
@@ -125,21 +126,20 @@ export default class menuScreen extends Phaser.Scene {
         this.widescreenOption = this.add.image(1024 / 2 - 155, 768 / 2 + 50 + 46 + 40, 'widescreenoff');
 
         this.pressthearrows = this.add.image(0 + 527, 768-15, 'pressthearrows').setScale(0.95, 1);
-        this.pressthearrows.setVisible(false);
         if (this.sys.game.device.input.touch || this.gameScreen.mobileDebug) {
-            let info = document.getElementById("extra-info");
-            info.remove();
             this.scale.displaySize.setAspectRatio(1366 / 768);
             this.gameScreen.wideScreen = true;
             this.widescreenOption.setTexture('widescreenon');
             this.scale.refresh();
-            this.pressthearrows.setVisible(true);
             this.arrowup.setVisible(true);
             this.arrowdown.setVisible(true);
             this.backbutton.setVisible(true);
         }
         else {
             this.scale.mode = Phaser.Scale.NONE;
+            this.pressthearrows.setTexture('pcdirections');
+            this.pressthearrows.setPosition(0 + 520, 768 - 40);
+            this.pressthearrows.setScale(0.71);
             this.scale.refresh();
         }
     // this.load.image("options", '/images/options.png');
@@ -433,7 +433,7 @@ export default class menuScreen extends Phaser.Scene {
         if (this.widescreenOption.visible == true) this.widescreenOption.setVisible(false);
       }
       else {
-        if (this.optionSelected == 3) this.arrow.setPosition(1024 / 2 - 450, 768/2 + 50 + 84);
+        if (this.optionSelected == 3) this.arrow.setPosition(1024 / 2 - 450, 768/2 + 50 + 86);
         if (this.optionSelected == 2) this.arrow.setPosition(1024 / 2 - 450, 768/2 + 50 + 42);
         if (this.optionSelected == 1) this.arrow.setPosition(1024 / 2 - 450, 768/2 + 50);
         if (this.newgame.visible == false) this.newgame.setVisible(true);

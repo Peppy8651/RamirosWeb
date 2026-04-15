@@ -13,6 +13,16 @@ export default class loadingScreen extends Phaser.Scene {
             this.load.on('progress', (value) => {
                 loadingText.setText('Loading...' + Math.floor(value * 100) + '%');
             });
+            if (this.game.device.input.touch) {
+                let mobileText = this.add.text(1024/2 - 250, 768/2 + 100, '  To hear audio on iPhone, turn off\nthe silent switch or use headphones.', {  fontFamily: 'Arial', 
+    fontSize: '32px', 
+    color: '#ffffff' });
+            }
+            else {
+                let pcText = this.add.text(1024/2 - 250, 768/2 + 100, 'Chromebooks may take longer to load.\nIf this screen freezes, refresh the page.', {  fontFamily: 'Arial', 
+    fontSize: '32px', 
+    color: '#ffffff' });
+            }
             this.load.maxRetries = 3; 
             this.load.setBaseURL('/RamirosWeb/');
             this.load.setPath('');
@@ -27,7 +37,7 @@ export default class loadingScreen extends Phaser.Scene {
                 "close", "wind", "windup", "jackinthebox", 
                 "jumpscare", "stare", "garble", "carlos1", "carlos2", "carlos3",
                 "maskon", "ventwalk", "metalwalk", "maskoff", 'cameras', 'darienlaugh', 'darienlaugh2',
-                'sergioflash'
+                'sergioflash', 'scarylaugh'
             ];
             sounds.forEach(s => this.load.audio(s, `audio/${s}.mp3`));
     

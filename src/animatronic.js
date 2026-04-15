@@ -236,7 +236,7 @@ export default class Animatronic {
                     if (this.gameScreen.flashlightstate == 1 && this.location == 15)
                     {
                         this.nasirValue1 = 0;
-                        this.nasirValue2 += 0.08 * delta;
+                        this.nasirValue2 += 0.075 * delta;
                         if (this.nasirValue2 > 100 * this.gameScreen.nightnum)
                         {
                             if (this.gameScreen.screenState == 0) this.gameScreen.drawChange = true;
@@ -765,8 +765,9 @@ export default class Animatronic {
                         //this.gameScreen.stare.play();
                         this.movementActive = true;
                         this.gameScreen.animatronicsInOffice++;
+                        this.gameScreen.scarylaugh.play();
                         this.location = 14; // he's about to jumpscare
-                        let jumpscareInterval = Math.random() < 0.5 ? 4000 : 9000;
+                        let jumpscareInterval = Math.random() < 0.5 ? 6000 : 7000;
                         this.gameScreen.stare = true;
                         this.officeJumpscareTimer = new timer(jumpscareInterval);
                         this.camTimer = new timer(1250 / (this.marlonBlackoutCounter + 1));
@@ -1089,7 +1090,10 @@ movementOpportunity()
                         this.movementActive = true; // so he can't move and crash the game
                         this.nasirJumpscareTimer.Start();
                     }
-                    if (this.location == 7) this.location = 15;
+                    if (this.location == 7) { 
+                        this.location = 15;
+                        this.gameScreen.scarylaugh.play();
+                    }
                     this.moved = true;
                     if (this.gameScreen.screenState == 0) this.gameScreen.drawChange = true;
                     if (this.gameScreen.debug) console.log(this.Name + " movement successful");
