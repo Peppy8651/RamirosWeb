@@ -7,6 +7,7 @@ export default class Animatronic {
       this.location;
       this.movementPath;
       this.AInum;
+      this.customNightAInum = 0;
       this.scrollspeed = 0.20;
       this.ID;
       this.alphaoverlay = 0.5;
@@ -24,6 +25,10 @@ export default class Animatronic {
       this.nasirValue1;
       this.nasirValue2; // flashlight counter so he goes away
       this.nasirValue3; // basically movement opportunity cooldown, just increases everytime he makes an attempt
+      this.ericFlashlightCounter = 0;
+      this.ericHallwayDisappearTimer = null;
+      this.ericJumpscareTimer = null;
+      this.ericCamDown = false;
       this.seenInVent;
       this.millisecondsCounter;
       this.flashMillisecondsCounter;
@@ -97,7 +102,32 @@ export default class Animatronic {
                     this.sergioFlashTimer.Reset();
                 };
                 this.sergioFlashTimer.Start();
-                break;
+            break;
+            case 'Eric':
+                this.ID = 11;
+                this.movementPath = [19, 16, 14]; // 19 is just a random spot it doesn't really matter
+                this.ericFlashlightCounter = 0;
+                this.ericCamDown = false;
+                this.ericHallwayDisappearTimer = new timer(7500);
+                this.ericHallwayDisappearTimer.finishCallback = () => {
+                    this.location = 19;
+                    this.ericFlashlightCounter = 0;
+                    this.gameScreen.danger = 0;
+                    if (this.gameScreen.debug) console.log("Eric disappeared from hallway");
+                };
+                this.ericJumpscareTimer = new timer(5000);
+                this.ericJumpscareTimer.finishCallback = () => {
+                    if (this.gameScreen.maskbuttonactive == 1 || this.gameScreen.maskbuttonactive == 2) {
+                        this.location = 19;
+                        this.ericCamDown = false;
+                        this.gameScreen.ericFade = true;
+                        this.ericFlashlightCounter = 0;
+                        this.gameScreen.danger = 0;
+                        // we need him to fade away first
+                        // this.gameScreen.eric.setVisible(false);
+                    }
+                }
+            break;
         }
         this.location = this.movementPath[0];
         this.camTimer = new timer(750);
@@ -173,8 +203,16 @@ export default class Animatronic {
                 break;
             case 6:
                 if (this.Name == "Misa" || this.Name == "Juan" || this.Name == "Ramiro") this.AInum = 0;
+                if (this.Name == 'Gustavo') this.AInum = 3;
+                if (this.Name == 'Carlos' || this.Name == 'Marlon' || this.Name == 'Darien' || this.Name == 'Sergio') this.AInum = 5;
+                if (this.Name == 'Nasir') this.AInum = 10;
+                if (this.Name == 'Eric') this.AInum = 2;
+                break;
+            case 7:
+                this.customNightAInum = this.AInum;
                 break;
         }
+        if (this.gameScreen.doubleMovementSpeed) this.movementOpportunityTime = 2500;
     }
     update(delta) {
     if (this.active)
@@ -198,7 +236,7 @@ export default class Animatronic {
                     if (this.gameScreen.flashlightstate == 1 && this.location == 15)
                     {
                         this.nasirValue1 = 0;
-                        this.nasirValue2 += 0.06 * delta;
+                        this.nasirValue2 += 0.075 * delta;
                         if (this.nasirValue2 > 100 * this.gameScreen.nightnum)
                         {
                             if (this.gameScreen.screenState == 0) this.gameScreen.drawChange = true;
@@ -217,6 +255,63 @@ export default class Animatronic {
                         if (this.nasirValue1 < 0) this.nasirValue1 = 0;
                     }
                     if (this.nasirJumpscareTimer._isRunning) this.nasirJumpscareTimer.Update(delta);
+                }
+            }
+            if (this.Name == 'Eric') {
+                switch (this.location) {
+                    case 16:
+                    if (this.AInum > 0) {
+                        if (this.ericFlashlightCounter > 100) {
+                            if (this.gameScreen.jumpscareID == 0) { // 0 means haven't jumpscared yet
+                                this.gameScreen.jumpscareID = this.ID;
+                                if (this.gameScreen.stare) this.gameScreen.stare = false;
+                                this.gameScreen.switchScreenState(2);
+                            }
+                        }
+                        if (this.gameScreen.flashlightstate == 1) {
+                            this.ericFlashlightCounter += delta * 0.055;
+                        }
+                        else {
+                            if (this.ericHallwayDisappearTimer._isRunning) {
+                                this.ericHallwayDisappearTimer.Update(delta);
+                            }
+                        }
+                    }
+                    break;
+                    case 14:
+                    if (this.AInum > 0) {
+                        if ((this.gameScreen.camerabuttonactive == 3) && this.ericCamDown == false) {
+                            this.ericCamDown = true;
+                            this.camTimer = new timer(2000);
+                            this.camTimer.finishCallback = () => {
+                                                if (this.gameScreen.maskbuttonactive == 0 || this.gameScreen.maskbuttonactive == 3) {
+                                                    if (this.gameScreen.jumpscareID == 0) { // 0 means haven't jumpscared yet
+                                                        if (this.gameScreen.stare) this.gameScreen.stare = false;
+                                                        this.gameScreen.jumpscareID = this.ID;
+                                                        this.gameScreen.switchScreenState(2); // force jumpscare if leaving cameras
+                                                    }
+                                                }
+                                                else {
+                                                    this.camTimer = null;
+                                                    this.ericJumpscareTimer.Reset();
+                                                    this.ericJumpscareTimer.Start(); // another one
+                                                }
+                                            };  
+                            this.camTimer.Start();
+                        }
+                        if (this.ericJumpscareTimer._isRunning) {
+                            this.ericJumpscareTimer.Update(delta);
+                            if (this.gameScreen.maskbuttonactive == 3) {
+                                if (this.gameScreen.jumpscareID == 0) { // 0 means haven't jumpscared yet
+                                    this.gameScreen.jumpscareID = this.ID;
+                                    if (this.gameScreen.stare) this.gameScreen.stare = false;
+                                    this.gameScreen.switchScreenState(2);
+                                }
+                            }
+                        }
+                    }
+                    break;
+
                 }
             }
             if (this.movementActive == false && this.gameScreen.pause == false)
@@ -299,18 +394,21 @@ export default class Animatronic {
                         if (this.Name == 'Nasir') this.AInum = 7;
                         break;
                     case 6:
+                        if (this.Name == 'Ramiro' || this.Name == 'Misa' || this.Name == 'Juan' || this.Name == 'Eric') this.AInum = 5;
+                        if (this.Name == 'Gustavo' || this.Name == 'Marlon' || this.Name == 'Darien' || this.Name == 'Sergio') this.AInum = 10;
+                        if (this.Name == 'Carlos') this.AInum = 9;
+                        if (this.Name == 'Nasir') this.AInum = 15;
                         break;
+                    case 7:
+                    if (this.AInum != this.customNightAInum) this.AInum = this.customNightAInum;
+                    break;
                 }
-                if (this.Name == "Carlos" && this.location == 14)
-                {
-                    if (this.gameScreen.carlos3.isPlaying == false) {
-                        this.gameScreen.carlos3.play();
-                    } 
-                }
+
             }
             if (this.cameraScreen.camFlashOn && this.location == this.cameraScreen.cameraspot) // reset timer and stuff by flashing
             {
                 this.movementOpportunityTime = 6670;
+                if (this.gameScreen.doubleMovementSpeed) this.movementOpportunityTime = 3335;
                 this.movementActive = false;
             }
             if (this.gameScreen.flashlightstate == 3 && this.location == 12)
@@ -333,6 +431,7 @@ export default class Animatronic {
                 }
                 if (this.gameScreen.animatronics[8].sergioFlashState != 2) {
                     this.movementOpportunityTime = 6670;
+                    if (this.gameScreen.doubleMovementSpeed) this.movementOpportunityTime = 3335;
                     this.movementActive = false;
                 }
             }
@@ -350,7 +449,7 @@ export default class Animatronic {
                 }
             }
             else {
-                if (this.gameScreen.animatronics[1].attacking != 2 && this.gameScreen.stare && this.gameScreen.animatronicsInOffice <= 0) {
+                if (this.gameScreen.animatronics[1].attacking != 2 && this.gameScreen.animatronics[0].attacking != 2 && this.gameScreen.stare && this.gameScreen.animatronicsInOffice <= 0) {
                     this.gameScreen.stare = false;
                     if (this.gameScreen.animatronicsInOffice < 0) this.gameScreen.animatronicsInOffice = 0;
                 }
@@ -369,9 +468,8 @@ export default class Animatronic {
                     case "Misa":
                     if (this.gameScreen.maskbuttonactive > 0 && this.gameScreen.maskbuttonactive < 3)
                     {
-                        if (this.gameScreen.stare == false) {
-                            this.gameScreen.stare = true;
-                        }
+                        if (this.gameScreen.stare == false) this.gameScreen.stare = true;
+
                         this.gameScreen.drawChange = true;
                         this.x -= (delta * this.scrollspeed);
                         // if (this.gameScree.stare.State != SoundState.Playing)
@@ -386,6 +484,7 @@ export default class Animatronic {
                             this.location = 2;
                             this.x = 0 + 600;
                             this.movementOpportunityTime = 5000;
+                            if (this.gameScreen.doubleMovementSpeed) this.movementOpportunityTime = 2500;
                             this.movementActive = false;
                             this.gameScreen.ventwalk.play();
                             // game.stare.Stop();
@@ -666,8 +765,9 @@ export default class Animatronic {
                         //this.gameScreen.stare.play();
                         this.movementActive = true;
                         this.gameScreen.animatronicsInOffice++;
+                        this.gameScreen.scarylaugh.play();
                         this.location = 14; // he's about to jumpscare
-                        let jumpscareInterval = Math.random() < 0.5 ? 4000 : 9000;
+                        let jumpscareInterval = Math.random() < 0.5 ? 6000 : 7000;
                         this.gameScreen.stare = true;
                         this.officeJumpscareTimer = new timer(jumpscareInterval);
                         this.camTimer = new timer(1250 / (this.marlonBlackoutCounter + 1));
@@ -914,7 +1014,27 @@ movementOpportunity()
                         }
                         else if (this.Name != "Misa" && this.Name != "Juan" && this.Name != "Carlos" && this.Name != "Gustavo")
                         {
-                            this.location = this.movementPath[index + 1];
+                            if (this.Name != 'Eric') {
+                                this.location = this.movementPath[index + 1];
+                            }
+                            else { // either hallway or office
+                               let movementLocation = Math.random() < 0.5 ? 16 : 14;
+                               switch (movementLocation) {
+                                    case 14:
+                                    if (this.gameScreen.camerabuttonactive != 3 && this.gameScreen.camerabuttonactive != 0) {
+                                        this.location = 14;
+                                        
+                                    }
+                                    break; 
+                                    case 16:
+                                    if (this.gameScreen.flashlightstate != 1) {
+                                        this.location = 16;
+                                        this.ericHallwayDisappearTimer.Reset();
+                                        this.ericHallwayDisappearTimer.Start();
+                                    } 
+                                    break;
+                               }
+                            }
                             this.moved = true;
                             if (this.gameScreen.debug) console.log(this.Name + " movement successful");
                             if (this.gameScreen.screenState == 0) this.gameScreen.drawChange = true;
@@ -948,7 +1068,10 @@ movementOpportunity()
                 }
                 
             }
-            if (this.attacking == 0) this.movementOpportunityTime = 5000;
+            if (this.attacking == 0) {
+                this.movementOpportunityTime = 5000;
+                if (this.gameScreen.doubleMovementSpeed) this.movementOpportunityTime = 2500;
+            }
             if (this.attacking > 0) this.movementOpportunityTime = 500;
             this.movementActive = false;
         }
@@ -967,7 +1090,10 @@ movementOpportunity()
                         this.movementActive = true; // so he can't move and crash the game
                         this.nasirJumpscareTimer.Start();
                     }
-                    if (this.location == 7) this.location = 15;
+                    if (this.location == 7) { 
+                        this.location = 15;
+                        this.gameScreen.scarylaugh.play();
+                    }
                     this.moved = true;
                     if (this.gameScreen.screenState == 0) this.gameScreen.drawChange = true;
                     if (this.gameScreen.debug) console.log(this.Name + " movement successful");

@@ -13,6 +13,16 @@ export default class loadingScreen extends Phaser.Scene {
             this.load.on('progress', (value) => {
                 loadingText.setText('Loading...' + Math.floor(value * 100) + '%');
             });
+            if (this.game.device.input.touch) {
+                let mobileText = this.add.text(1024/2 - 250, 768/2 + 100, '  To hear audio on iPhone, turn off\nthe silent switch or use headphones.', {  fontFamily: 'Arial', 
+    fontSize: '32px', 
+    color: '#ffffff' });
+            }
+            else {
+                let pcText = this.add.text(1024/2 - 250, 768/2 + 100, 'Chromebooks may take longer to load.\nIf this screen freezes, refresh the page.', {  fontFamily: 'Arial', 
+    fontSize: '32px', 
+    color: '#ffffff' });
+            }
             this.load.maxRetries = 3; 
             this.load.setBaseURL('/RamirosWeb/');
             this.load.setPath('');
@@ -27,7 +37,7 @@ export default class loadingScreen extends Phaser.Scene {
                 "close", "wind", "windup", "jackinthebox", 
                 "jumpscare", "stare", "garble", "carlos1", "carlos2", "carlos3",
                 "maskon", "ventwalk", "metalwalk", "maskoff", 'cameras', 'darienlaugh', 'darienlaugh2',
-                'sergioflash'
+                'sergioflash', 'scarylaugh'
             ];
             sounds.forEach(s => this.load.audio(s, `audio/${s}.mp3`));
     
@@ -103,6 +113,7 @@ export default class loadingScreen extends Phaser.Scene {
             this.load.image('mainhallmarlonflash', "/images/cameras/locations/flashlight/mainhallmarlon.png");
             this.load.image("officeflashjuan", "/images/officeflashjuan.png");
             this.load.image("officeflashram", "/images/officeflashram.png");
+            this.load.image("officeflasheric", "/images/officeflasheric.png");
             this.load.image("officeflashnas", "/images/officeflashnas.png");
             this.load.image("officeflashsergio", "/images/officeflashsergio.png");
             this.load.image("officeflashnassergio", "/images/officeflashnassergio.png");
@@ -135,6 +146,8 @@ export default class loadingScreen extends Phaser.Scene {
             this.load.image("ramiro", "/images/ramiro.png");
             this.load.image("sergio", "/images/sergio.png");
             this.load.image('sergiojump', '/images/sergiojump.png');
+            this.load.image('eric', '/images/eric.png');
+            this.load.image('ericjump', '/images/ericjump.png');
             this.load.image("marlonoffice", '/images/marlonoffice.png');
             this.load.image("marlonjump", '/images/marlonjump.png');
             this.load.image("darien", '/images/darien.png');
@@ -161,7 +174,9 @@ export default class loadingScreen extends Phaser.Scene {
             this.load.audio("misael", "/audio/misael.mp3");
             this.load.audio("misael2", "/audio/misael2.mp3");
             this.load.audio("misael3", "/audio/misael3.mp3");
-            this.load.audio('feralangelwaltz', '/audio/feralangelwaltz.mp3');
+            this.load.audio("misael4", "/audio/misael4.mp3");
+            this.load.audio("misael5", "/audio/misael5.mp3");
+
             // deepbreaths.Volume = 0.25f;
     // deepbreaths.IsLooped = false;
     this.load.image("mutecall", "/images/mutecall.png");
