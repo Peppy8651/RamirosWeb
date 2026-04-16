@@ -145,7 +145,7 @@ export default class cameraScreen extends Phaser.Scene {
     this.am = this.add.image(this.gameScreen.width - 60, 90, "am");
     this.hourNumShow = this.add.image(this.gameScreen.width - 120, 90, "num" + 1);
     this.hourNumShow2 = this.add.image(this.gameScreen.width - 100, 90, "num" + 2);
-    this.camerause = this.add.image(760, this.gameScreen.height - this.gameScreen.camerarect.height, "camerause");
+    this.camerause = this.add.image(760, this.gameScreen.height - this.gameScreen.camerarect.height / 2, "camerause");
 
     // This method is called once, just after preload()
     // It will initialize our scene, like the positions of the sprites

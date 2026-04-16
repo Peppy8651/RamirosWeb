@@ -90,8 +90,8 @@ export default class gameScreen extends Phaser.Scene {
   preload() {
         this.leftvent = new Rectangle(-this.cameraX + 75, -this.cameraY + 385, 60, 90);
         this.rightvent = new Rectangle(-this.cameraX + this.width - 160, -this.cameraY + 385, 60, 90);
-        this.maskrect = new Rectangle(10, this.height-60, 500, 40);
-        this.camerarect = new Rectangle(510, this.height-60, 500, 40);
+        this.maskrect = new Rectangle(10, this.height-60 + 20, 500, 40);
+        this.camerarect = new Rectangle(510, this.height-60 + 20, 500, 40);
         this.musicTimer = new timer(this.musicMilliseconds);   
         this.musicTimer.Start();
         this.timers.push(this.musicTimer);
@@ -137,7 +137,7 @@ export default class gameScreen extends Phaser.Scene {
     this.am = this.add.image(this.width - 60, 90, "am");
     this.hourNumShow = this.add.image(this.width - 120, 90, "num" + 1);
     this.hourNumShow2 = this.add.image(this.width - 100, 90, "num" + 2);
-    this.camerause = this.add.image(760, this.height - this.camerarect.height, "camerause");
+    this.camerause = this.add.image(760, this.height - this.camerarect.height / 2, "camerause");
 
     this.freddymask = this.add.sprite(0 + this.width/2, 0 + this.height/2, "freddymask1");
     this.freddymask.anims.create({
@@ -173,7 +173,7 @@ export default class gameScreen extends Phaser.Scene {
     });
     this.freddymask.setVisible(false);
     this.cameraopen.setVisible(false);
-    this.maskuse = this.add.image(260, this.height - this.maskrect.height, "maskuse");
+    this.maskuse = this.add.image(260, this.height - this.maskrect.height / 2, "maskuse");
     this.maskon = this.sound.add("maskon");
     this.maskoff = this.sound.add("maskoff");
     this.deepbreaths = this.sound.add("deepbreaths");
@@ -247,11 +247,11 @@ export default class gameScreen extends Phaser.Scene {
         this.maskuse.setScale(1, 2.5);
         this.maskrect.height = 100;
         this.maskuse.setPosition(260, this.height - this.maskrect.height /2);
-        this.maskrect.y -= 50;
+        this.maskrect.y = this.height-60 - 50;
         this.camerause.setScale(1, 2.5); 
         this.camerarect.height = 100;
         this.camerause.setPosition(760, this.height - this.camerarect.height /2);
-        this.camerarect.y -= 50;
+        this.camerarect.y = this.height-60 - 50;
         this.leftvent.x -= 10;
         this.leftvent.y -= 30;
         this.rightvent.x -= 10;
