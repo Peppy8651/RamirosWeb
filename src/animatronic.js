@@ -424,6 +424,7 @@ export default class Animatronic {
                     if (this.sergioFlashCounter < this.gameScreen.nightnum) {  
                         if (this.sergioFlashState == 1) {
                             this.sergioFlashState = 2;
+                            this.location = 0;
                             if (this.sergioFlashTimer._isRunning == false) this.sergioFlashTimer.Start();
                             if (this.gameScreen.sergioflash.isPlaying == false) this.gameScreen.sergioflash.play();
                         }
